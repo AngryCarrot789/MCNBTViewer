@@ -1,4 +1,4 @@
-﻿namespace REghZyFramework.Themes {
+﻿namespace MCNBTViewer.Themes {
     public enum ThemeType {
         Dark,
         Red,

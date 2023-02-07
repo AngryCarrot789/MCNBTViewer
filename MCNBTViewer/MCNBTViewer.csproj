@@ -14,6 +14,7 @@
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -42,11 +43,17 @@
     <Reference Include="REghZy.Maths">
       <HintPath>..\..\REghZy\DLL\REghZy.Maths.dll</HintPath>
     </Reference>
+    <Reference Include="REghZy.MathsF">
+      <HintPath>..\..\REghZy\DLL\REghZy.MathsF.dll</HintPath>
+    </Reference>
     <Reference Include="REghZy.MVVM">
       <HintPath>..\..\REghZy\DLL\REghZy.MVVM.dll</HintPath>
     </Reference>
     <Reference Include="REghZy.MVVM.Framework">
       <HintPath>..\..\REghZy\DLL\REghZy.MVVM.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="REghZy.Streams">
+      <HintPath>..\..\REghZy\DLL\REghZy.Streams.dll</HintPath>
     </Reference>
     <Reference Include="REghZy.Utils">
       <HintPath>..\..\REghZy\DLL\REghZy.Utils.dll</HintPath>
@@ -75,6 +82,25 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\SelectedParentToPathConverter.cs" />
+    <Compile Include="NBT\Arrays.cs" />
+    <Compile Include="NBT\Bits.cs" />
+    <Compile Include="NBT\Controls\NBTBaseControl.cs" />
+    <Compile Include="NBT\Structure\CompressedStreamTools.cs" />
+    <Compile Include="NBT\Structure\NBTBase.cs" />
+    <Compile Include="NBT\Structure\NBTTagByte.cs" />
+    <Compile Include="NBT\Structure\NBTTagByteArray.cs" />
+    <Compile Include="NBT\Structure\NBTTagCompound.cs" />
+    <Compile Include="NBT\Structure\NBTTagDouble.cs" />
+    <Compile Include="NBT\Structure\NBTTagEnd.cs" />
+    <Compile Include="NBT\Structure\NBTTagFloat.cs" />
+    <Compile Include="NBT\Structure\NBTTagInt.cs" />
+    <Compile Include="NBT\Structure\NBTTagIntArray.cs" />
+    <Compile Include="NBT\Structure\NBTTagList.cs" />
+    <Compile Include="NBT\Structure\NBTTagLong.cs" />
+    <Compile Include="NBT\Structure\NBTTagShort.cs" />
+    <Compile Include="NBT\Structure\NBTTagString.cs" />
+    <Compile Include="NBT\Structure\NBTType.cs" />
+    <Compile Include="NBT\ViewModels\NBTBaseViewModel.cs" />
     <Compile Include="Themes\AttachedProperties\PasswordAttachedProperty.cs" />
     <Compile Include="Themes\AttachedProperties\TextHinting.cs" />
     <Compile Include="Themes\Controls.xaml.cs">
@@ -97,7 +123,6 @@
     <Compile Include="Explorer\FolderItemViewModel.cs" />
     <Compile Include="Explorer\ITreeView.cs" />
     <Compile Include="Explorer\ExplorerViewModel.cs" />
-    <Compile Include="Explorer\TreeExplorerViewModel_OLD.cs" />
     <Compile Include="Explorer\FileItemViewModel.cs" />
     <Compile Include="MainViewModel.cs" />
     <Compile Include="MainWindow.xaml.cs">
@@ -154,9 +179,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Themes\appxaml.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

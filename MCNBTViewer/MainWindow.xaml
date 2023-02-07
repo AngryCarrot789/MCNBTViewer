@@ -13,7 +13,9 @@
         Background="{DynamicResource AREghZyBrush.Deep.3.Background.Static}">
     <Grid>
         <Menu VerticalAlignment="Top">
-            <MenuItem Header="File"/>
+            <MenuItem Header="File">
+                <MenuItem Header="Open file" Command="{Binding OpenFileCommand, Mode=OneTime}"/>
+            </MenuItem>
         </Menu>
         <Grid Margin="0,18,0,0">
             <Grid.ColumnDefinitions>

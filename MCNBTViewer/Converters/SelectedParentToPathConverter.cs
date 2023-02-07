@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
@@ -10,7 +9,7 @@ namespace MCNBTViewer.Converters {
     public class SelectedParentToPathConverter : IValueConverter {
         public bool UseParent { get; set; } = true;
         public string RootPath { get; set; } = "<Root>";
-        public string PathSeparator { get; set; } = "/";
+        public string PathSeparator { get; set; } = ">";
 
         public SelectedParentToPathConverter() {
 
@@ -19,6 +18,9 @@ namespace MCNBTViewer.Converters {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
             if (value is FileItemViewModel file) {
                 return this.UseParent ? (file.Parent != null ? GetPath(file.Parent) : this.RootPath) : GetPath(file);
+            }
+            else if (value == null) {
+                return this.RootPath;
             }
             else {
                 return $"<ERROR TYPE {value}>";

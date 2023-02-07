@@ -33,6 +33,12 @@ namespace MCNBTViewer.Explorer {
             set => this.RaisePropertyChanged(ref this.name, value);
         }
 
+        private object data;
+        public object Data {
+            get => this.data;
+            set => this.RaisePropertyChanged(ref this.data, value);
+        }
+
         public FileItemViewModel() {
 
         }

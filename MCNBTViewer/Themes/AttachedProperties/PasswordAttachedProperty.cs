@@ -2,7 +2,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace REghZyFramework.Themes.AttachedProperties {
+namespace MCNBTViewer.Themes.AttachedProperties {
     public class PasswordAttachedProperty {
         public static readonly DependencyProperty ListenToLengthProperty =
             DependencyProperty.RegisterAttached(
