@@ -1,0 +1,80 @@
+﻿<Window x:Class="MCNBTViewer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MCNBTViewer" xmlns:controls="clr-namespace:MCNBTViewer.Controls"
+        xmlns:explorer="clr-namespace:MCNBTViewer.Explorer"
+        xmlns:converters="clr-namespace:MCNBTViewer.Converters"
+        d:DataContext="{d:DesignInstance Type=local:MainViewModel}"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800"
+        Style="{DynamicResource CustomWindowStyle}"
+        Background="{DynamicResource AREghZyBrush.Deep.3.Background.Static}">
+    <Grid>
+        <Menu VerticalAlignment="Top">
+            <MenuItem Header="File"/>
+        </Menu>
+        <Grid Margin="0,18,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="7*"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="15*"/>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0" DataContext="{Binding Explorer}">
+                <controls:ExtendedTreeView Explorer="{Binding}" 
+                                           SelectedItemChanged="TreeView_SelectedItemChanged" 
+                                           ItemsSource="{Binding Root.Children}"
+                                           BorderThickness="0 1 0 0"
+                                           Background="{DynamicResource AREghZyBrush.Deep.3.Background.Static}" 
+                                           BorderBrush="{DynamicResource AREghZyBrush.Primary.2.Border.Static}">
+                    <controls:ExtendedTreeView.Style>
+                        <Style TargetType="{x:Type controls:ExtendedTreeView}" BasedOn="{StaticResource {x:Type TreeView}}"/>
+                    </controls:ExtendedTreeView.Style>
+                    <TreeView.ItemContainerStyle>
+                        <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource {x:Type TreeViewItem}}">
+                            <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+                        </Style>
+                    </TreeView.ItemContainerStyle>
+
+                    <TreeView.ItemTemplate>
+                        <HierarchicalDataTemplate DataType="{x:Type explorer:FolderItemViewModel}" ItemsSource="{Binding Children}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Name}"/>
+                            </StackPanel>
+                        </HierarchicalDataTemplate>
+                    </TreeView.ItemTemplate>
+                </controls:ExtendedTreeView>
+            </Grid>
+            <Border Grid.Column="2" BorderBrush="{DynamicResource AREghZyBrush.Primary.2.Border.Static}" BorderThickness="0 1 0 0">
+                <Grid Background="{DynamicResource AREghZyBrush.Deep.3.Background.Static}">
+                    <Grid.Resources>
+                        <converters:SelectedParentToPathConverter x:Key="PathConverter"/>
+                    </Grid.Resources>
+
+                    <TextBlock Text="{Binding Explorer.ExplorerList.CurrentFolder, Converter={StaticResource PathConverter}}"
+                               VerticalAlignment="Top" FontFamily="Consolas" Padding="5"/>
+                    <controls:ExtendedListBox Margin="0,24,0,0"
+                        DataContext="{Binding Explorer.ExplorerList}"
+                        Explorer="{Binding Explorer}"
+                        ItemsSource="{Binding CurrentFolder.Children}"
+                        SelectedItem="{Binding SelectedFile, UpdateSourceTrigger=PropertyChanged}"
+                        BorderThickness="0 1 0 0" Background="{DynamicResource AREghZyBrush.Deep.2.Background.Static}">
+                        <controls:ExtendedListBox.Style>
+                            <Style TargetType="{x:Type controls:ExtendedListBox}" BasedOn="{StaticResource {x:Type ListBox}}"/>
+                        </controls:ExtendedListBox.Style>
+                        <controls:ExtendedListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}" Padding="2" Margin="1"/>
+                            </DataTemplate>
+                        </controls:ExtendedListBox.ItemTemplate>
+                    </controls:ExtendedListBox>
+                </Grid>
+
+            </Border>
+            <!-- Details panel -->
+
+            <GridSplitter VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="1"/>
+        </Grid>
+    </Grid>
+</Window>
