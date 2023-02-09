@@ -20,20 +20,11 @@ namespace MCNBTViewer.NBT.Structure {
 
         public abstract byte GetId();
 
-        public NBTBase setName(String var1) {
-            this.tagName = var1 ?? "";
-            return this;
-        }
-
         public String GetName() {
             return this.tagName ?? "";
         }
 
-        public static NBTBase ReadNamedTag(DataInputStream input) {
-            return ReadNamedTag(input, 0);
-        }
-
-        public static NBTBase ReadNamedTag(DataInputStream input, int deep) {
+        public static NBTBase ReadNamedTag(DataInputStream input, int deep = 0) {
             byte id = input.ReadByte();
             if (id == 0) {
                 return new NBTTagEnd();

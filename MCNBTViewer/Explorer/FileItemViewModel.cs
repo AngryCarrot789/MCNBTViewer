@@ -25,10 +25,8 @@ namespace MCNBTViewer.Explorer {
             set => this.RaisePropertyChanged(ref this.isExpanded, value);
         }
 
-        public virtual FileItemType FileType => FileItemType.File;
-
         protected string name;
-        public virtual string Name {
+        public string Name {
             get => this.name;
             set => this.RaisePropertyChanged(ref this.name, value);
         }

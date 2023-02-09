@@ -81,6 +81,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\BasicTagIconConverter.cs" />
     <Compile Include="Converters\SelectedParentToPathConverter.cs" />
     <Compile Include="NBT\Arrays.cs" />
     <Compile Include="NBT\Bits.cs" />
@@ -101,6 +102,7 @@
     <Compile Include="NBT\Structure\NBTTagString.cs" />
     <Compile Include="NBT\Structure\NBTType.cs" />
     <Compile Include="NBT\ViewModels\NBTBaseViewModel.cs" />
+    <Compile Include="NBT\ViewModels\NBTPrimitiveViewModel.cs" />
     <Compile Include="Themes\AttachedProperties\PasswordAttachedProperty.cs" />
     <Compile Include="Themes\AttachedProperties\TextHinting.cs" />
     <Compile Include="Themes\Controls.xaml.cs">
@@ -179,6 +181,21 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\Credits.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\icons8-box-16.png" />
+    <Resource Include="Resources\Icons\icons8-box-40.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\icons8-empty-box-16.png" />
+    <Resource Include="Resources\Icons\icons8-empty-box-40.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\icons8-open-box-16.png" />
+    <Resource Include="Resources\Icons\icons8-open-box-40.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

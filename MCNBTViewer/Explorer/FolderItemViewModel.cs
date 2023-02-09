@@ -3,18 +3,11 @@ using System.Collections.Specialized;
 
 namespace MCNBTViewer.Explorer {
     public class FolderItemViewModel : FileItemViewModel {
-        public override FileItemType FileType => FileItemType.Folder;
-
         /// <summary>
         /// This file's children. If this instance is <see cref="FileItemViewModel"/> then this will be
         /// empty. Only <see cref="FolderItemViewModel"/> or any over "folder" type derivation should have children (<see cref="CanExpand"/>)
         /// </summary>
         public ObservableCollection<FileItemViewModel> Children { get; }
-
-        public override string Name {
-            get => this.name ?? (this.name = $"File with {this.Children.Count} items");
-            set => base.Name = value;
-        }
 
         public FolderItemViewModel() {
             this.Children = new ObservableCollection<FileItemViewModel>();
