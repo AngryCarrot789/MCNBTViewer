@@ -1,15 +1,14 @@
-using System;
 using REghZy.Streams;
 
 namespace MCNBTViewer.NBT.Structure {
     public class NBTTagLong : NBTBase {
         public long data;
 
-        public NBTTagLong(String name) : base(name) {
+        public NBTTagLong(string name) : base(name) {
         }
 
-        public NBTTagLong(String name, long var2) : base(name) {
-            this.data = var2;
+        public NBTTagLong(string name, long data) : base(name) {
+            this.data = data;
         }
 
         public override void Write(DataOutputStream output) {
@@ -20,30 +19,29 @@ namespace MCNBTViewer.NBT.Structure {
             this.data = input.ReadLong();
         }
 
-        public override byte GetId() {
-            return 4;
-        }
+        public override byte Id => 4;
 
         public override string ToString() {
-            return "" + this.data;
+            return this.data.ToString();
         }
 
-        public override NBTBase Copy() {
-            return new NBTTagLong(this.GetName(), this.data);
+        public override NBTBase CloneTag() {
+            return new NBTTagLong(this.Name, this.data);
         }
 
-        public override bool Equals(object var1) {
-            if (base.Equals(var1)) {
-                NBTTagLong var2 = (NBTTagLong)var1;
+        public override bool Equals(object obj) {
+            if (base.Equals(obj)) {
+                NBTTagLong var2 = (NBTTagLong) obj;
                 return this.data == var2.data;
-            } else {
+            }
+            else {
                 return false;
             }
         }
 
         public override int GetHashCode() {
             ulong x = (ulong) this.data;
-            return base.GetHashCode() ^ (int)(x ^ x >> 32);
+            return base.GetHashCode() ^ (int) (x ^ x >> 32);
         }
     }
 }

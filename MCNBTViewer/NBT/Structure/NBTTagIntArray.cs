@@ -5,52 +5,47 @@ namespace MCNBTViewer.NBT.Structure {
     public class NBTTagIntArray : NBTBase {
         public int[] data;
 
-        public NBTTagIntArray(String name) : base(name) {
+        public NBTTagIntArray(string name) : base(name) {
         }
 
-        public NBTTagIntArray(String name, int[] var2) : base(name) {
-            this.data = var2;
+        public NBTTagIntArray(string name, int[] data) : base(name) {
+            this.data = data;
         }
 
         public override void Write(DataOutputStream output) {
             output.WriteInt(this.data.Length);
-
-            for(int var2 = 0; var2 < this.data.Length; ++var2) {
-                output.WriteInt(this.data[var2]);
+            foreach (int value in this.data) {
+                output.WriteInt(value);
             }
-
         }
 
         public override void Read(DataInputStream input, int deep) {
             int var3 = input.ReadInt();
             this.data = new int[var3];
 
-            for(int var4 = 0; var4 < var3; ++var4) {
+            for (int var4 = 0; var4 < var3; ++var4) {
                 this.data[var4] = input.ReadInt();
             }
-
         }
 
-        public override byte GetId() {
-            return 11;
-        }
+        public override byte Id => 11;
 
         public override string ToString() {
             return "[" + this.data.Length + " bytes]";
         }
 
-        public override NBTBase Copy() {
+        public override NBTBase CloneTag() {
             int[] var1 = new int[this.data.Length];
             Array.Copy(this.data, 0, var1, 0, (int) this.data.Length);
-            return new NBTTagIntArray(this.GetName(), var1);
+            return new NBTTagIntArray(this.Name, var1);
         }
 
-        public override bool Equals(object var1) {
-            if (!base.Equals(var1)) {
+        public override bool Equals(object obj) {
+            if (base.Equals(obj) && obj is NBTTagIntArray arr) {
+                return this.data == null && arr.data == null || this.data != null && Arrays.Equals(this.data, arr.data);
+            }
+            else {
                 return false;
-            } else {
-                NBTTagIntArray var2 = (NBTTagIntArray)var1;
-                return this.data == null && var2.data == null || this.data != null && Arrays.Equals(this.data, var2.data);
             }
         }
 

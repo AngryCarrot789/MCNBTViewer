@@ -1,51 +1,51 @@
-using System;
 using REghZy.Streams;
 
 namespace MCNBTViewer.NBT.Structure {
     public class NBTTagString : NBTBase {
-        public String data;
+        public override byte Id => 8;
 
-        public NBTTagString(String name) : base(name) {
+        public string Data { get; set; }
+
+        public NBTTagString(string name) : base(name) {
+
         }
 
-        public NBTTagString(String name, String var2) : base(name) {
-            this.data = var2;
-            if (var2 == null) {
-                throw new ArgumentNullException(nameof(var2), "Empty string not allowed");
-            }
+        public NBTTagString(string name, string data) : base(name) {
+            this.Data = data;
         }
 
         public override void Write(DataOutputStream output) {
-            output.WriteStringLabelledUTF8(this.data);
+            if (this.Data == null) {
+                output.WriteUShort(0);
+            }
+            else {
+                output.WriteStringLabelledUTF8(this.Data);
+            }
         }
 
         public override void Read(DataInputStream input, int deep) {
-            this.data = input.ReadStringUTF8Labelled();
-        }
-
-        public override byte GetId() {
-            return 8;
+            this.Data = input.ReadStringUTF8Labelled();
         }
 
         public override string ToString() {
-            return "" + this.data;
+            return this.Data;
         }
 
-        public override NBTBase Copy() {
-            return new NBTTagString(this.GetName(), this.data);
+        public override NBTBase CloneTag() {
+            return new NBTTagString(this.Name, this.Data);
         }
 
-        public override bool Equals(object var1) {
-            if (!base.Equals(var1)) {
+        public override bool Equals(object obj) {
+            if (base.Equals(obj) && obj is NBTTagString str) {
+                return this.Data == null && str.Data == null || string.Equals(this.Data, str.Data);
+            }
+            else {
                 return false;
-            } else {
-                NBTTagString var2 = (NBTTagString)var1;
-                return this.data == null && var2.data == null || this.data != null && this.data.Equals(var2.data);
             }
         }
 
         public override int GetHashCode() {
-            return base.GetHashCode() ^ this.data.GetHashCode();
+            return base.GetHashCode() ^ this.Data.GetHashCode();
         }
     }
 }

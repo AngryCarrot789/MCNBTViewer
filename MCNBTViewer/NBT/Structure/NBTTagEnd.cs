@@ -6,18 +6,14 @@ namespace MCNBTViewer.NBT.Structure {
         }
 
         public override void Write(DataOutputStream output) {
-
         }
 
         public override void Read(DataInputStream input, int deep) {
-
         }
 
-        public override byte GetId() {
-            return 0;
-        }
+        public override byte Id => 0;
 
-        public override NBTBase Copy() {
+        public override NBTBase CloneTag() {
             return new NBTTagEnd();
         }
 

@@ -6,11 +6,11 @@ namespace MCNBTViewer.NBT.Structure {
     public class NBTTagCompound : NBTBase {
         public readonly Dictionary<string, NBTBase> tagMap;
 
-        public NBTTagCompound(){
+        public NBTTagCompound() {
             this.tagMap = new Dictionary<string, NBTBase>();
         }
 
-        public NBTTagCompound(String name) : base(name) {
+        public NBTTagCompound(string name) : base(name) {
             this.tagMap = new Dictionary<string, NBTBase>();
         }
 
@@ -26,8 +26,8 @@ namespace MCNBTViewer.NBT.Structure {
             if (deep <= 512) {
                 this.tagMap.Clear();
                 NBTBase nbt;
-                while ((nbt = ReadNamedTag(input, deep + 1)).GetId() != 0) {
-                    this.tagMap[nbt.GetName()] = nbt;
+                while ((nbt = ReadNamedTag(input, deep + 1)).Id != 0) {
+                    this.tagMap[nbt.Name] = nbt;
                 }
             }
             else {
@@ -36,18 +36,16 @@ namespace MCNBTViewer.NBT.Structure {
         }
 
         public void Put(string key, NBTBase nbt) {
-            nbt.name = key;
+            nbt.Name = key;
             this.tagMap[key] = nbt;
         }
 
-        public override byte GetId() {
-            return 10;
-        }
+        public override byte Id => 10;
 
-        public override NBTBase Copy() {
-            NBTTagCompound nbt = new NBTTagCompound(this.GetName());
-            foreach (KeyValuePair<string,NBTBase> pair in this.tagMap) {
-                nbt.tagMap[pair.Key] = pair.Value.Copy();
+        public override NBTBase CloneTag() {
+            NBTTagCompound nbt = new NBTTagCompound(this.Name);
+            foreach (KeyValuePair<string, NBTBase> pair in this.tagMap) {
+                nbt.tagMap[pair.Key] = pair.Value.CloneTag();
             }
 
             return nbt;

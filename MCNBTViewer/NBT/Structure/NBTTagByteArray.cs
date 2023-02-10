@@ -5,10 +5,10 @@ namespace MCNBTViewer.NBT.Structure {
     public class NBTTagByteArray : NBTBase {
         public byte[] data;
 
-        public NBTTagByteArray(String name) : base(name) {
+        public NBTTagByteArray(string name) : base(name) {
         }
 
-        public NBTTagByteArray(String name, byte[] var2) : base(name) {
+        public NBTTagByteArray(string name, byte[] var2) : base(name) {
             this.data = var2;
         }
 
@@ -23,22 +23,20 @@ namespace MCNBTViewer.NBT.Structure {
             input.ReadFully(this.data);
         }
 
-        public override byte GetId() {
-            return 7;
-        }
+        public override byte Id => 7;
 
         public override string ToString() {
             return "[" + this.data.Length + " bytes]";
         }
 
-        public override NBTBase Copy() {
+        public override NBTBase CloneTag() {
             byte[] var1 = new byte[this.data.Length];
             Array.Copy(this.data, 0, var1, 0, (int) this.data.Length);
-            return new NBTTagByteArray(this.GetName(), var1);
+            return new NBTTagByteArray(this.Name, var1);
         }
 
-        public override bool Equals(object var1) {
-            return base.Equals(var1) ? Arrays.Equals(this.data, ((NBTTagByteArray)var1).data) : false;
+        public override bool Equals(object obj) {
+            return base.Equals(obj) ? Arrays.Equals(this.data, ((NBTTagByteArray) obj).data) : false;
         }
 
         public override int GetHashCode() {

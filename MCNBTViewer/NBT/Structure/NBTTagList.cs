@@ -11,12 +11,12 @@ namespace MCNBTViewer.NBT.Structure {
             this.list = new List<NBTBase>();
         }
 
-        public NBTTagList(String name) : base(name) {
+        public NBTTagList(string name) : base(name) {
             this.list = new List<NBTBase>();
         }
 
         public override void Write(DataOutputStream output) {
-            this.heldItemType = this.list.Count > 0 ? this.list[0].GetId() : (byte) 1;
+            this.heldItemType = this.list.Count > 0 ? this.list[0].Id : (byte) 1;
             output.WriteByte(this.heldItemType);
             output.WriteInt(this.list.Count);
             foreach (NBTBase t in this.list) {
@@ -40,21 +40,19 @@ namespace MCNBTViewer.NBT.Structure {
             }
         }
 
-        public override byte GetId() {
-            return 9;
-        }
+        public override byte Id => 9;
 
-        public override NBTBase Copy() {
-            NBTTagList copy = new NBTTagList(this.GetName()) {heldItemType = this.heldItemType};
+        public override NBTBase CloneTag() {
+            NBTTagList copy = new NBTTagList(this.Name) {heldItemType = this.heldItemType};
             foreach (NBTBase nbtBase in this.list) {
-                copy.list.Add(nbtBase.Copy());
+                copy.list.Add(nbtBase.CloneTag());
             }
 
             return copy;
         }
 
-        public override bool Equals(object var1) {
-            if (base.Equals(var1) && var1 is NBTTagList list) {
+        public override bool Equals(object obj) {
+            if (base.Equals(obj) && obj is NBTTagList list) {
                 if (this.heldItemType == list.heldItemType) {
                     return this.list.Equals(list.list);
                 }

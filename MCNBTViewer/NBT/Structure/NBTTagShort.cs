@@ -1,15 +1,14 @@
-using System;
 using REghZy.Streams;
 
 namespace MCNBTViewer.NBT.Structure {
     public class NBTTagShort : NBTBase {
         public short data;
 
-        public NBTTagShort(String name) : base(name) {
+        public NBTTagShort(string name) : base(name) {
         }
 
-        public NBTTagShort(String name, short var2) : base(name) {
-            this.data = var2;
+        public NBTTagShort(string name, short data) : base(name) {
+            this.data = data;
         }
 
         public override void Write(DataOutputStream output) {
@@ -20,23 +19,22 @@ namespace MCNBTViewer.NBT.Structure {
             this.data = input.ReadShort();
         }
 
-        public override byte GetId() {
-            return 2;
-        }
+        public override byte Id => 2;
 
         public override string ToString() {
-            return "" + this.data;
+            return this.data.ToString();
         }
 
-        public override NBTBase Copy() {
-            return new NBTTagShort(this.GetName(), this.data);
+        public override NBTBase CloneTag() {
+            return new NBTTagShort(this.Name, this.data);
         }
 
-        public override bool Equals(object var1) {
-            if (base.Equals(var1)) {
-                NBTTagShort var2 = (NBTTagShort)var1;
+        public override bool Equals(object obj) {
+            if (base.Equals(obj)) {
+                NBTTagShort var2 = (NBTTagShort) obj;
                 return this.data == var2.data;
-            } else {
+            }
+            else {
                 return false;
             }
         }
