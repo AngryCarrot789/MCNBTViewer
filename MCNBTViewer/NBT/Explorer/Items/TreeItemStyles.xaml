@@ -5,11 +5,11 @@
                     xmlns:converters="clr-namespace:MCNBTViewer.Converters"
                     xmlns:explorer="clr-namespace:MCNBTViewer.NBT.Explorer">
     <HierarchicalDataTemplate x:Key="TreeTagCompoundTemplate" DataType="{x:Type nbt:NBTCompoundViewModel}" ItemsSource="{Binding Children}">
-        <StackPanel Orientation="Horizontal" Height="20">
+        <StackPanel Orientation="Horizontal" Height="18">
             <Image x:Name="Img" Width="16" Height="16"/>
             <TextBlock Margin="4 0 0 0">
                 <TextBlock.Text>
-                    <MultiBinding Converter="{StaticResource CollectionNameConverter}">
+                    <MultiBinding Converter="{StaticResource NBTCollectionNameConverter}">
                         <Binding Path="Name"/>
                         <Binding Path="Children"/>
                     </MultiBinding>
@@ -38,11 +38,11 @@
     </HierarchicalDataTemplate>
 
     <HierarchicalDataTemplate x:Key="TreeTagListTemplate" DataType="{x:Type nbt:NBTListViewModel}" ItemsSource="{Binding Children}">
-        <StackPanel Orientation="Horizontal" Height="20">
+        <StackPanel Orientation="Horizontal" Height="18">
             <Image Width="16" Height="16" Source="/MCNBTViewer;component/Resources/Icons/icons8-bulleted-list-48.png"/>
             <TextBlock Margin="4 0 0 0">
                 <TextBlock.Text>
-                    <MultiBinding Converter="{StaticResource CollectionNameConverter}">
+                    <MultiBinding Converter="{StaticResource NBTCollectionNameConverter}">
                         <Binding Path="Name"/>
                         <Binding Path="Children"/>
                     </MultiBinding>
@@ -52,17 +52,30 @@
     </HierarchicalDataTemplate>
 
     <HierarchicalDataTemplate x:Key="TreeTagArrayTemplate" DataType="{x:Type nbt:BaseNBTArrayViewModel}">
-        <StackPanel Orientation="Horizontal" Height="20">
+        <StackPanel Orientation="Horizontal" Height="18">
             <Image Source="{Binding NBTType, Converter={StaticResource TagIconConverter}}" Width="16" Height="16"/>
-            <TextBlock Margin="4 0 0 0" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBlock Margin="4 0 0 0">
+                <TextBlock.Text>
+                    <MultiBinding Converter="{StaticResource NBTArrayNameConverter}">
+                        <Binding Path="Name"/>
+                        <Binding Path="Data"/>
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
         </StackPanel>
     </HierarchicalDataTemplate>
 
     <HierarchicalDataTemplate x:Key="TreeTagPrimitive" DataType="{x:Type nbt:NBTPrimitiveViewModel}">
-        <StackPanel Orientation="Horizontal" Height="20">
+        <StackPanel Orientation="Horizontal" Height="18">
             <Image Source="{Binding NBTType, Converter={StaticResource TagIconConverter}}" Width="16" Height="16"/>
-            <TextBlock Margin="4 0 0 0" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
-        </StackPanel>
+            <TextBlock Margin="4 0 0 0">
+                <TextBlock.Text>
+                    <MultiBinding Converter="{StaticResource NBTPrimitiveNameConverter}">
+                        <Binding Path="Name"/>
+                        <Binding Path="Data"/>
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>        </StackPanel>
     </HierarchicalDataTemplate>
 
     <explorer:TreeItemTemplateSelector x:Key="NBTTreeItemSelector">

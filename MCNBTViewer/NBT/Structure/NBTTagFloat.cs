@@ -2,12 +2,14 @@ using REghZy.Streams;
 
 namespace MCNBTViewer.NBT.Structure {
     public class NBTTagFloat : NBTBase {
+        public override byte Id => 5;
+
         public float data;
 
-        public NBTTagFloat(string name) : base(name) {
+        public NBTTagFloat() {
         }
 
-        public NBTTagFloat(string name, float var2) : base(name) {
+        public NBTTagFloat(float var2) {
             this.data = var2;
         }
 
@@ -19,14 +21,13 @@ namespace MCNBTViewer.NBT.Structure {
             this.data = input.ReadFloat();
         }
 
-        public override byte Id => 5;
 
         public override string ToString() {
             return this.data.ToString();
         }
 
         public override NBTBase CloneTag() {
-            return new NBTTagFloat(this.Name, this.data);
+            return new NBTTagFloat(this.data);
         }
 
         public override bool Equals(object obj) {

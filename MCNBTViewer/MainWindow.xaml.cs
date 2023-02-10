@@ -9,9 +9,5 @@ namespace MCNBTViewer {
             this.InitializeComponent();
             this.DataContext = new MainViewModel();
         }
-
-        private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e) {
-
-        }
     }
 }

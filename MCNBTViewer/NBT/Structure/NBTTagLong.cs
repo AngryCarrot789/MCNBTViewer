@@ -2,12 +2,14 @@ using REghZy.Streams;
 
 namespace MCNBTViewer.NBT.Structure {
     public class NBTTagLong : NBTBase {
+        public override byte Id => 4;
+
         public long data;
 
-        public NBTTagLong(string name) : base(name) {
+        public NBTTagLong() {
         }
 
-        public NBTTagLong(string name, long data) : base(name) {
+        public NBTTagLong(long data) {
             this.data = data;
         }
 
@@ -19,24 +21,17 @@ namespace MCNBTViewer.NBT.Structure {
             this.data = input.ReadLong();
         }
 
-        public override byte Id => 4;
 
         public override string ToString() {
             return this.data.ToString();
         }
 
         public override NBTBase CloneTag() {
-            return new NBTTagLong(this.Name, this.data);
+            return new NBTTagLong(this.data);
         }
 
         public override bool Equals(object obj) {
-            if (base.Equals(obj)) {
-                NBTTagLong var2 = (NBTTagLong) obj;
-                return this.data == var2.data;
-            }
-            else {
-                return false;
-            }
+            return base.Equals(obj) && obj is NBTTagLong tag && this.data == tag.data;
         }
 
         public override int GetHashCode() {

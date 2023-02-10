@@ -1,14 +1,15 @@
 using System;
 using REghZy.Streams;
+using REghZy.Utils;
 
 namespace MCNBTViewer.NBT.Structure {
     public class NBTTagIntArray : NBTBase {
         public int[] data;
 
-        public NBTTagIntArray(string name) : base(name) {
+        public NBTTagIntArray() {
         }
 
-        public NBTTagIntArray(string name, int[] data) : base(name) {
+        public NBTTagIntArray(int[] data) {
             this.data = data;
         }
 
@@ -31,13 +32,13 @@ namespace MCNBTViewer.NBT.Structure {
         public override byte Id => 11;
 
         public override string ToString() {
-            return "[" + this.data.Length + " bytes]";
+            return "[" + this.data.Length + " ints]";
         }
 
         public override NBTBase CloneTag() {
-            int[] var1 = new int[this.data.Length];
-            Array.Copy(this.data, 0, var1, 0, (int) this.data.Length);
-            return new NBTTagIntArray(this.Name, var1);
+            int[] copy = new int[this.data.Length];
+            Array.Copy(this.data, 0, copy, 0, this.data.Length);
+            return new NBTTagIntArray(copy);
         }
 
         public override bool Equals(object obj) {

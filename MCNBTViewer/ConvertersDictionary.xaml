@@ -1,7 +1,9 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:converters="clr-namespace:MCNBTViewer.Converters">
-    <converters:CompoundListNameConverter x:Key="CollectionNameConverter"/>
+    <converters:NbtCollectiveNameConverter x:Key="NBTCollectionNameConverter"/>
+    <converters:NBTArrayNameConverter x:Key="NBTArrayNameConverter"/>
+    <converters:NBTPrimitiveNameConverter x:Key="NBTPrimitiveNameConverter"/>
 
     <converters:TagIconConverter x:Key="TagIconConverter"
                                  TagByte="/MCNBTViewer;component/Resources/Icons/FileIcon-TagByte8.png"

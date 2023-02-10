@@ -82,23 +82,31 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Controls\IconTextPair.cs" />
-    <Compile Include="Converters\CompoundListNameConverter.cs" />
+    <Compile Include="Controls\NBTNavigationButton.cs" />
+    <Compile Include="Controls\PathViewer.cs" />
+    <Compile Include="Converters\NBTArrayNameConverter.cs" />
+    <Compile Include="Converters\NbtCollectiveNameConverter.cs" />
     <Compile Include="Converters\EnumConverter.cs" />
+    <Compile Include="Converters\NBTItemNameConverter.cs" />
+    <Compile Include="Converters\NBTPrimitiveNameConverter.cs" />
+    <Compile Include="Converters\SelectedItemToPathListConverter.cs" />
     <Compile Include="Converters\TagIconConverter.cs" />
     <Compile Include="Converters\SelectedParentToPathConverter.cs" />
     <Compile Include="NBT\Arrays.cs" />
     <Compile Include="NBT\Bits.cs" />
     <Compile Include="NBT\Controls\NBTBaseControl.cs" />
     <Compile Include="NBT\Controls\NBTCompoundControl.cs" />
+    <Compile Include="NBT\Explorer\ExplorerList\ListFallbackSourceConverter.cs" />
+    <Compile Include="NBT\Explorer\ExplorerList\NBTExplorerListViewModel.cs" />
     <Compile Include="NBT\Explorer\Items\BaseNBTArrayViewModel.cs" />
     <Compile Include="NBT\Explorer\Items\BaseNBTCollectionViewModel.cs" />
     <Compile Include="NBT\Explorer\Items\BaseNBTViewModel.cs" />
     <Compile Include="NBT\Explorer\Items\NBTByteArrayViewModel.cs" />
     <Compile Include="NBT\Explorer\Items\NBTCompoundViewModel.cs" />
+    <Compile Include="NBT\Explorer\Items\NBTDataFileViewModel.cs" />
     <Compile Include="NBT\Explorer\Items\NBTIntArrayViewModel.cs" />
     <Compile Include="NBT\Explorer\Items\NBTListViewModel.cs" />
     <Compile Include="NBT\Explorer\Items\NBTPrimitiveItemViewModel.cs" />
-    <Compile Include="NBT\Explorer\NBTExplorerListViewModel.cs" />
     <Compile Include="NBT\Explorer\NBTExplorerViewModel.cs" />
     <Compile Include="NBT\Explorer\TreeItemTemplateSelector.cs" />
     <Compile Include="NBT\Structure\CompressedStreamTools.cs" />
@@ -212,7 +220,6 @@
     <Resource Include="Resources\Icons\FileIcon-TagShort16.png" />
     <Resource Include="Resources\Icons\FileIcon-TagString.png" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Resource Include="Resources\Icons\icons8-bulleted-list-48.png" />
   </ItemGroup>

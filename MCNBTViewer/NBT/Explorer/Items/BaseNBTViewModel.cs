@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Runtime.Remoting.Messaging;
 using MCNBTViewer.NBT.Structure;
 using REghZy.MVVM.ViewModels;
 
@@ -26,9 +29,9 @@ namespace MCNBTViewer.NBT.Explorer.Items {
         public string Name {
             get => this.name;
             set {
-                string old = this.name;
-                this.RaisePropertyChanged(ref this.name, value);
-                this.OnNameChanged(old, value);
+                if (this.CanChangeName(this.name, value)) {
+                    this.RaisePropertyChanged(ref this.name, value);
+                }
             }
         }
 
@@ -38,8 +41,41 @@ namespace MCNBTViewer.NBT.Explorer.Items {
             set => this.RaisePropertyChanged(ref this.parent, value);
         }
 
-        protected BaseNBTViewModel(NBTType type) {
+        /// <summary>
+        /// Calculates the root parent of this NBT
+        /// </summary>
+        public BaseNBTCollectionViewModel RootParent {
+            get {
+                BaseNBTCollectionViewModel topLevel = null;
+                for (BaseNBTCollectionViewModel next = this.Parent; next != null; next = next.Parent)
+                    topLevel = next;
+                return topLevel;
+            }
+        }
+
+        public List<BaseNBTViewModel> ParentChain {
+            get {
+                BaseNBTViewModel item = this;
+                List<BaseNBTViewModel> list = new List<BaseNBTViewModel>();
+                do {
+                    list.Add(item);
+                } while ((item = item.Parent) != null);
+                list.Reverse();
+                return list;
+            }
+        }
+
+        protected BaseNBTViewModel(string name, NBTType type) {
+            this.Name = name;
             this.NBTType = type;
+        }
+
+        protected BaseNBTViewModel(NBTType type) : this(null, type) {
+
+        }
+
+        protected BaseNBTViewModel() : this(null, NBTType.End) {
+
         }
 
         public abstract NBTBase ToNBT();
@@ -48,8 +84,8 @@ namespace MCNBTViewer.NBT.Explorer.Items {
             return false;
         }
 
-        protected virtual void OnNameChanged(string oldName, string name) {
-
+        protected virtual bool CanChangeName(string oldName, string newName) {
+            return true;
         }
 
         public virtual void OnRemovedFromFolder() {
@@ -58,6 +94,42 @@ namespace MCNBTViewer.NBT.Explorer.Items {
 
         public virtual void OnAddedToFolder() {
 
+        }
+
+        public static NBTCompoundViewModel CreateFrom(string name, NBTTagCompound nbt) {
+            NBTCompoundViewModel tag = new NBTCompoundViewModel(name);
+            foreach (KeyValuePair<string, NBTBase> pair in nbt.map) {
+                tag.Children.Add(CreateFrom(pair.Key, pair.Value));
+            }
+
+            return tag;
+        }
+
+        public static NBTListViewModel CreateFrom(string name, NBTTagList nbt) {
+            NBTListViewModel tag = new NBTListViewModel(name);
+            foreach (NBTBase t in nbt.tags) {
+                tag.Children.Add(CreateFrom(null, t));
+            }
+
+            return tag;
+        }
+
+        public static BaseNBTViewModel CreateFrom(string name, NBTBase nbt) {
+            switch (nbt) {
+                case NBTTagCompound compound: return CreateFrom(name, compound);
+                case NBTTagList list: return CreateFrom(name, list);
+                case NBTTagByteArray ba: return new NBTByteArrayViewModel(name) {Data = ba.data};
+                case NBTTagIntArray ia: return new NBTIntArrayViewModel(name) {Data = ia.data};
+                case NBTTagByte b: return new NBTPrimitiveViewModel(name, NBTType.Byte) {Data = b.data.ToString()};
+                case NBTTagShort s: return new NBTPrimitiveViewModel(name, NBTType.Short) {Data = s.data.ToString()};
+                case NBTTagInt i: return new NBTPrimitiveViewModel(name, NBTType.Int) {Data = i.data.ToString()};
+                case NBTTagLong l: return new NBTPrimitiveViewModel(name, NBTType.Long) {Data = l.data.ToString()};
+                case NBTTagFloat f: return new NBTPrimitiveViewModel(name, NBTType.Float) {Data = f.data.ToString()};
+                case NBTTagDouble d: return new NBTPrimitiveViewModel(name, NBTType.Double) {Data = d.data.ToString()};
+                case NBTTagString str: return new NBTPrimitiveViewModel(name, NBTType.String) {Data = str.data};
+                case NBTTagEnd _: return new NBTPrimitiveViewModel(name, NBTType.End);
+                default: return new NBTPrimitiveViewModel(name, nbt.Type);
+            }
         }
     }
 }

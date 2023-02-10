@@ -1,27 +1,30 @@
+using System;
 using System.IO;
 using System.IO.Compression;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using REghZy.Streams;
 
 namespace MCNBTViewer.NBT.Structure {
     public static class CompressedStreamTools {
-        public static NBTTagCompound ReadCompressed(string filePath) {
+        public static NBTTagCompound ReadCompressed(string filePath, out string tagName) {
             using (FileStream stream = File.OpenRead(filePath)) {
-                return ReadCompressed(stream);
+                return ReadCompressed(stream, out tagName);
             }
         }
 
-        public static NBTTagCompound ReadCompressed(Stream stream) {
+        public static NBTTagCompound ReadCompressed(Stream stream, out string tagName) {
             using (BufferedStream buffered = new BufferedStream(new GZipStream(stream, CompressionMode.Decompress))) {
-                return ReadTagCompound(new DataInputStream(buffered));
-            }
-        }
-
-        public static NBTTagCompound ReadTagCompound(DataInputStream input) {
-            NBTBase nbtbase = NBTBase.ReadNamedTag(input);
-            if (nbtbase is NBTTagCompound compound) {
-                return compound;
-            } else {
-                throw new IOException("Root tag must be a named compound tag");
+                if (NBTBase.ReadTag(new DataInputStream(buffered), 0, out tagName, out NBTBase nbt)) {
+                    if (nbt is NBTTagCompound compound) {
+                        return compound;
+                    }
+                    else {
+                        throw new Exception("Expected to read NBTTagCompound. Got " + nbt.Type + " instead");
+                    }
+                }
+                else {
+                    throw new Exception("Failed to read NBT from stream");
+                }
             }
         }
     }

@@ -4,30 +4,19 @@ using REghZy.Streams;
 
 namespace MCNBTViewer.NBT.Structure {
     public class NBTTagCompound : NBTBase {
-        public readonly Dictionary<string, NBTBase> tagMap;
+        public override byte Id => 10;
+
+        public readonly Dictionary<string, NBTBase> map;
 
         public NBTTagCompound() {
-            this.tagMap = new Dictionary<string, NBTBase>();
-        }
-
-        public NBTTagCompound(string name) : base(name) {
-            this.tagMap = new Dictionary<string, NBTBase>();
-        }
-
-        public override void Write(DataOutputStream output) {
-            foreach (NBTBase nbt in this.tagMap.Values) {
-                WriteNamedTag(nbt, output);
-            }
-
-            output.WriteByte(0);
+            this.map = new Dictionary<string, NBTBase>();
         }
 
         public override void Read(DataInputStream input, int deep) {
-            if (deep <= 512) {
-                this.tagMap.Clear();
-                NBTBase nbt;
-                while ((nbt = ReadNamedTag(input, deep + 1)).Id != 0) {
-                    this.tagMap[nbt.Name] = nbt;
+            if (deep <= 512 || IgnoreStackDepth) {
+                this.map.Clear();
+                while (ReadTag(input, deep + 1, out string name, out NBTBase nbt)) {
+                    this.map[name] = nbt;
                 }
             }
             else {
@@ -35,19 +24,22 @@ namespace MCNBTViewer.NBT.Structure {
             }
         }
 
-        public void Put(string key, NBTBase nbt) {
-            nbt.Name = key;
-            this.tagMap[key] = nbt;
+        public override void Write(DataOutputStream output) {
+            foreach (KeyValuePair<string, NBTBase> pair in this.map) {
+                WriteTag(output, pair.Key, pair.Value);
+            }
+            output.WriteByte(0);
         }
 
-        public override byte Id => 10;
+        public void Put(string key, NBTBase nbt) {
+            this.map[key] = nbt;
+        }
 
         public override NBTBase CloneTag() {
-            NBTTagCompound nbt = new NBTTagCompound(this.Name);
-            foreach (KeyValuePair<string, NBTBase> pair in this.tagMap) {
-                nbt.tagMap[pair.Key] = pair.Value.CloneTag();
+            NBTTagCompound nbt = new NBTTagCompound();
+            foreach (KeyValuePair<string, NBTBase> pair in this.map) {
+                nbt.map[pair.Key] = Clone(pair.Value);
             }
-
             return nbt;
         }
     }

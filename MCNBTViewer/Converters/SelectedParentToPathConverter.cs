@@ -4,19 +4,20 @@ using System.Globalization;
 using System.Text;
 using System.Windows.Data;
 using MCNBTViewer.Explorer;
+using MCNBTViewer.NBT.Explorer.Items;
 
 namespace MCNBTViewer.Converters {
     public class SelectedParentToPathConverter : IValueConverter {
-        public bool UseParent { get; set; } = true;
-        public string RootPath { get; set; } = "<Root>";
-        public string PathSeparator { get; set; } = ">";
+        public bool UseParent { get; set; } = false;
+        public string RootPath { get; set; } = "<root>";
+        public string PathSeparator { get; set; } = " > ";
 
         public SelectedParentToPathConverter() {
 
         }
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
-            if (value is FileItemViewModel file) {
+            if (value is BaseNBTViewModel file) {
                 return this.UseParent ? (file.Parent != null ? GetPath(file.Parent) : this.RootPath) : GetPath(file);
             }
             else if (value == null) {
@@ -31,9 +32,9 @@ namespace MCNBTViewer.Converters {
             throw new NotImplementedException();
         }
 
-        public string GetPath(FileItemViewModel file) {
-            List<FileItemViewModel> list = new List<FileItemViewModel>();
-            for (FileItemViewModel f = file; file != null; file = file.Parent) {
+        public string GetPath(BaseNBTViewModel file) {
+            List<BaseNBTViewModel> list = new List<BaseNBTViewModel>();
+            for (BaseNBTViewModel f = file; f != null; f = f.Parent) {
                 list.Add(f);
             }
 
@@ -49,8 +50,8 @@ namespace MCNBTViewer.Converters {
             return sb.ToString();
         }
 
-        public static string AsPathElement(FileItemViewModel file) {
-            return file.Name ?? "<unnamed file>";
+        public static string AsPathElement(BaseNBTViewModel file) {
+            return string.IsNullOrEmpty(file.Name) ? "<unnamed>" : file.Name;
         }
     }
 }

@@ -37,7 +37,7 @@ namespace MCNBTViewer.Controls {
             }
         }
 
-        public void SetSelectedFile(FileItemViewModel file) {
+        public void SetSelectedFile(object file) {
             if (file is FolderItemViewModel folder) {
                 for (FolderItemViewModel parent = folder.Parent; parent != null; parent = parent.Parent) {
                     if (!parent.IsExpanded && parent.CanExpand) {
@@ -47,6 +47,10 @@ namespace MCNBTViewer.Controls {
 
                 folder.IsExpanded = true;
             }
+        }
+
+        public object GetSelectedItem() {
+            return this.SelectedItem;
         }
     }
 }

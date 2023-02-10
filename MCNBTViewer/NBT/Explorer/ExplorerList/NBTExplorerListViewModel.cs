@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MCNBTViewer.Explorer;
-using MCNBTViewer.NBT.Explorer.Items;
+﻿using MCNBTViewer.NBT.Explorer.Items;
 using REghZy.MVVM.ViewModels;
 
-namespace MCNBTViewer.NBT.Explorer {
+namespace MCNBTViewer.NBT.Explorer.ExplorerList {
     public class NBTExplorerListViewModel : BaseViewModel {
         public NBTExplorerViewModel Explorer { get; }
 
@@ -17,16 +11,14 @@ namespace MCNBTViewer.NBT.Explorer {
             set => this.RaisePropertyChanged(ref this.currentFolder, value);
         }
 
-        private BaseNBTViewModel selectedFile;
-        public BaseNBTViewModel SelectedFile {
-            get => this.selectedFile;
-            set => this.RaisePropertyChanged(ref this.selectedFile, value);
+        private BaseNBTViewModel selectedItem;
+        public BaseNBTViewModel SelectedItem {
+            get => this.selectedItem;
+            set => this.RaisePropertyChanged(ref this.selectedItem, value);
         }
 
         public NBTExplorerListViewModel(NBTExplorerViewModel explorer) {
             this.Explorer = explorer;
         }
-        // NBTCollectiveItemViewModel
-
     }
 }

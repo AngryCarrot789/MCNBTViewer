@@ -1,9 +1,8 @@
 using System;
-using MCNBTViewer.NBT.Explorer;
-using MCNBTViewer.NBT.Explorer.Items;
+using System.Windows.Controls;
 
 namespace MCNBTViewer.NBT.Structure {
-    public enum NBTType {
+    public enum NBTType : byte {
         End       = 0,
         Byte      = 1,
         Short     = 2,
@@ -19,25 +18,50 @@ namespace MCNBTViewer.NBT.Structure {
     }
 
     public static class NBTypeExtensions {
-        public static NBTBase ToBaseNBT(this NBTType type, string name) {
-            switch (type) {
-                case NBTType.End: return new NBTTagEnd();
-                case NBTType.Byte: return new NBTTagByte(name);
-                case NBTType.Short: return new NBTTagShort(name);
-                case NBTType.Int: return new NBTTagInt(name);
-                case NBTType.Long: return new NBTTagLong(name);
-                case NBTType.Float: return new NBTTagFloat(name);
-                case NBTType.Double: return new NBTTagDouble(name);
-                case NBTType.String: return new NBTTagString(name);
-                case NBTType.ByteArray: return new NBTTagByteArray(name);
-                case NBTType.IntArray: return new NBTTagIntArray(name);
-                case NBTType.List: return new NBTTagList(name);
-                case NBTType.Compound: return new NBTTagCompound(name);
-                default: throw new ArgumentOutOfRangeException(nameof(type), type, null);
+        /// <summary>
+        /// Compares the 2 types by primary group; primitive, array, list, compound
+        /// </summary>
+        /// <returns>A comparison value; -1, 0 or +1</returns>
+        public static int Compare4(this NBTType a, NBTType b) {
+            // compound, float
+            // list, compound,
+            // compound, array
+            // array, int
+            if (a == b) {
+                return 0;
+            }
+            else if (a.IsPrimitive()) {
+                return b.IsPrimitive() ? 0 : 1;
+            }
+            else if (a.IsArray()) {
+                if (b.IsPrimitive()) {
+                    return -1;
+                }
+                else if (b.IsArray()) {
+                    return 0;
+                }
+                else {
+                    return 1;
+                }
+            }
+            else if (a == NBTType.List) {
+                // top cast should handle this but this is just for clear reading
+                if (b == NBTType.List) {
+                    return 0;
+                }
+                else {
+                    return b == NBTType.Compound ? 1 : -1;
+                }
+            }
+            else if (a == NBTType.Compound) {
+                return b == NBTType.Compound ? 0 : -1;
+            }
+            else {
+                throw new Exception("Invalid A: " + a);
             }
         }
 
-        public static BaseNBTViewModel ToViewModel(this NBTType type, string name) {
+        public static bool IsPrimitive(this NBTType type) {
             switch (type) {
                 case NBTType.End:
                 case NBTType.Byte:
@@ -46,14 +70,21 @@ namespace MCNBTViewer.NBT.Structure {
                 case NBTType.Long:
                 case NBTType.Float:
                 case NBTType.Double:
-                case NBTType.String:
-                    return new NBTPrimitiveViewModel(type) {Name = name};
-                case NBTType.ByteArray: return new NBTByteArrayViewModel() {Name = name};
-                case NBTType.IntArray: return new NBTIntArrayViewModel() {Name = name};
-                case NBTType.List: return new NBTListViewModel() {Name = name};
-                case NBTType.Compound: return new NBTCompoundViewModel() {Name = name};
+                case NBTType.String:    return true;
+                case NBTType.ByteArray:
+                case NBTType.IntArray:
+                case NBTType.List:
+                case NBTType.Compound:  return false;
                 default: throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
+        }
+
+        public static bool IsArray(this NBTType type) {
+            return type == NBTType.IntArray || type == NBTType.ByteArray;
+        }
+
+        public static bool IsCollection(this NBTType type) {
+            return type == NBTType.List || type == NBTType.Compound;
         }
     }
 }

@@ -24,7 +24,7 @@ namespace MCNBTViewer.Explorer {
         /// <summary>
         /// Called when the tree's selected item changes
         /// </summary>
-        /// <param name="selectedFile">The newly selected file</param>
+        /// <param Name="selectedFile">The newly selected file</param>
         public void SelectFileFromTree(FileItemViewModel selectedFile) {
             if (this.isUpdatingSelection) {
                 return;
@@ -37,14 +37,14 @@ namespace MCNBTViewer.Explorer {
 
                 this.isUpdatingChildren = true;
                 // if (selectedFile is FolderItemViewModel folder) {
-                //     this.ExplorerList.CurrentFolder = folder;
-                //     this.ExplorerList.SelectedFile = null;
+                //     this.ExplorerList.SelectedDataFile = folder;
+                //     this.ExplorerList.SelectedItem = null;
                 // }
                 // else {
-                //     if (this.ExplorerList.CurrentFolder == null || this.ExplorerList.CurrentFolder != selectedFile.Parent) {
-                //         this.ExplorerList.CurrentFolder = selectedFile.Parent;
+                //     if (this.ExplorerList.SelectedDataFile == null || this.ExplorerList.SelectedDataFile != selectedFile.Parent) {
+                //         this.ExplorerList.SelectedDataFile = selectedFile.Parent;
                 //     }
-                //     this.ExplorerList.SelectedFile = selectedFile;
+                //     this.ExplorerList.SelectedItem = selectedFile;
                 //     // update UI, e.g data preview
                 // }
 
@@ -61,9 +61,9 @@ namespace MCNBTViewer.Explorer {
         }
 
         /// <summary>
-        /// Called when the list calls for the "use" action against an item (aka navigate by double click or pressing enter)
+        /// Called when the tags calls for the "use" action against an item (aka navigate by double click or pressing enter)
         /// </summary>
-        /// <param name="file">The file (non-null)</param>
+        /// <param Name="file">The file (non-null)</param>
         public void NavigateListFileItem(FileItemViewModel file) {
             if (this.isUpdatingSelection) {
                 return;

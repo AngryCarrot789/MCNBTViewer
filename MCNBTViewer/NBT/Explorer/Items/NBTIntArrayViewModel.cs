@@ -4,12 +4,12 @@ namespace MCNBTViewer.NBT.Explorer.Items {
     public class NBTIntArrayViewModel : BaseNBTArrayViewModel {
         public int[] Data { get; set; }
 
-        public NBTIntArrayViewModel() : base(NBTType.IntArray) {
+        public NBTIntArrayViewModel(string name = null) : base(name, NBTType.IntArray) {
 
         }
 
         public override NBTBase ToNBT() {
-            return new NBTTagIntArray(this.Name, this.Data);
+            return new NBTTagIntArray(this.Data);
         }
     }
 }

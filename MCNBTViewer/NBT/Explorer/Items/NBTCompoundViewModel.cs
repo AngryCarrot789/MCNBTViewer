@@ -1,17 +1,22 @@
+using System;
 using MCNBTViewer.NBT.Structure;
 
 namespace MCNBTViewer.NBT.Explorer.Items {
     public class NBTCompoundViewModel : BaseNBTCollectionViewModel {
-        public NBTCompoundViewModel() : base(NBTType.Compound) {
+        public NBTCompoundViewModel(string name = null) : base(name, NBTType.Compound) {
 
         }
 
         public override NBTBase ToNBT() {
-            NBTTagCompound tag = new NBTTagCompound(this.Name);
+            NBTTagCompound tag = new NBTTagCompound();
             foreach (BaseNBTViewModel item in this.Children) {
                 NBTBase nbt = item.ToNBT();
-                if (nbt.GetId() != 0) {
-                    tag.tagMap[nbt.name] = nbt;
+                if (nbt.Id != 0) {
+                    if (item.Name == null) {
+                        throw new Exception("Tag name cannot be null: " + item);
+                    }
+
+                    tag.map[item.Name] = nbt;
                 }
             }
 

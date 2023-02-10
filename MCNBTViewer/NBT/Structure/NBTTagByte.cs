@@ -4,10 +4,10 @@ namespace MCNBTViewer.NBT.Structure {
     public class NBTTagByte : NBTBase {
         public byte data;
 
-        public NBTTagByte(string name) : base(name) {
+        public NBTTagByte() {
         }
 
-        public NBTTagByte(string name, byte var2) : base(name) {
+        public NBTTagByte(byte var2) {
             this.data = var2;
         }
 
@@ -26,7 +26,7 @@ namespace MCNBTViewer.NBT.Structure {
         }
 
         public override NBTBase CloneTag() {
-            return new NBTTagByte(this.Name, this.data);
+            return new NBTTagByte(this.data);
         }
 
         public override bool Equals(object obj) {

@@ -1,5 +1,9 @@
+using MCNBTViewer.NBT.Explorer.Items;
+
 namespace MCNBTViewer.Explorer {
     public interface ITreeView {
-        void SetSelectedFile(FileItemViewModel file);
+        void SetSelectedFile(object file);
+
+        object GetSelectedItem();
     }
 }
