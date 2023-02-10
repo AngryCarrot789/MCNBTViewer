@@ -1,4 +1,18 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:converters="clr-namespace:MCNBTViewer.Converters">
+    <converters:CompoundListNameConverter x:Key="CollectionNameConverter"/>
+
+    <converters:TagIconConverter x:Key="TagIconConverter"
+                                 TagByte="/MCNBTViewer;component/Resources/Icons/FileIcon-TagByte8.png"
+                                 TagShort="/MCNBTViewer;component/Resources/Icons/FileIcon-TagShort16.png"
+                                 TagInt="/MCNBTViewer;component/Resources/Icons/FileIcon-TagInt32.png"
+                                 TagLong="/MCNBTViewer;component/Resources/Icons/FileIcon-TagLong64.png"
+                                 TagFloat="/MCNBTViewer;component/Resources/Icons/FileIcon-TagFloat32.png"
+                                 TagDouble="/MCNBTViewer;component/Resources/Icons/FileIcon-TagDouble64.png"
+                                 TagString="/MCNBTViewer;component/Resources/Icons/FileIcon-TagString.png"
+                                 TagList="/MCNBTViewer;component/Resources/Icons/icons8-bulleted-list-48.png"
+                                 TagCompoundClosed="/MCNBTViewer;component/Resources/Icons/icons8-closed-box-48.png"
+                                 TagCompoundOpenEmpty="/MCNBTViewer;component/Resources/Icons/icons8-empty-box-48.png"
+                                 TagCompoundOpenFull="/MCNBTViewer;component/Resources/Icons/icons8-open-box-48.png"/>
 </ResourceDictionary>

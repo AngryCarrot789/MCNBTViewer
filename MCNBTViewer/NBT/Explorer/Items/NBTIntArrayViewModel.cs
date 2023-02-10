@@ -1,12 +1,11 @@
-using MCNBTViewer.NBT.Explorer.Base;
 using MCNBTViewer.NBT.Structure;
 
 namespace MCNBTViewer.NBT.Explorer.Items {
-    public class NBTIntArrayItemViewModel : BaseNBTArrayViewModel {
+    public class NBTIntArrayViewModel : BaseNBTArrayViewModel {
         public int[] Data { get; set; }
 
-        public NBTIntArrayItemViewModel() {
-            this.NBTType = NBTType.IntArray;
+        public NBTIntArrayViewModel() : base(NBTType.IntArray) {
+
         }
 
         public override NBTBase ToNBT() {

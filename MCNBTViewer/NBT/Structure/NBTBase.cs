@@ -5,13 +5,14 @@ namespace MCNBTViewer.NBT.Structure {
     public abstract class NBTBase {
         public static readonly string[] NBT_TYPES = new string[] {"END", "BYTE", "SHORT", "INT", "LONG", "FLOAT", "DOUBLE", "BYTE[]", "STRING", "LIST", "COMPOUND", "INT[]"};
 
-        public String tagName;
+        public String name;
 
         public NBTBase() {
+
         }
 
         public NBTBase(string name) {
-            this.tagName = name ?? "";
+            this.name = name;
         }
 
         public abstract void Write(DataOutputStream output);
@@ -20,8 +21,10 @@ namespace MCNBTViewer.NBT.Structure {
 
         public abstract byte GetId();
 
+        public NBTType Type => (NBTType) this.GetId();
+
         public String GetName() {
-            return this.tagName ?? "";
+            return this.name ?? "";
         }
 
         public static NBTBase ReadNamedTag(DataInputStream input, int deep = 0) {
@@ -88,11 +91,11 @@ namespace MCNBTViewer.NBT.Structure {
                 if (this.GetId() != nbt.GetId()) {
                     return false;
                 }
-                else if (this.tagName == null && nbt.tagName != null || this.tagName != null && nbt.tagName == null) {
+                else if (this.name == null && nbt.name != null || this.name != null && nbt.name == null) {
                     return false;
                 }
                 else {
-                    return this.tagName == null || this.tagName.Equals(nbt.tagName);
+                    return this.name == null || this.name.Equals(nbt.name);
                 }
             }
             else {
@@ -101,7 +104,7 @@ namespace MCNBTViewer.NBT.Structure {
         }
 
         public override int GetHashCode() {
-            return this.tagName.GetHashCode() ^ this.GetId();
+            return this.name.GetHashCode() ^ this.GetId();
         }
     }
 }

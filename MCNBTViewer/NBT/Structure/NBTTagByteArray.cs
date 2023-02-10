@@ -5,10 +5,10 @@ namespace MCNBTViewer.NBT.Structure {
     public class NBTTagByteArray : NBTBase {
         public byte[] data;
 
-        public NBTTagByteArray(String var1) : base(var1) {
+        public NBTTagByteArray(String name) : base(name) {
         }
 
-        public NBTTagByteArray(String var1, byte[] var2) : base(var1) {
+        public NBTTagByteArray(String name, byte[] var2) : base(name) {
             this.data = var2;
         }
 

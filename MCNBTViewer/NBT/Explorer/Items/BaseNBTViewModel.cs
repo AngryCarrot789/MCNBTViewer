@@ -1,9 +1,13 @@
 using MCNBTViewer.NBT.Structure;
 using REghZy.MVVM.ViewModels;
 
-namespace MCNBTViewer.NBT.Explorer.Base {
+namespace MCNBTViewer.NBT.Explorer.Items {
     public abstract class BaseNBTViewModel : BaseViewModel {
-        public NBTType NBTType { get; }
+        private NBTType nbtType;
+        public NBTType NBTType {
+            get => this.nbtType;
+            set => this.RaisePropertyChanged(ref this.nbtType, value);
+        }
 
         private bool canExpand;
         public bool CanExpand {

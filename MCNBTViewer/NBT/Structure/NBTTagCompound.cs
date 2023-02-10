@@ -6,7 +6,11 @@ namespace MCNBTViewer.NBT.Structure {
     public class NBTTagCompound : NBTBase {
         public readonly Dictionary<string, NBTBase> tagMap;
 
-        public NBTTagCompound(String var1) : base(var1) {
+        public NBTTagCompound(){
+            this.tagMap = new Dictionary<string, NBTBase>();
+        }
+
+        public NBTTagCompound(String name) : base(name) {
             this.tagMap = new Dictionary<string, NBTBase>();
         }
 
@@ -29,6 +33,11 @@ namespace MCNBTViewer.NBT.Structure {
             else {
                 throw new Exception("Tried to read NBT tag with too high complexity, depth > 512");
             }
+        }
+
+        public void Put(string key, NBTBase nbt) {
+            nbt.name = key;
+            this.tagMap[key] = nbt;
         }
 
         public override byte GetId() {

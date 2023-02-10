@@ -5,10 +5,10 @@ namespace MCNBTViewer.NBT.Structure {
     public class NBTTagShort : NBTBase {
         public short data;
 
-        public NBTTagShort(String var1) : base(var1) {
+        public NBTTagShort(String name) : base(name) {
         }
 
-        public NBTTagShort(String var1, short var2) : base(var1) {
+        public NBTTagShort(String name, short var2) : base(name) {
             this.data = var2;
         }
 

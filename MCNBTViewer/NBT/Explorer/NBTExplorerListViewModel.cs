@@ -11,14 +11,14 @@ namespace MCNBTViewer.NBT.Explorer {
     public class NBTExplorerListViewModel : BaseViewModel {
         public NBTExplorerViewModel Explorer { get; }
 
-        private NBTCollectiveItemViewModelBase currentFolder;
-        public NBTCollectiveItemViewModelBase CurrentFolder {
+        private BaseNBTCollectionViewModel currentFolder;
+        public BaseNBTCollectionViewModel CurrentFolder {
             get => this.currentFolder;
             set => this.RaisePropertyChanged(ref this.currentFolder, value);
         }
 
-        private NBTItemViewModelBase selectedFile;
-        public NBTItemViewModelBase SelectedFile {
+        private BaseNBTViewModel selectedFile;
+        public BaseNBTViewModel SelectedFile {
             get => this.selectedFile;
             set => this.RaisePropertyChanged(ref this.selectedFile, value);
         }

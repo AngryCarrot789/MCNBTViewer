@@ -2,7 +2,7 @@ using REghZy.Streams;
 
 namespace MCNBTViewer.NBT.Structure {
     public class NBTTagEnd : NBTBase {
-        public NBTTagEnd() : base() {
+        public NBTTagEnd() {
         }
 
         public override void Write(DataOutputStream output) {

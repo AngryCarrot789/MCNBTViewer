@@ -1,10 +1,9 @@
-using MCNBTViewer.NBT.Explorer.Base;
 using MCNBTViewer.NBT.Structure;
 
 namespace MCNBTViewer.NBT.Explorer.Items {
-    public class NBTListItemViewModel : BaseNBTCollectionViewModel {
-        public NBTListItemViewModel() {
-            this.NBTType = NBTType.List;
+    public class NBTListViewModel : BaseNBTCollectionViewModel {
+        public NBTListViewModel() : base(NBTType.List) {
+
         }
 
         public override NBTBase ToNBT() {

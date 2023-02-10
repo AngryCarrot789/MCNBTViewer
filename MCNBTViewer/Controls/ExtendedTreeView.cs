@@ -1,22 +1,24 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using MCNBTViewer.Explorer;
+using MCNBTViewer.NBT.Explorer;
+using MCNBTViewer.NBT.Explorer.Items;
 
 namespace MCNBTViewer.Controls {
     public class ExtendedTreeView : TreeView, ITreeView {
         public static readonly DependencyProperty ExplorerProperty =
             DependencyProperty.Register(
                 "Explorer",
-                typeof(ExplorerViewModel),
+                typeof(NBTExplorerViewModel),
                 typeof(ExtendedTreeView),
                 new PropertyMetadata(null, PropertyChangedCallback));
 
         private static void PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-            ((ExplorerViewModel) e.NewValue).TreeView = (ExtendedTreeView) d;
+            ((NBTExplorerViewModel) e.NewValue).TreeView = (ExtendedTreeView) d;
         }
 
-        public ExplorerViewModel Explorer {
-            get => (ExplorerViewModel) this.GetValue(ExplorerProperty);
+        public NBTExplorerViewModel Explorer {
+            get => (NBTExplorerViewModel) this.GetValue(ExplorerProperty);
             set => this.SetValue(ExplorerProperty, value);
         }
 
@@ -25,15 +27,14 @@ namespace MCNBTViewer.Controls {
         }
 
         protected override void OnSelectedItemChanged(RoutedPropertyChangedEventArgs<object> e) {
-            if (e.NewValue is FileItemViewModel file) {
-                this.Explorer.SelectFileFromTree(file);
-            }
-
+            base.OnSelectedItemChanged(e);
             if (e.Handled) {
                 return;
             }
 
-            base.OnSelectedItemChanged(e);
+            if (e.NewValue is BaseNBTViewModel file) {
+                this.Explorer.OnTreeSelectItem(file);
+            }
         }
 
         public void SetSelectedFile(FileItemViewModel file) {

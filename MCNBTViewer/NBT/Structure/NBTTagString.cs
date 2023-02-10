@@ -5,10 +5,10 @@ namespace MCNBTViewer.NBT.Structure {
     public class NBTTagString : NBTBase {
         public String data;
 
-        public NBTTagString(String var1) : base(var1) {
+        public NBTTagString(String name) : base(name) {
         }
 
-        public NBTTagString(String var1, String var2) : base(var1) {
+        public NBTTagString(String name, String var2) : base(name) {
             this.data = var2;
             if (var2 == null) {
                 throw new ArgumentNullException(nameof(var2), "Empty string not allowed");

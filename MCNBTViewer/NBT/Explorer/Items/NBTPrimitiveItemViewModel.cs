@@ -1,22 +1,22 @@
 using System;
 using MCNBTViewer.NBT.Structure;
 
-namespace MCNBTViewer.NBT.Explorer {
+namespace MCNBTViewer.NBT.Explorer.Items {
     /// <summary>
     /// A view model for tags end, byte, short, int, long, float, double and string
     /// </summary>
-    public class NBTPrimitiveViewModelItem : NBTBaseItemViewModel {
+    public class NBTPrimitiveViewModel : BaseNBTViewModel {
         private string data;
         public string Data {
             get => this.data;
             set => this.RaisePropertyChanged(ref this.data, value);
         }
 
-        public NBTPrimitiveViewModelItem() {
-            
+        public NBTPrimitiveViewModel() : this(NBTType.End) {
+
         }
 
-        public NBTPrimitiveViewModelItem(NBTType type) : base(type) {
+        public NBTPrimitiveViewModel(NBTType type) : base(type) {
 
         }
 

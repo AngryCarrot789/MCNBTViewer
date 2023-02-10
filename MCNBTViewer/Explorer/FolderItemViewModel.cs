@@ -33,5 +33,9 @@ namespace MCNBTViewer.Explorer {
         protected override bool QueryCanExpand() {
             return this.Children.Count > 0;
         }
+
+        protected override void OnNameChanged(string oldName, string newName) {
+
+        }
     }
 }

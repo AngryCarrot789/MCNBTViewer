@@ -6,14 +6,14 @@
         xmlns:local="clr-namespace:MCNBTViewer" xmlns:c="clr-namespace:MCNBTViewer.Controls"
         xmlns:explorer="clr-namespace:MCNBTViewer.Explorer"
         xmlns:converters="clr-namespace:MCNBTViewer.Converters"
+        xmlns:nbt="clr-namespace:MCNBTViewer.NBT.Explorer.Items"
+        xmlns:structure="clr-namespace:MCNBTViewer.NBT.Structure"
+        xmlns:nbtexp="clr-namespace:MCNBTViewer.NBT.Explorer"
         d:DataContext="{d:DesignInstance Type=local:MainViewModel}"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
         Style="{DynamicResource CustomWindowStyle}"
         Background="{DynamicResource AREghZyBrush.Deep.3.Background.Static}">
-    <Window.Resources>
-        <converters:BasicTagIconConverter x:Key="TagIconConverter"/>
-    </Window.Resources>
     <Grid>
         <Menu VerticalAlignment="Top">
             <MenuItem Header="File">
@@ -32,7 +32,8 @@
                                     ItemsSource="{Binding Root.Children}"
                                     BorderThickness="0 1 0 0"
                                     Background="{DynamicResource AREghZyBrush.Deep.3.Background.Static}" 
-                                    BorderBrush="{DynamicResource AREghZyBrush.Primary.2.Border.Static}">
+                                    BorderBrush="{DynamicResource AREghZyBrush.Primary.2.Border.Static}"
+                                    ItemTemplateSelector="{StaticResource NBTTreeItemSelector}">
                     <c:ExtendedTreeView.Style>
                         <Style TargetType="{x:Type c:ExtendedTreeView}" BasedOn="{StaticResource {x:Type TreeView}}"/>
                     </c:ExtendedTreeView.Style>
@@ -41,31 +42,6 @@
                             <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
                         </Style>
                     </c:ExtendedTreeView.ItemContainerStyle>
-
-                    <TreeView.ItemTemplate>
-                        <HierarchicalDataTemplate DataType="{x:Type explorer:FolderItemViewModel}" ItemsSource="{Binding Children}">
-                            <StackPanel Orientation="Horizontal">
-                                <StackPanel Orientation="Horizontal">
-                                    <Image Source="Resources/Icons/icons8-box-40.png" Width="16" Height="16"/>
-                                    <TextBlock Text="{Binding Name}" Margin="5 0 0 0"/>
-                                </StackPanel>
-                            </StackPanel>
-                        </HierarchicalDataTemplate>
-                    </TreeView.ItemTemplate>
-
-                    <c:ExtendedTreeView.Resources>
-                        <HierarchicalDataTemplate DataType="{x:Type explorer:FolderItemViewModel}" ItemsSource="{Binding Children}">
-                            <StackPanel Orientation="Horizontal">
-                                <Image Source="Resources/Icons/icons8-box-40.png" Width="16" Height="16"/>
-                                <TextBlock Text="{Binding Name}" Margin="5 0 0 0"/>
-                            </StackPanel>
-                        </HierarchicalDataTemplate>
-                        <HierarchicalDataTemplate DataType="{x:Type explorer:FileItemViewModel}">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{Binding Name}"/>
-                            </StackPanel>
-                        </HierarchicalDataTemplate>
-                    </c:ExtendedTreeView.Resources>
                 </c:ExtendedTreeView>
             </Grid>
             <Border Grid.Column="2" BorderBrush="{DynamicResource AREghZyBrush.Primary.2.Border.Static}" BorderThickness="0 1 0 0">
@@ -74,24 +50,32 @@
                         <converters:SelectedParentToPathConverter x:Key="PathConverter"/>
                     </Grid.Resources>
 
-                    <TextBlock Text="{Binding Explorer.ExplorerList.CurrentFolder, Converter={StaticResource PathConverter}}"
+                    <TextBlock Text="{Binding Explorer.SelectedPath, Converter={StaticResource PathConverter}}"
                                VerticalAlignment="Top" FontFamily="Consolas" Padding="5"/>
-                    <c:ExtendedListBox Margin="0,24,0,0"
-                        DataContext="{Binding Explorer.ExplorerList}"
-                        Explorer="{Binding Explorer}"
-                        ItemsSource="{Binding CurrentFolder.Children}"
-                        SelectedItem="{Binding SelectedFile, UpdateSourceTrigger=PropertyChanged}"
-                        BorderThickness="0 1 0 0"
-                        Background="{DynamicResource AREghZyBrush.Deep.2.Background.Static}">
+                    <c:ExtendedListBox Margin="0,24,0,20"
+                                       DataContext="{Binding Explorer.ExplorerList}"
+                                       Explorer="{Binding Explorer}"
+                                       ItemsSource="{Binding CurrentFolder.Children}"
+                                       SelectedItem="{Binding SelectedFile, UpdateSourceTrigger=PropertyChanged}"
+                                       BorderThickness="0 1 0 0"
+                                       Background="{DynamicResource AREghZyBrush.Deep.2.Background.Static}">
                         <c:ExtendedListBox.Style>
                             <Style TargetType="{x:Type c:ExtendedListBox}" BasedOn="{StaticResource {x:Type ListBox}}"/>
                         </c:ExtendedListBox.Style>
                         <c:ExtendedListBox.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Name}" Padding="2" Margin="1"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="{Binding NBTType, Converter={StaticResource TagIconConverter}}" Width="16" Height="16"/>
+                                    <TextBlock Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Margin="5 0 0 0"/>
+                                </StackPanel>
                             </DataTemplate>
                         </c:ExtendedListBox.ItemTemplate>
                     </c:ExtendedListBox>
+                    <c:IconTextPair IconWidth="16" Text="OK" VerticalAlignment="Bottom" VerticalContentAlignment="Center" Height="20" Padding="2,0">
+                        <Border CornerRadius="0,3,3,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1" Background="{DynamicResource AREghZyBrush.Primary.2.Background.Static}" BorderBrush="{DynamicResource AREghZyBrush.Primary.2.Border.Static}" BorderThickness="1">
+                            <TextBlock Text="B[]" Margin="0,0" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+                    </c:IconTextPair>
                 </Grid>
 
             </Border>

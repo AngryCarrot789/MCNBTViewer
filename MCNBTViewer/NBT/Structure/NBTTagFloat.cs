@@ -5,10 +5,10 @@ namespace MCNBTViewer.NBT.Structure {
     public class NBTTagFloat : NBTBase {
         public float data;
 
-        public NBTTagFloat(String var1) : base(var1) {
+        public NBTTagFloat(String name) : base(name) {
         }
 
-        public NBTTagFloat(String var1, float var2) : base(var1) {
+        public NBTTagFloat(String name, float var2) : base(name) {
             this.data = var2;
         }
 

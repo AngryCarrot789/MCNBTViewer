@@ -4,31 +4,35 @@ using REghZy.Streams;
 
 namespace MCNBTViewer.NBT.Structure {
     public class NBTTagList : NBTBase {
-        public readonly List<NBTBase> tagList;
-        public byte field_74746_b;
+        public readonly List<NBTBase> list;
+        public byte heldItemType;
 
-        public NBTTagList(String var1) : base(var1) {
-            this.tagList = new List<NBTBase>();
+        public NBTTagList() {
+            this.list = new List<NBTBase>();
+        }
+
+        public NBTTagList(String name) : base(name) {
+            this.list = new List<NBTBase>();
         }
 
         public override void Write(DataOutputStream output) {
-            this.field_74746_b = this.tagList.Count > 0 ? this.tagList[0].GetId() : (byte) 1;
-            output.WriteByte(this.field_74746_b);
-            output.WriteInt(this.tagList.Count);
-            foreach (NBTBase t in this.tagList) {
+            this.heldItemType = this.list.Count > 0 ? this.list[0].GetId() : (byte) 1;
+            output.WriteByte(this.heldItemType);
+            output.WriteInt(this.list.Count);
+            foreach (NBTBase t in this.list) {
                 t.Write(output);
             }
         }
 
         public override void Read(DataInputStream input, int deep) {
             if (deep <= 512) {
-                this.field_74746_b = input.ReadByte();
+                this.heldItemType = input.ReadByte();
                 int count = input.ReadInt();
-                this.tagList.Clear();
+                this.list.Clear();
                 for (int k = 0; k < count; ++k) {
-                    NBTBase nbtbase = CreateTag(this.field_74746_b, null);
+                    NBTBase nbtbase = CreateTag(this.heldItemType, null);
                     nbtbase.Read(input, deep + 1);
-                    this.tagList.Add(nbtbase);
+                    this.list.Add(nbtbase);
                 }
             }
             else {
@@ -41,9 +45,9 @@ namespace MCNBTViewer.NBT.Structure {
         }
 
         public override NBTBase Copy() {
-            NBTTagList copy = new NBTTagList(this.GetName()) {field_74746_b = this.field_74746_b};
-            foreach (NBTBase nbtBase in this.tagList) {
-                copy.tagList.Add(nbtBase.Copy());
+            NBTTagList copy = new NBTTagList(this.GetName()) {heldItemType = this.heldItemType};
+            foreach (NBTBase nbtBase in this.list) {
+                copy.list.Add(nbtBase.Copy());
             }
 
             return copy;
@@ -51,8 +55,8 @@ namespace MCNBTViewer.NBT.Structure {
 
         public override bool Equals(object var1) {
             if (base.Equals(var1) && var1 is NBTTagList list) {
-                if (this.field_74746_b == list.field_74746_b) {
-                    return this.tagList.Equals(list.tagList);
+                if (this.heldItemType == list.heldItemType) {
+                    return this.list.Equals(list.list);
                 }
             }
 
@@ -60,7 +64,7 @@ namespace MCNBTViewer.NBT.Structure {
         }
 
         public override int GetHashCode() {
-            return base.GetHashCode() ^ this.tagList.GetHashCode();
+            return base.GetHashCode() ^ this.list.GetHashCode();
         }
     }
 }

@@ -81,11 +81,26 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Converters\BasicTagIconConverter.cs" />
+    <Compile Include="Controls\IconTextPair.cs" />
+    <Compile Include="Converters\CompoundListNameConverter.cs" />
+    <Compile Include="Converters\EnumConverter.cs" />
+    <Compile Include="Converters\TagIconConverter.cs" />
     <Compile Include="Converters\SelectedParentToPathConverter.cs" />
     <Compile Include="NBT\Arrays.cs" />
     <Compile Include="NBT\Bits.cs" />
     <Compile Include="NBT\Controls\NBTBaseControl.cs" />
+    <Compile Include="NBT\Controls\NBTCompoundControl.cs" />
+    <Compile Include="NBT\Explorer\Items\BaseNBTArrayViewModel.cs" />
+    <Compile Include="NBT\Explorer\Items\BaseNBTCollectionViewModel.cs" />
+    <Compile Include="NBT\Explorer\Items\BaseNBTViewModel.cs" />
+    <Compile Include="NBT\Explorer\Items\NBTByteArrayViewModel.cs" />
+    <Compile Include="NBT\Explorer\Items\NBTCompoundViewModel.cs" />
+    <Compile Include="NBT\Explorer\Items\NBTIntArrayViewModel.cs" />
+    <Compile Include="NBT\Explorer\Items\NBTListViewModel.cs" />
+    <Compile Include="NBT\Explorer\Items\NBTPrimitiveItemViewModel.cs" />
+    <Compile Include="NBT\Explorer\NBTExplorerListViewModel.cs" />
+    <Compile Include="NBT\Explorer\NBTExplorerViewModel.cs" />
+    <Compile Include="NBT\Explorer\TreeItemTemplateSelector.cs" />
     <Compile Include="NBT\Structure\CompressedStreamTools.cs" />
     <Compile Include="NBT\Structure\NBTBase.cs" />
     <Compile Include="NBT\Structure\NBTTagByte.cs" />
@@ -101,8 +116,6 @@
     <Compile Include="NBT\Structure\NBTTagShort.cs" />
     <Compile Include="NBT\Structure\NBTTagString.cs" />
     <Compile Include="NBT\Structure\NBTType.cs" />
-    <Compile Include="NBT\ViewModels\NBTBaseViewModel.cs" />
-    <Compile Include="NBT\ViewModels\NBTPrimitiveViewModel.cs" />
     <Compile Include="Themes\AttachedProperties\PasswordAttachedProperty.cs" />
     <Compile Include="Themes\AttachedProperties\TextHinting.cs" />
     <Compile Include="Themes\Controls.xaml.cs">
@@ -110,6 +123,8 @@
     </Compile>
     <Compile Include="Themes\ThemesController.cs" />
     <Compile Include="Themes\ThemeTypes.cs" />
+    <Page Include="Controls\ControlStyles.xaml" />
+    <Page Include="ConvertersDictionary.xaml" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -131,6 +146,8 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="NBT\Controls\ControlStyles.xaml" />
+    <Page Include="NBT\Explorer\Items\TreeItemStyles.xaml" />
     <Page Include="Themes\ControlColours.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -178,6 +195,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="Resources\Icons\FileIcon.psd" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -186,16 +204,24 @@
     <Resource Include="Resources\Icons\Credits.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Icons\icons8-box-16.png" />
-    <Resource Include="Resources\Icons\icons8-box-40.png" />
+    <Resource Include="Resources\Icons\FileIcon-TagByte8.png" />
+    <Resource Include="Resources\Icons\FileIcon-TagDouble64.png" />
+    <Resource Include="Resources\Icons\FileIcon-TagFloat32.png" />
+    <Resource Include="Resources\Icons\FileIcon-TagInt32.png" />
+    <Resource Include="Resources\Icons\FileIcon-TagLong64.png" />
+    <Resource Include="Resources\Icons\FileIcon-TagShort16.png" />
+    <Resource Include="Resources\Icons\FileIcon-TagString.png" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\Icons\icons8-bulleted-list-48.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Icons\icons8-empty-box-16.png" />
-    <Resource Include="Resources\Icons\icons8-empty-box-40.png" />
+    <Resource Include="Resources\Icons\icons8-open-box-48.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Icons\icons8-open-box-16.png" />
-    <Resource Include="Resources\Icons\icons8-open-box-40.png" />
+    <Resource Include="Resources\Icons\icons8-closed-box-48.png" />
+    <Resource Include="Resources\Icons\icons8-empty-box-48.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

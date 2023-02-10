@@ -2,16 +2,16 @@
 
 
 NBTagCompound icons:
-https://icons8.com/icon/21064/box
-https://icons8.com/icon/31122/empty-box
-https://icons8.com/icon/31098/open-box
+https://icons8.com/icon/12143/open-box
+https://icons8.com/icon/12105/empty-box
+
+TagList:
+https://icons8.com/icon/KcI0qcXiLNUn/bulleted-list
 
 Tag types:
 https://icons8.com/icon/13499/8"
 https://icons8.com/icon/71407/16"
 https://icons8.com/icon/71421/32"
 https://icons8.com/icon/71365/64"
-
-
 
 

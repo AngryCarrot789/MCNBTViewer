@@ -28,7 +28,11 @@ namespace MCNBTViewer.Explorer {
         protected string name;
         public string Name {
             get => this.name;
-            set => this.RaisePropertyChanged(ref this.name, value);
+            set {
+                string old = this.name;
+                this.RaisePropertyChanged(ref this.name, value);
+                this.OnNameChanged(old, value);
+            }
         }
 
         private object data;
@@ -43,6 +47,10 @@ namespace MCNBTViewer.Explorer {
 
         protected virtual bool QueryCanExpand() {
             return false;
+        }
+
+        protected virtual void OnNameChanged(string oldName, string newName) {
+
         }
 
         public virtual void OnAddedToFolder() {

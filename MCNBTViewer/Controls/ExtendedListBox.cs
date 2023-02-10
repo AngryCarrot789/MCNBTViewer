@@ -2,18 +2,20 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using MCNBTViewer.Explorer;
+using MCNBTViewer.NBT.Explorer;
+using MCNBTViewer.NBT.Explorer.Items;
 
 namespace MCNBTViewer.Controls {
     public class ExtendedListBox : ListBox {
         public static readonly DependencyProperty ExplorerProperty =
             DependencyProperty.Register(
                 "Explorer",
-                typeof(ExplorerViewModel),
+                typeof(NBTExplorerViewModel),
                 typeof(ExtendedListBox),
                 new PropertyMetadata(null));
 
-        public ExplorerViewModel Explorer {
-            get => (ExplorerViewModel) this.GetValue(ExplorerProperty);
+        public NBTExplorerViewModel Explorer {
+            get => (NBTExplorerViewModel) this.GetValue(ExplorerProperty);
             set => this.SetValue(ExplorerProperty, value);
         }
 
@@ -23,24 +25,23 @@ namespace MCNBTViewer.Controls {
                 return;
             }
 
-            if (this.SelectedItem is FileItemViewModel folder) {
-                if (this.ItemContainerGenerator.ContainerFromItem(folder) is ListBoxItem item) {
+            if (this.SelectedItem is BaseNBTViewModel file) {
+                if (this.ItemContainerGenerator.ContainerFromItem(file) is ListBoxItem item) {
                     if (item.IsMouseOver) {
-                        this.Explorer.NavigateListFileItem(folder);
+                        this.Explorer.UseItem(file);
                     }
                 }
             }
         }
-
         protected override void OnKeyDown(KeyEventArgs e) {
             base.OnKeyDown(e);
             if (e.Handled) {
                 return;
             }
 
-            if (e.Key == Key.Enter) {
-                if (this.SelectedItem is FileItemViewModel folder) {
-                    this.Explorer.NavigateListFileItem(folder);
+            if (this.IsFocused && e.Key == Key.Enter) {
+                if (this.SelectedItem is BaseNBTViewModel file) {
+                    this.Explorer.UseItem(file);
                 }
             }
         }
