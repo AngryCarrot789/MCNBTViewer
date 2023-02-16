@@ -2,8 +2,9 @@ using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
+using MCNBTViewer.Core.Explorer;
 
-namespace MCNBTViewer.NBT.Explorer.ExplorerList {
+namespace MCNBTViewer.NBT.Explorer {
     public class ListFallbackSourceConverter : IMultiValueConverter {
         public NBTExplorerViewModel Explorer { get; set; }
 

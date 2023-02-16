@@ -1,8 +1,8 @@
 using System;
-using MCNBTViewer.Utils;
+using MCNBTViewer.Core.Utils;
 using REghZy.Streams;
 
-namespace MCNBTViewer.NBT.Structure {
+namespace MCNBTViewer.Core.NBT {
     public class NBTTagByteArray : NBTBase {
         public byte[] data;
 

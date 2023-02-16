@@ -1,7 +1,8 @@
 using System.Collections.Generic;
+using MCNBTViewer.Core.NBT;
 using REghZy.MVVM.ViewModels;
 
-namespace MCNBTViewer.Core.NBT.Explorer.Items {
+namespace MCNBTViewer.Core.Explorer.Items {
     public abstract class BaseNBTViewModel : BaseViewModel {
         private NBTType nbtType;
         public NBTType NBTType {

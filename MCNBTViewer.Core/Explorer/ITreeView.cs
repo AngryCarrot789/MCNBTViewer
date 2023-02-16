@@ -1,4 +1,4 @@
-namespace MCNBTViewer.Explorer {
+namespace MCNBTViewer.Core.Explorer {
     public interface ITreeView {
         void SetSelectedFile(object file);
 

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using MCNBTViewer.Core.NBT;
 
-namespace MCNBTViewer.Core.NBT.Explorer.Items {
+namespace MCNBTViewer.Core.Explorer.Items {
     public class NBTDataFileViewModel : NBTCompoundViewModel {
         private string fileFilePath;
         public string FilePath {

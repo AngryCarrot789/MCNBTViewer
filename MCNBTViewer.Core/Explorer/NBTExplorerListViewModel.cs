@@ -1,7 +1,7 @@
-﻿using MCNBTViewer.Core.NBT.Explorer.Items;
+﻿using MCNBTViewer.Core.Explorer.Items;
 using REghZy.MVVM.ViewModels;
 
-namespace MCNBTViewer.NBT.Explorer {
+namespace MCNBTViewer.Core.Explorer {
     public class NBTExplorerListViewModel : BaseViewModel {
         public NBTExplorerViewModel Explorer { get; }
 

@@ -1,8 +1,6 @@
-using System;
 using REghZy.Streams;
-using REghZy.Utils;
 
-namespace MCNBTViewer.NBT.Structure {
+namespace MCNBTViewer.Core.NBT {
     public abstract class NBTBase {
         public static bool IgnoreStackDepth = false;
 

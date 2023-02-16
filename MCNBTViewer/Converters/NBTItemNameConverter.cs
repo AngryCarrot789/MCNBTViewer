@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
-using MCNBTViewer.NBT.Explorer.Items;
+using MCNBTViewer.Core.Explorer.Items;
 
 namespace MCNBTViewer.Converters {
     public class NBTItemNameConverter : IValueConverter {

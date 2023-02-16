@@ -2,8 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:controls="clr-namespace:MCNBTViewer.Controls"
                     xmlns:converters="clr-namespace:MCNBTViewer.Converters"
-                    xmlns:items="clr-namespace:MCNBTViewer.NBT.Explorer.Items"
-                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+                    xmlns:system="clr-namespace:System;assembly=mscorlib"
+                    xmlns:items="clr-namespace:MCNBTViewer.Core.Explorer.Items;assembly=MCNBTViewer.Core">
     <Style TargetType="{x:Type controls:IconTextPair}">
         <Setter Property="Template">
             <Setter.Value>

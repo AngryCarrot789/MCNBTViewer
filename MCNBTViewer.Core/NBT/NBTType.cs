@@ -1,7 +1,6 @@
 using System;
-using System.Windows.Controls;
 
-namespace MCNBTViewer.NBT.Structure {
+namespace MCNBTViewer.Core.NBT {
     public enum NBTType : byte {
         End       = 0,
         Byte      = 1,

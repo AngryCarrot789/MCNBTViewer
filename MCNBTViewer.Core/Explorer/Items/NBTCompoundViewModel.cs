@@ -1,6 +1,7 @@
 using System;
+using MCNBTViewer.Core.NBT;
 
-namespace MCNBTViewer.Core.NBT.Explorer.Items {
+namespace MCNBTViewer.Core.Explorer.Items {
     public class NBTCompoundViewModel : BaseNBTCollectionViewModel {
         public NBTCompoundViewModel(string name = null) : base(name, NBTType.Compound) {
 

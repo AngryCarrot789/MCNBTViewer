@@ -1,9 +1,8 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using MCNBTViewer.Explorer;
-using MCNBTViewer.NBT.Explorer;
-using MCNBTViewer.NBT.Explorer.Items;
+using MCNBTViewer.Core.Explorer;
+using MCNBTViewer.Core.Explorer.Items;
 
 namespace MCNBTViewer.Controls {
     public class ExtendedListBox : ListBox {

@@ -1,4 +1,6 @@
-namespace MCNBTViewer.Core.NBT.Explorer.Items {
+using MCNBTViewer.Core.NBT;
+
+namespace MCNBTViewer.Core.Explorer.Items {
     public class NBTListViewModel : BaseNBTCollectionViewModel {
         public NBTListViewModel(string name = null) : base(name, NBTType.List) {
 

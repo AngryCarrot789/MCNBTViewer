@@ -1,6 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
-using MCNBTViewer.NBT.Structure;
+using MCNBTViewer.Core.NBT;
 
 namespace MCNBTViewer.NBT.Controls {
     public class NBTBaseControl : Control {

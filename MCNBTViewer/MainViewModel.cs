@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Input;
+using MCNBTViewer.Core.Explorer;
+using MCNBTViewer.Core.Explorer.Items;
+using MCNBTViewer.Core.NBT;
 using MCNBTViewer.NBT.Explorer;
-using MCNBTViewer.NBT.Explorer.Items;
-using MCNBTViewer.NBT.Structure;
 using REghZy.MVVM.ViewModels;
 
 namespace MCNBTViewer {
@@ -14,7 +15,7 @@ namespace MCNBTViewer {
 
         public MainViewModel() {
             this.Explorer = new NBTExplorerViewModel();
-            const string debugPath = "C:\\Users\\kettl\\Desktop\\BergBergDk.dat";
+            const string debugPath = "C:\\Users\\kettl\\Desktop\\TheRareCarrot.dat";
             if (File.Exists(debugPath)) {
                 NBTTagCompound compound = CompressedStreamTools.ReadCompressed(debugPath, out string name);
                 this.Explorer.LoadedDataFiles.Add(new NBTDataFileViewModel(name, compound));

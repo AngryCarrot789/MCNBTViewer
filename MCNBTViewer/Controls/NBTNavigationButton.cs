@@ -1,6 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
-using MCNBTViewer.NBT.Explorer.Items;
+using MCNBTViewer.Core.Explorer.Items;
 
 namespace MCNBTViewer.Controls {
     public class NBTNavigationButton : Control {

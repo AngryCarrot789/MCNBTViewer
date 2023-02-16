@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 
-namespace MCNBTViewer.Utils {
+namespace MCNBTViewer.Core.Utils {
     public static class Bits {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe int FloatBitsToI32(float value) {

@@ -1,4 +1,6 @@
-namespace MCNBTViewer.Core.NBT.Explorer.Items {
+using MCNBTViewer.Core.NBT;
+
+namespace MCNBTViewer.Core.Explorer.Items {
     public class NBTByteArrayViewModel : BaseNBTArrayViewModel {
         public byte[] Data { get; set; }
 

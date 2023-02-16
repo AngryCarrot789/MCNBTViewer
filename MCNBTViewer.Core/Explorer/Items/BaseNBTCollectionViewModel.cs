@@ -1,7 +1,8 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using MCNBTViewer.Core.NBT;
 
-namespace MCNBTViewer.Core.NBT.Explorer.Items {
+namespace MCNBTViewer.Core.Explorer.Items {
     public abstract class BaseNBTCollectionViewModel : BaseNBTViewModel {
         public ObservableCollection<BaseNBTViewModel> Children { get; }
 

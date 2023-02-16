@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using MCNBTViewer.Core.Explorer.Items;
 
 namespace MCNBTViewer.NBT.Explorer {
-    public class TreeItemTemplateSelector : DataTemplateSelector {
+    public class NBTItemTemplateSelector : DataTemplateSelector {
         public DataTemplate TagPrimitive { get; set; }
         public DataTemplate TagArray { get; set; }
         public DataTemplate TagList { get; set; }

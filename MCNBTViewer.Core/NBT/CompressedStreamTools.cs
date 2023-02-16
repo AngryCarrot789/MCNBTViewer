@@ -1,10 +1,9 @@
 using System;
 using System.IO;
 using System.IO.Compression;
-using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using REghZy.Streams;
 
-namespace MCNBTViewer.NBT.Structure {
+namespace MCNBTViewer.Core.NBT {
     public static class CompressedStreamTools {
         public static NBTTagCompound ReadCompressed(string filePath, out string tagName) {
             using (FileStream stream = File.OpenRead(filePath)) {

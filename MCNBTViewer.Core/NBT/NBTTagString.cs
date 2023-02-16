@@ -1,6 +1,6 @@
 using REghZy.Streams;
 
-namespace MCNBTViewer.NBT.Structure {
+namespace MCNBTViewer.Core.NBT {
     public class NBTTagString : NBTBase {
         public override byte Id => 8;
 

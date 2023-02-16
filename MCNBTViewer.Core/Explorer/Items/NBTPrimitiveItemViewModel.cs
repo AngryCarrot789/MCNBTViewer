@@ -1,6 +1,7 @@
 using System;
+using MCNBTViewer.Core.NBT;
 
-namespace MCNBTViewer.Core.NBT.Explorer.Items {
+namespace MCNBTViewer.Core.Explorer.Items {
     /// <summary>
     /// A view model for tags end, byte, short, int, long, float, double and string
     /// </summary>

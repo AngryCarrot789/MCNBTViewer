@@ -4,19 +4,15 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MCNBTViewer" xmlns:c="clr-namespace:MCNBTViewer.Controls"
-        xmlns:explorer="clr-namespace:MCNBTViewer.Explorer"
         xmlns:converters="clr-namespace:MCNBTViewer.Converters"
-        xmlns:nbt="clr-namespace:MCNBTViewer.NBT.Explorer.Items"
-        xmlns:structure="clr-namespace:MCNBTViewer.NBT.Structure"
         xmlns:nbtexp="clr-namespace:MCNBTViewer.NBT.Explorer"
-        xmlns:explorerList="clr-namespace:MCNBTViewer.NBT.Explorer.ExplorerList"
         d:DataContext="{d:DesignInstance Type=local:MainViewModel}"
         mc:Ignorable="d"
         Title="MainWindow" Height="576" Width="1024"
         Style="{DynamicResource CustomWindowStyle}"
         Background="{DynamicResource AREghZyBrush.Deep.3.Background.Static}">
     <Window.Resources>
-        <explorerList:ListFallbackSourceConverter x:Key="FallbackConverter"/>
+        <nbtexp:ListFallbackSourceConverter x:Key="FallbackConverter"/>
     </Window.Resources>
     <Grid>
         <Menu VerticalAlignment="Top">
@@ -81,6 +77,7 @@
                                        DataContext="{Binding Explorer.ExplorerList}"
                                        Explorer="{Binding Explorer}"
                                        SelectedItem="{Binding SelectedItem, UpdateSourceTrigger=PropertyChanged}"
+                                       ItemTemplateSelector="{StaticResource NBTListItemSelector}"
                                        BorderThickness="0 1 0 0"
                                        Background="{DynamicResource AREghZyBrush.Deep.2.Background.Static}">
                         <ListBox.ItemsSource>
@@ -92,14 +89,6 @@
                         <c:ExtendedListBox.Style>
                             <Style TargetType="{x:Type c:ExtendedListBox}" BasedOn="{StaticResource {x:Type ListBox}}"/>
                         </c:ExtendedListBox.Style>
-                        <c:ExtendedListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <Image Source="{Binding NBTType, Converter={StaticResource TagIconConverter}}" Width="16" Height="16"/>
-                                    <TextBlock Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Margin="5 0 0 0"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </c:ExtendedListBox.ItemTemplate>
                     </c:ExtendedListBox>
                     <c:IconTextPair IconWidth="16" Text="OK" VerticalAlignment="Bottom" VerticalContentAlignment="Center" Height="20" Padding="2,0">
                         <Border CornerRadius="0,3,3,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1" Background="{DynamicResource AREghZyBrush.Primary.2.Background.Static}" BorderBrush="{DynamicResource AREghZyBrush.Primary.2.Border.Static}" BorderThickness="1">

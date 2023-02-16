@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
-using MCNBTViewer.NBT.Structure;
+using MCNBTViewer.Core.NBT;
 
 namespace MCNBTViewer.Converters {
     public class TagIconConverter : IValueConverter {

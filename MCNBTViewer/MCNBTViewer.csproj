@@ -92,38 +92,10 @@
     <Compile Include="Converters\SelectedItemToPathListConverter.cs" />
     <Compile Include="Converters\TagIconConverter.cs" />
     <Compile Include="Converters\SelectedParentToPathConverter.cs" />
-    <Compile Include="NBT\Arrays.cs" />
-    <Compile Include="NBT\Bits.cs" />
     <Compile Include="NBT\Controls\NBTBaseControl.cs" />
     <Compile Include="NBT\Controls\NBTCompoundControl.cs" />
-    <Compile Include="NBT\Explorer\ExplorerList\ListFallbackSourceConverter.cs" />
-    <Compile Include="NBT\Explorer\ExplorerList\NBTExplorerListViewModel.cs" />
-    <Compile Include="NBT\Explorer\Items\BaseNBTArrayViewModel.cs" />
-    <Compile Include="NBT\Explorer\Items\BaseNBTCollectionViewModel.cs" />
-    <Compile Include="NBT\Explorer\Items\BaseNBTViewModel.cs" />
-    <Compile Include="NBT\Explorer\Items\NBTByteArrayViewModel.cs" />
-    <Compile Include="NBT\Explorer\Items\NBTCompoundViewModel.cs" />
-    <Compile Include="NBT\Explorer\Items\NBTDataFileViewModel.cs" />
-    <Compile Include="NBT\Explorer\Items\NBTIntArrayViewModel.cs" />
-    <Compile Include="NBT\Explorer\Items\NBTListViewModel.cs" />
-    <Compile Include="NBT\Explorer\Items\NBTPrimitiveItemViewModel.cs" />
-    <Compile Include="NBT\Explorer\NBTExplorerViewModel.cs" />
-    <Compile Include="NBT\Explorer\TreeItemTemplateSelector.cs" />
-    <Compile Include="NBT\Structure\CompressedStreamTools.cs" />
-    <Compile Include="NBT\Structure\NBTBase.cs" />
-    <Compile Include="NBT\Structure\NBTTagByte.cs" />
-    <Compile Include="NBT\Structure\NBTTagByteArray.cs" />
-    <Compile Include="NBT\Structure\NBTTagCompound.cs" />
-    <Compile Include="NBT\Structure\NBTTagDouble.cs" />
-    <Compile Include="NBT\Structure\NBTTagEnd.cs" />
-    <Compile Include="NBT\Structure\NBTTagFloat.cs" />
-    <Compile Include="NBT\Structure\NBTTagInt.cs" />
-    <Compile Include="NBT\Structure\NBTTagIntArray.cs" />
-    <Compile Include="NBT\Structure\NBTTagList.cs" />
-    <Compile Include="NBT\Structure\NBTTagLong.cs" />
-    <Compile Include="NBT\Structure\NBTTagShort.cs" />
-    <Compile Include="NBT\Structure\NBTTagString.cs" />
-    <Compile Include="NBT\Structure\NBTType.cs" />
+    <Compile Include="NBT\Explorer\ListFallbackSourceConverter.cs" />
+    <Compile Include="NBT\Explorer\NBTItemTemplateSelector.cs" />
     <Compile Include="Themes\AttachedProperties\PasswordAttachedProperty.cs" />
     <Compile Include="Themes\AttachedProperties\TextHinting.cs" />
     <Compile Include="Themes\Controls.xaml.cs">
@@ -143,18 +115,13 @@
     </Compile>
     <Compile Include="Controls\ExtendedListBox.cs" />
     <Compile Include="Controls\ExtendedTreeView.cs" />
-    <Compile Include="Explorer\ExplorerListViewModel.cs" />
-    <Compile Include="Explorer\FileItemType.cs" />
-    <Compile Include="Explorer\FolderItemViewModel.cs" />
-    <Compile Include="Explorer\ITreeView.cs" />
-    <Compile Include="Explorer\ExplorerViewModel.cs" />
-    <Compile Include="Explorer\FileItemViewModel.cs" />
     <Compile Include="MainViewModel.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Page Include="NBT\Controls\ControlStyles.xaml" />
+    <Page Include="NBT\Explorer\Items\ListItemStyles.xaml" />
     <Page Include="NBT\Explorer\Items\TreeItemStyles.xaml" />
     <Page Include="Themes\ControlColours.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -229,6 +196,16 @@
   <ItemGroup>
     <Resource Include="Resources\Icons\icons8-closed-box-48.png" />
     <Resource Include="Resources\Icons\icons8-empty-box-48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MCNBTViewer.Core\MCNBTViewer.Core.csproj">
+      <Project>{ebddaa92-38b1-4501-b4eb-9eeb02909258}</Project>
+      <Name>MCNBTViewer.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Explorer" />
+    <Folder Include="NBT\Structure" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

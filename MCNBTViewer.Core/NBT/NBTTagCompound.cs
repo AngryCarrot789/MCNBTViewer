@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using REghZy.Streams;
 
-namespace MCNBTViewer.NBT.Structure {
+namespace MCNBTViewer.Core.NBT {
     public class NBTTagCompound : NBTBase {
         public override byte Id => 10;
 

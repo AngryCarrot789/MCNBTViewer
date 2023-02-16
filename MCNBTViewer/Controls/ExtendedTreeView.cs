@@ -1,8 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using MCNBTViewer.Explorer;
-using MCNBTViewer.NBT.Explorer;
-using MCNBTViewer.NBT.Explorer.Items;
+using MCNBTViewer.Core.Explorer;
+using MCNBTViewer.Core.Explorer.Items;
 
 namespace MCNBTViewer.Controls {
     public class ExtendedTreeView : TreeView, ITreeView {
@@ -38,8 +37,8 @@ namespace MCNBTViewer.Controls {
         }
 
         public void SetSelectedFile(object file) {
-            if (file is FolderItemViewModel folder) {
-                for (FolderItemViewModel parent = folder.Parent; parent != null; parent = parent.Parent) {
+            if (file is BaseNBTCollectionViewModel folder) {
+                for (BaseNBTCollectionViewModel parent = folder.Parent; parent != null; parent = parent.Parent) {
                     if (!parent.IsExpanded && parent.CanExpand) {
                         parent.IsExpanded = true;
                     }
