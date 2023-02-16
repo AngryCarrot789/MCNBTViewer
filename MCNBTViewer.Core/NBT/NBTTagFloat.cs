@@ -1,37 +1,39 @@
+using MCNBTViewer.Utils;
 using REghZy.Streams;
 
 namespace MCNBTViewer.NBT.Structure {
-    public class NBTTagDouble : NBTBase {
-        public double data;
+    public class NBTTagFloat : NBTBase {
+        public override byte Id => 5;
 
-        public NBTTagDouble() {
+        public float data;
+
+        public NBTTagFloat() {
         }
 
-        public NBTTagDouble(double var2) {
+        public NBTTagFloat(float var2) {
             this.data = var2;
         }
 
         public override void Write(DataOutputStream output) {
-            output.WriteDouble(this.data);
+            output.WriteFloat(this.data);
         }
 
         public override void Read(DataInputStream input, int deep) {
-            this.data = input.ReadDouble();
+            this.data = input.ReadFloat();
         }
 
-        public override byte Id => 6;
 
         public override string ToString() {
             return this.data.ToString();
         }
 
         public override NBTBase CloneTag() {
-            return new NBTTagDouble(this.data);
+            return new NBTTagFloat(this.data);
         }
 
         public override bool Equals(object obj) {
             if (base.Equals(obj)) {
-                NBTTagDouble var2 = (NBTTagDouble) obj;
+                NBTTagFloat var2 = (NBTTagFloat) obj;
                 return this.data == var2.data;
             }
             else {
@@ -40,8 +42,7 @@ namespace MCNBTViewer.NBT.Structure {
         }
 
         public override int GetHashCode() {
-            ulong var1 = Bits.DoubleBitsToU64(this.data);
-            return base.GetHashCode() ^ (int) (var1 ^ var1 >> 32);
+            return base.GetHashCode() ^ Bits.FloatBitsToI32(this.data);
         }
     }
 }

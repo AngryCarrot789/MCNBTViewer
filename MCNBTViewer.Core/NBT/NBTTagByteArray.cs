@@ -1,4 +1,5 @@
 using System;
+using MCNBTViewer.Utils;
 using REghZy.Streams;
 
 namespace MCNBTViewer.NBT.Structure {

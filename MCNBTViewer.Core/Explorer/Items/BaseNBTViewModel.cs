@@ -1,10 +1,7 @@
-using System;
 using System.Collections.Generic;
-using System.Runtime.Remoting.Messaging;
-using MCNBTViewer.NBT.Structure;
 using REghZy.MVVM.ViewModels;
 
-namespace MCNBTViewer.NBT.Explorer.Items {
+namespace MCNBTViewer.Core.NBT.Explorer.Items {
     public abstract class BaseNBTViewModel : BaseViewModel {
         private NBTType nbtType;
         public NBTType NBTType {

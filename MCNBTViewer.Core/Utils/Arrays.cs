@@ -1,7 +1,13 @@
 using System.Collections.Generic;
 
-namespace MCNBTViewer.NBT {
+namespace MCNBTViewer.Utils {
+    /// <summary>
+    /// Contains function that apparently aren't in C# but are in java, used for NBT equality testing
+    /// </summary>
     public static class Arrays {
+        // Using IEqualityComparer + generic functions is easier than having
+        // a Hash function for all types of non-struct type arrays
+
         public static int Hash<T>(T[] array) {
             if (array == null)
                 return 0;

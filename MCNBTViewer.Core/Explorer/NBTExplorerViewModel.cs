@@ -2,16 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows;
 using System.Windows.Input;
-using MCNBTViewer.Explorer;
-using MCNBTViewer.NBT.Explorer.ExplorerList;
-using MCNBTViewer.NBT.Explorer.Items;
-using MCNBTViewer.NBT.Structure;
+using MCNBTViewer.Core.NBT.Explorer.Items;
 using REghZy.MVVM.Commands;
 using REghZy.MVVM.ViewModels;
 
-namespace MCNBTViewer.NBT.Explorer {
+namespace MCNBTViewer.Core.NBT.Explorer {
     public class NBTExplorerViewModel : BaseViewModel {
         private bool isUpdatingSelection;
 

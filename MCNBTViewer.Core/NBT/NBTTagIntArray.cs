@@ -1,6 +1,7 @@
 using System;
 using REghZy.Streams;
 using REghZy.Utils;
+using Arrays = MCNBTViewer.Utils.Arrays;
 
 namespace MCNBTViewer.NBT.Structure {
     public class NBTTagIntArray : NBTBase {
