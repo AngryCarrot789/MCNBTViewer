@@ -1,16 +1,41 @@
-﻿using System.Windows;
+﻿using System.Collections.Generic;
+using System.Windows;
+using MCNBTViewer.Controls;
 using MCNBTViewer.Core;
+using MCNBTViewer.Core.Explorer;
+using MCNBTViewer.Core.Explorer.Items;
+using MCNBTViewer.Views;
 
 namespace MCNBTViewer {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window {
+    public partial class MainWindow : WindowEx {
         public MainViewModel ViewModel => this.DataContext as MainViewModel;
 
         public MainWindow() {
             this.InitializeComponent();
             this.DataContext = new MainViewModel();
+            this.ViewModel.Explorer.ExplorerListHandle = new MainListImpl(this.MainListBox);
+        }
+
+        public class MainListImpl : IMainList {
+            public readonly ExtendedListBox listBox;
+
+            public MainListImpl(ExtendedListBox listBox) {
+                this.listBox = listBox;
+            }
+
+            public IEnumerable<BaseNBTViewModel> GetSelectedTags() {
+                foreach (object obj in this.listBox.ItemContainerGenerator.Items) {
+                    if (this.listBox.IsItemItsOwnContainer(obj)) {
+                        yield return this.listBox.ItemContainerGenerator.ItemFromContainer((DependencyObject) obj) as BaseNBTViewModel;
+                    }
+                    else {
+                        yield return obj as BaseNBTViewModel;
+                    }
+                }
+            }
         }
 
         private async void OnTreeViewDrop(object sender, DragEventArgs e) {

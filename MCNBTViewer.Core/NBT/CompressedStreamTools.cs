@@ -13,7 +13,7 @@ namespace MCNBTViewer.Core.NBT {
 
         public static NBTTagCompound ReadCompressed(Stream stream, out string tagName) {
             using (BufferedStream buffered = new BufferedStream(new GZipStream(stream, CompressionMode.Decompress, true))) {
-                if (NBTBase.ReadTag(new DataInputStream(buffered), 0, out tagName, out NBTBase nbt)) {
+                if (NBTBase.ReadTag(CreateInput(buffered), 0, out tagName, out NBTBase nbt)) {
                     if (nbt is NBTTagCompound compound) {
                         return compound;
                     }
@@ -35,8 +35,30 @@ namespace MCNBTViewer.Core.NBT {
 
         public static void WriteCompressed(NBTBase nbt, Stream stream) {
             using (GZipStream gzip = new GZipStream(stream, CompressionMode.Compress, true)) {
-                NBTBase.WriteTag(new DataOutputStream(gzip), null, nbt);
+                NBTBase.WriteTag(CreateOutput(stream), null, nbt);
             }
+        }
+
+        public static IDataInput CreateInput(Stream stream) {
+            IDataInput output;
+            if (IoC.IsBigEndian) {
+                output = new DataInputStream(stream);
+            }
+            else {
+                output = new DataInputStreamLE(stream);
+            }
+            return output;
+        }
+
+        public static IDataOutput CreateOutput(Stream stream) {
+            IDataOutput output;
+            if (IoC.IsBigEndian) {
+                output = new DataOutputStream(stream);
+            }
+            else {
+                output = new DataOutputStreamLE(stream);
+            }
+            return output;
         }
     }
 }

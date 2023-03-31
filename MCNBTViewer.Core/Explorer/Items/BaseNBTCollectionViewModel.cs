@@ -28,12 +28,12 @@ namespace MCNBTViewer.Core.Explorer.Items {
 
         public RelayCommand PasteNBTBinaryDataCommand { get; }
 
-        public RelayCommandParam<int> CreateTagCommand { get; }
+        public RelayCommand<int> CreateTagCommand { get; }
 
         protected BaseNBTCollectionViewModel(string name, NBTType type) : base(name, type) {
             this.Children = new ObservableCollection<BaseNBTViewModel>();
             this.Children.CollectionChanged += this.OnChildrenChanged;
-            this.CreateTagCommand = new RelayCommandParam<int>(async (x) => await this.NewTagAction(x));
+            this.CreateTagCommand = new RelayCommand<int>(async (x) => await this.NewTagAction(x));
             this.SortByTypeCommand = new RelayCommand(() => {
                 IgnoreMainExplorerSelectionChange = true;
                 List<BaseNBTViewModel> list = this.Children.OrderByDescending((a) => a.NBTType).ToList();

@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Input;
 using MCNBTViewer.Core.AdvancedContextService;
 using MCNBTViewer.Core.NBT;
 using MCNBTViewer.Core.Utils;
 using MCNBTViewer.Core.Views.Dialogs.UserInputs;
-using REghZy.Streams;
 
 namespace MCNBTViewer.Core.Explorer.Items {
     public abstract class BaseNBTViewModel : BaseViewModel, IContextProvider {
@@ -53,6 +53,25 @@ namespace MCNBTViewer.Core.Explorer.Items {
             }
         }
 
+        public List<string> PathChain {
+            get {
+                List<string> list = new List<string>();
+                foreach (BaseNBTViewModel item in this.ParentChain) {
+                    if (item.Parent is NBTListViewModel tagList) {
+                        list.Add(new StringBuilder().Append('[').Append(tagList.Children.IndexOf(item)).Append(']').ToString());
+                    }
+                    else if (string.IsNullOrEmpty(item.Name)) {
+                        list.Add("<unnamed>");
+                    }
+                    else {
+                        list.Add(item.Name);
+                    }
+                }
+
+                return list;
+            }
+        }
+
         public RelayCommand RemoveFromParentCommand { get; }
 
         public ICommand CopyKeyNameCommand { get; }
@@ -76,7 +95,7 @@ namespace MCNBTViewer.Core.Explorer.Items {
                     using (MemoryStream stream = new MemoryStream()) {
                         try {
                             NBTBase nbt = this.ToNBT();
-                            NBTBase.WriteTag(new DataOutputStream(stream), this.Name, nbt);
+                            NBTBase.WriteTag(CompressedStreamTools.CreateOutput(stream), this.Name, nbt);
                             IoC.Clipboard.SetBinaryTag("TAG_NBT", stream.ToArray());
                         }
                         catch (Exception e) {

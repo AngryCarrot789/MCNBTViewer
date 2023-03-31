@@ -19,7 +19,18 @@ namespace MCNBTViewer {
 
         public ICommand SaveAllDatFilesCommands { get; }
 
+        public ICommand ShowFindViewCommand { get; }
+
+        private bool isBigEndian;
+        public bool IsBigEndian {
+            get => this.isBigEndian;
+            set => this.RaisePropertyChanged(ref this.isBigEndian, value, () => {
+                IoC.IsBigEndian = this.IsBigEndian;
+            });
+        }
+
         public MainViewModel() {
+            this.IsBigEndian = true;
             this.Explorer = new NBTExplorerViewModel();
             IoC.MainExplorer = this.Explorer;
             this.OpenFileCommand = new RelayCommand(async () => await this.OpenFileAction());
@@ -46,6 +57,12 @@ namespace MCNBTViewer {
                     i++;
                 }
             });
+
+            this.ShowFindViewCommand = new RelayCommand(this.ShowFindViewAction);
+        }
+
+        private void ShowFindViewAction() {
+            IoC.FindView.ShowFindView();
         }
 
         private async Task OpenFolderAction() {
@@ -105,7 +122,7 @@ namespace MCNBTViewer {
         }
 
         public void AddDataFile(NBTDataFileViewModel file) {
-            this.Explorer.LoadedDataFiles.Add(file);
+            this.Explorer.AddDataFile(file);
         }
 
         public static NBTCompoundViewModel CreateRoot() {

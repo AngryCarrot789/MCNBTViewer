@@ -1,9 +1,9 @@
 namespace MCNBTViewer.Core.Views.Windows {
-    public abstract class BaseWindowViewModel : BaseViewModel {
-        public IWindow Window { get; }
+    public class BaseWindowViewModel : BaseViewModel {
+        public IWindow Window { get; set; }
 
-        protected BaseWindowViewModel(IWindow window) {
-            this.Window = window;
+        public BaseWindowViewModel() {
+
         }
     }
 }

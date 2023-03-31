@@ -1,6 +1,6 @@
 using System.Windows;
 
-namespace FocusGroupHotkeys.Themes.Attached {
+namespace MCNBTViewer.Themes.Attached {
     public static class MenuHelper {
         public static readonly DependencyProperty UseStretchedContentProperty = DependencyProperty.RegisterAttached("UseStretchedContent", typeof(bool), typeof(MenuHelper), new PropertyMetadata(false));
 

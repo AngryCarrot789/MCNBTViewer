@@ -29,6 +29,18 @@ namespace MCNBTViewer.Core {
             this.isEnabled = true;
         }
 
+        protected static object GetConvertedParameter<T>(object value) {
+            if (value is IConvertible convertible) {
+                return convertible.ToType(typeof(T), null);
+            }
+            else if (value == null && typeof(ValueType).IsAssignableFrom(typeof(T))) {
+                return default(T);
+            }
+            else {
+                throw new Exception("Parameter is not convertable: " + value);
+            }
+        }
+
         public abstract void Execute(object parameter);
 
         /// <summary>

@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace FramePFX.AttachedProperties {
+namespace MCNBTViewer.AttachedProperties {
     public static class AttachedInteractivity {
         public static readonly DependencyProperty DoubleClickCommandProperty = DependencyProperty.RegisterAttached("DoubleClickCommand", typeof(ICommand), typeof(AttachedInteractivity), new PropertyMetadata(null, OnDoubleClickCommandChanged));
         public static readonly DependencyProperty UseICGForParameterProperty = DependencyProperty.RegisterAttached("UseICGForParameter", typeof(bool), typeof(AttachedInteractivity), new PropertyMetadata(false));
@@ -36,10 +36,23 @@ namespace FramePFX.AttachedProperties {
 
         private static void OnDoubleClickCommandChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
             if (d is UIElement control) {
-                control.MouseDown -= Handler;
-                if (e.NewValue != null) {
-                    control.MouseDown += Handler;
+                if (e.OldValue != null) {
+                    int index = 0;
+                    foreach (InputBinding item in control.InputBindings) {
+                        if (item.Command == e.OldValue) {
+                            control.InputBindings.RemoveAt(index);
+                            break;
+                        }
+
+                        index++;
+                    }
                 }
+
+                control.InputBindings.Add(new MouseBinding((ICommand) e.NewValue, new MouseGesture(MouseAction.LeftDoubleClick)));
+                // control.MouseDown -= Handler;
+                // if (e.NewValue != null) {
+                //     control.MouseDown += Handler;
+                // }
             }
         }
 

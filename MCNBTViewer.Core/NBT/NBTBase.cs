@@ -15,20 +15,21 @@ namespace MCNBTViewer.Core.NBT {
         /// <summary>
         /// Read the data for this tag
         /// </summary>
+        /// <param name="input"></param>
         /// <param name="deep">How deep the read procedure is currently</param>
-        public abstract void Read(DataInputStream input, int deep);
+        public abstract void Read(IDataInput input, int deep);
 
         /// <summary>
         /// Write this tag's data to the output
         /// </summary>
-        public abstract void Write(DataOutputStream output);
+        public abstract void Write(IDataOutput output);
 
         /// <summary>
         /// Creates a deep copy of this tag
         /// </summary>
         public abstract NBTBase CloneTag();
 
-        public static bool ReadTag(DataInputStream input, int deep, out string name, out NBTBase nbt) {
+        public static bool ReadTag(IDataInput input, int deep, out string name, out NBTBase nbt) {
             byte id = input.ReadByte();
             if (id == 0) {
                 name = null;
@@ -47,7 +48,7 @@ namespace MCNBTViewer.Core.NBT {
             }
         }
 
-        public static void WriteTag(DataOutputStream output, string name, NBTBase tag) {
+        public static void WriteTag(IDataOutput output, string name, NBTBase tag) {
             output.WriteByte(tag.Id);
             if (tag.Id != 0) {
                 output.WriteStringLabelledUTF8(name ?? "");

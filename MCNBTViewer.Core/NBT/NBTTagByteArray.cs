@@ -13,12 +13,12 @@ namespace MCNBTViewer.Core.NBT {
             this.data = var2;
         }
 
-        public override void Write(DataOutputStream output) {
+        public override void Write(IDataOutput output) {
             output.WriteInt(this.data.Length);
             output.Write(this.data);
         }
 
-        public override void Read(DataInputStream input, int deep) {
+        public override void Read(IDataInput input, int deep) {
             int var3 = input.ReadInt();
             this.data = new byte[var3];
             input.ReadFully(this.data);

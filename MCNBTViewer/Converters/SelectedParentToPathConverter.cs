@@ -17,7 +17,7 @@ namespace MCNBTViewer.Converters {
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
             if (value is BaseNBTViewModel file) {
-                return this.UseParent ? (file.Parent != null ? GetPath(file.Parent) : this.RootPath) : GetPath(file);
+                return this.UseParent ? (file.Parent != null ? this.GetPath(file.Parent) : this.RootPath) : this.GetPath(file);
             }
             else if (value == null) {
                 return this.RootPath;

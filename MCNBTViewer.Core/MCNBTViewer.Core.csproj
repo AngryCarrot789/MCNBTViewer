@@ -16,4 +16,8 @@
     </Reference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Explorer\Finding\" />
+  </ItemGroup>
+
 </Project>

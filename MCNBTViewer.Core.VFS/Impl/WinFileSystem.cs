@@ -54,11 +54,11 @@ namespace MCNBTViewer.Core.VFS.Impl {
         }
 
         public override void MoveFileInto(object requestor, VirtualFileBase file, VirtualFolder target) {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public override VirtualFileBase CopyFileInto(object requestor, VirtualFileBase file, VirtualFolder target, string name) {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public override string GetFilePath(VirtualFileBase file) {

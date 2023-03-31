@@ -1,25 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using MCNBTViewer.Core;
+using MCNBTViewer.Core.Explorer.Finding;
+using MCNBTViewer.NBT.Explorer.Finding;
 using MCNBTViewer.Views;
 
 namespace MCNBTViewer.NBT.Explorer.Dialogs {
     /// <summary>
     /// Interaction logic for FindNBTWindow.xaml
     /// </summary>
-    public partial class FindNBTWindow : WindowEx {
+    public partial class FindNBTWindow : BaseWindow {
         public FindNBTWindow() {
-            InitializeComponent();
+            this.InitializeComponent();
+            this.DataContext = new FindViewModel() {
+                Window = this
+            };
+        }
+
+        protected override void OnClosed(EventArgs e) {
+            base.OnClosed(e);
+
+            ((FindView) IoC.FindView).OnClosedInternal(this);
         }
     }
 }

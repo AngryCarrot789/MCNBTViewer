@@ -11,11 +11,11 @@ namespace MCNBTViewer.Core.NBT {
             this.data = data;
         }
 
-        public override void Write(DataOutputStream output) {
+        public override void Write(IDataOutput output) {
             output.WriteShort(this.data);
         }
 
-        public override void Read(DataInputStream input, int deep) {
+        public override void Read(IDataInput input, int deep) {
             this.data = input.ReadShort();
         }
 

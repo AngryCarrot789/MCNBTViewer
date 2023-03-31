@@ -2,11 +2,11 @@ using System.Threading.Tasks;
 using MCNBTViewer.Core.Views.ViewModels;
 
 namespace MCNBTViewer.Core.Views.Dialogs {
-    public abstract class BaseConfirmableDialogViewModel : BaseDialogViewModel {
+    public class BaseConfirmableDialogViewModel : BaseDialogViewModel {
         public RelayCommand ConfirmCommand { get; }
         public RelayCommand CancelCommand { get; }
 
-        protected BaseConfirmableDialogViewModel() {
+        public BaseConfirmableDialogViewModel() {
             this.ConfirmCommand = new RelayCommand(async () => await this.ConfirmAction());
             this.CancelCommand = new RelayCommand(async () => await this.CancelAction());
         }

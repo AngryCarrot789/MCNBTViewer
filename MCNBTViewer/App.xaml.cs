@@ -8,6 +8,7 @@ using MCNBTViewer.Core.Explorer.Items;
 using MCNBTViewer.Core.NBT;
 using MCNBTViewer.Core.Services;
 using MCNBTViewer.NBT.Explorer.Dialogs;
+using MCNBTViewer.NBT.Explorer.Finding;
 using MCNBTViewer.Services;
 using MCNBTViewer.Views.Dialogs.FilePicking;
 using MCNBTViewer.Views.Dialogs.Message;
@@ -26,6 +27,7 @@ namespace MCNBTViewer {
             IoC.UserInput = new UserInputDialogService();
             IoC.OsFileExplorer = new WinOSFileExplorer();
             IoC.TagDialogService = new NewTagDialogService();
+            IoC.FindView = new FindView();
 
             this.MainWindow = new MainWindow();
             this.MainWindow.Show();

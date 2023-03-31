@@ -27,7 +27,8 @@ namespace MCNBTViewer.Core.Explorer {
 
         public BaseNBTViewModel SelectedFile => (BaseNBTViewModel) this.TreeView.GetSelectedItem();
 
-        public ObservableCollection<NBTDataFileViewModel> LoadedDataFiles { get; }
+        private readonly ObservableCollection<NBTDataFileViewModel> loadedDataFiles;
+        public ReadOnlyObservableCollection<NBTDataFileViewModel> LoadedDataFiles { get; }
 
         public NBTExplorerListViewModel ExplorerList { get; }
 
@@ -37,8 +38,11 @@ namespace MCNBTViewer.Core.Explorer {
         public ICommand SortByNameCommand { get; }
         public ICommand SortByBothCommand { get; }
 
+        public IMainList ExplorerListHandle { get; set; }
+
         public NBTExplorerViewModel() {
-            this.LoadedDataFiles = new ObservableCollection<NBTDataFileViewModel>();
+            this.loadedDataFiles = new ObservableCollection<NBTDataFileViewModel>();
+            this.LoadedDataFiles = new ReadOnlyObservableCollection<NBTDataFileViewModel>(this.loadedDataFiles);
             this.ExplorerList = new NBTExplorerListViewModel(this);
             this.SortByTypeCommand = new RelayCommand(() => {
                 BaseNBTViewModel selected = this.SelectedFile;
@@ -94,9 +98,9 @@ namespace MCNBTViewer.Core.Explorer {
 
         public void RemoveDatFile(NBTDataFileViewModel file) {
             bool isSelected = this.RootDataFileForSelectedItem == file;
-            if (this.LoadedDataFiles.Remove(file)) {
+            if (this.loadedDataFiles.Remove(file)) {
                 if (isSelected) {
-                    NBTDataFileViewModel any = this.LoadedDataFiles.FirstOrDefault();
+                    NBTDataFileViewModel any = this.loadedDataFiles.FirstOrDefault();
                     if (any == null) {
                         this.ExplorerList.CurrentFolder = null;
                         this.ExplorerList.SelectedItem = null;
@@ -118,7 +122,7 @@ namespace MCNBTViewer.Core.Explorer {
 
             this.IgnoreSelectionChanged = true;
             try {
-                if (item is NBTDataFileViewModel model && this.LoadedDataFiles.Contains(item)) {
+                if (item is NBTDataFileViewModel model && this.loadedDataFiles.Contains(item)) {
                     this.ExplorerList.CurrentFolder = model;
                     if (model.Children.Count > 0) {
                         this.ExplorerList.SelectedItem = model.Children[0];
@@ -153,6 +157,16 @@ namespace MCNBTViewer.Core.Explorer {
 
         public void UseItem(BaseNBTViewModel file) {
 
+        }
+
+        public void SetSelectedItem(BaseNBTViewModel item) {
+            this.TreeView.SetSelectedFile(item);
+        }
+
+        public void AddDataFile(NBTDataFileViewModel file) {
+            if (file != null) {
+                this.loadedDataFiles.Add(file);
+            }
         }
     }
 }

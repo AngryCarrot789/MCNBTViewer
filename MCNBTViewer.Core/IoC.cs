@@ -1,5 +1,6 @@
 using MCNBTViewer.Core.Explorer;
 using MCNBTViewer.Core.Explorer.Dialogs;
+using MCNBTViewer.Core.Explorer.Finding;
 using MCNBTViewer.Core.Services;
 using MCNBTViewer.Core.Views.Dialogs.FilePicking;
 using MCNBTViewer.Core.Views.Dialogs.Message;
@@ -18,5 +19,9 @@ namespace MCNBTViewer.Core {
         public static INewTagDialogService TagDialogService { get; set; }
 
         public static NBTExplorerViewModel MainExplorer { get; set; }
+
+        public static IFindView FindView { get; set; }
+
+        public static bool IsBigEndian { get; set; }
     }
 }

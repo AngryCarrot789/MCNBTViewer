@@ -15,7 +15,7 @@ namespace MCNBTViewer.Core.NBT {
             this.tagType = tagType;
         }
 
-        public override void Write(DataOutputStream output) {
+        public override void Write(IDataOutput output) {
             this.tagType = this.tags.Count == 0 ? (byte) 0 : this.tags[0].Id;
             output.WriteByte(this.tagType);
             output.WriteInt(this.tags.Count);
@@ -24,7 +24,7 @@ namespace MCNBTViewer.Core.NBT {
             }
         }
 
-        public override void Read(DataInputStream input, int deep) {
+        public override void Read(IDataInput input, int deep) {
             if (deep <= 512 || IgnoreStackDepth) {
                 this.tagType = input.ReadByte();
                 int count = input.ReadInt();

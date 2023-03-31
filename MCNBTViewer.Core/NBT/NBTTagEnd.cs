@@ -6,10 +6,10 @@ namespace MCNBTViewer.Core.NBT {
 
         }
 
-        public override void Write(DataOutputStream output) {
+        public override void Write(IDataOutput output) {
         }
 
-        public override void Read(DataInputStream input, int deep) {
+        public override void Read(IDataInput input, int deep) {
         }
 
         public override byte Id => 0;

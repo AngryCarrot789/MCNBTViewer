@@ -15,6 +15,7 @@
                 <ResourceDictionary Source="Controls/ControlStyles.xaml"/>
                 <ResourceDictionary Source="NBT/Explorer/Items/TreeItemStyles.xaml"/>
                 <ResourceDictionary Source="NBT/Explorer/Items/ListItemStyles.xaml"/>
+                <ResourceDictionary Source="NBT/Explorer/Dialogs/NBTFindingStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

@@ -65,6 +65,7 @@
     <Compile Include="AdvancedContextService\AdvancedMenuItem.cs" />
     <Compile Include="AdvancedContextService\ContextMenuHelper.cs" />
     <Compile Include="AdvancedContextService\MenuItemStyleSelector.cs" />
+    <Compile Include="AttachedProperties\AttachedInteractivity.cs" />
     <Compile Include="AttachedProperties\TextBlockHelper.cs" />
     <Compile Include="Controls\IconTextPair.cs" />
     <Compile Include="Controls\NBTNavigationButton.cs" />
@@ -79,13 +80,24 @@
     <Compile Include="Converters\NBTItemNameConverter.cs" />
     <Compile Include="Converters\NBTPrimitiveNameConverter.cs" />
     <Compile Include="Converters\NBTPrimitiveNameInlinesConverter.cs" />
+    <Compile Include="Converters\NBTToPathConverter.cs" />
     <Compile Include="Converters\NullConverter.cs" />
     <Compile Include="Converters\SelectedItemToPathListConverter.cs" />
     <Compile Include="Converters\TagIconConverter.cs" />
     <Compile Include="Converters\SelectedParentToPathConverter.cs" />
     <Compile Include="NBT\Controls\NBTBaseControl.cs" />
     <Compile Include="NBT\Controls\NBTCompoundControl.cs" />
+    <Compile Include="NBT\Explorer\Dialogs\ChainConverter.cs" />
+    <Compile Include="NBT\Explorer\Dialogs\FindNBTWindow.xaml.cs">
+      <DependentUpon>FindNBTWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="NBT\Explorer\Dialogs\FindResultTemplateSelector.cs" />
+    <Compile Include="NBT\Explorer\Dialogs\InlinesTagNameValueConverter.cs" />
+    <Compile Include="NBT\Explorer\Dialogs\Inlines\BaseInlineHighlightConverter.cs" />
+    <Compile Include="NBT\Explorer\Dialogs\Inlines\InlineHelper.cs" />
+    <Compile Include="NBT\Explorer\Dialogs\Inlines\HighlightingInlinesConverter.cs" />
     <Compile Include="NBT\Explorer\Dialogs\NewTagDialogService.cs" />
+    <Compile Include="NBT\Explorer\Finding\FindView.cs" />
     <Compile Include="NBT\Explorer\ListFallbackSourceConverter.cs" />
     <Compile Include="NBT\Explorer\NBTItemTemplateSelector.cs" />
     <Compile Include="Services\ClipboardService.cs" />
@@ -137,6 +149,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="NBT\Controls\ControlStyles.xaml" />
+    <Page Include="NBT\Explorer\Dialogs\FindNBTWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="NBT\Explorer\Dialogs\NBTFindingStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="NBT\Explorer\Items\ListItemStyles.xaml" />
     <Page Include="NBT\Explorer\Items\TreeItemStyles.xaml" />
     <Page Include="Themes\ControlColours.xaml">
