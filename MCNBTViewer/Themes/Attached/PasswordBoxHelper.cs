@@ -2,13 +2,13 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace MCNBTViewer.Themes.AttachedProperties {
-    public class PasswordAttachedProperty {
+namespace FocusGroupHotkeys.Themes.Attached {
+    public class PasswordBoxHelper {
         public static readonly DependencyProperty ListenToLengthProperty =
             DependencyProperty.RegisterAttached(
                 "ListenToLength",
                 typeof(bool),
-                typeof(PasswordAttachedProperty),
+                typeof(PasswordBoxHelper),
                 new FrameworkPropertyMetadata(false, PropertyChangedCallback));
 
         private static void PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
@@ -27,7 +27,7 @@ namespace MCNBTViewer.Themes.AttachedProperties {
             DependencyProperty.RegisterAttached(
                 "InputLength",
                 typeof(int),
-                typeof(PasswordAttachedProperty),
+                typeof(PasswordBoxHelper),
                 new FrameworkPropertyMetadata(0));
 
         public static bool GetListenToLength(PasswordBox box) {

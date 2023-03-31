@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 
-namespace MCNBTViewer.Themes.AttachedProperties {
+namespace FocusGroupHotkeys.Themes.Attached {
     public static class TextHinting {
         public static readonly DependencyProperty ShowWhenFocusedProperty =
             DependencyProperty.RegisterAttached(
@@ -17,7 +17,7 @@ namespace MCNBTViewer.Themes.AttachedProperties {
                 control.SetValue(ShowWhenFocusedProperty, value);
             }
 
-            throw new ArgumentException("Control was not a textbox", "control");
+            throw new ArgumentException("Control was not a textbox", nameof(control));
         }
 
         public static bool GetShowWhenFocused(Control control) {
@@ -25,7 +25,7 @@ namespace MCNBTViewer.Themes.AttachedProperties {
                 return (bool) control.GetValue(ShowWhenFocusedProperty);
             }
 
-            throw new ArgumentException("Control was not a textbox", "control");
+            throw new ArgumentException("Control was not a textbox", nameof(control));
         }
     }
 }

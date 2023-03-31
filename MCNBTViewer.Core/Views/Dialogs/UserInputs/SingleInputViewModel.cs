@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using MCNBTViewer.Core.Views.Dialogs;
 using MCNBTViewer.Core.Views.ViewModels;
 
-namespace MCNBTViewer.Views.Dialogs.UserInputs {
-    public class SingleInputViewModel : BaseConfirmableDialogViewModel, IErrorInfoHandler {
+namespace MCNBTViewer.Core.Views.Dialogs.UserInputs {
+    public class MySingleInputViewModel : BaseConfirmableDialogViewModel, IErrorInfoHandler {
         private string title;
         public string Title {
             get => this.title;
@@ -22,7 +21,9 @@ namespace MCNBTViewer.Views.Dialogs.UserInputs {
             set => this.RaisePropertyChanged(ref this.input, value);
         }
 
-        public SingleInputViewModel(IDialog dialog) : base(dialog) {
+        public InputValidator ValidateInput { get; set; }
+
+        public MySingleInputViewModel(IDialog dialog) : base(dialog) {
 
         }
 
