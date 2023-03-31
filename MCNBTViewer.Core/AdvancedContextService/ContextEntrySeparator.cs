@@ -1,4 +1,4 @@
-namespace FramePFX.Core.AdvancedContextService {
+namespace MCNBTViewer.Core.AdvancedContextService {
     /// <summary>
     /// A separator element between menu items
     /// </summary>

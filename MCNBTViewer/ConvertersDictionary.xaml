@@ -1,9 +1,18 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:converters="clr-namespace:MCNBTViewer.Converters">
-    <converters:NbtCollectiveNameConverter x:Key="NBTCollectionNameConverter"/>
-    <converters:NBTArrayNameConverter x:Key="NBTArrayNameConverter"/>
-    <converters:NBTPrimitiveNameConverter x:Key="NBTPrimitiveNameConverter"/>
+    <Style TargetType="{x:Type Run}" x:Key="CONVERTER_NormalRunStyle">
+        <Setter Property="Foreground" Value="{DynamicResource AREghZyBrush.Foreground.Static}"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+    </Style>
+
+    <Style TargetType="{x:Type Run}" x:Key="CONVERTER_ExtraRunStyle">
+        <Setter Property="Foreground" Value="{DynamicResource AREghZyBrush.Foreground.Deeper}"/>
+    </Style>
+
+    <converters:NbtCollectiveNameInlinesConverter x:Key="NbtCollectiveInlinesNameConverter" NormalTextRunStyle="{StaticResource CONVERTER_NormalRunStyle}" ExtraDataTextRunStyle="{StaticResource CONVERTER_ExtraRunStyle}"/>
+    <converters:NBTArrayNameInlinesConverter x:Key="NBTArrayInlinesNameConverter" NormalTextRunStyle="{StaticResource CONVERTER_NormalRunStyle}" ExtraDataTextRunStyle="{StaticResource CONVERTER_ExtraRunStyle}"/>
+    <converters:NBTPrimitiveNameInlinesConverter x:Key="NBTPrimitiveInlinesNameConverter" NormalTextRunStyle="{StaticResource CONVERTER_NormalRunStyle}" ExtraDataTextRunStyle="{StaticResource CONVERTER_ExtraRunStyle}"/>
 
     <converters:TagIconConverter x:Key="TagIconConverter"
                                  TagByte="/MCNBTViewer;component/Resources/Icons/FileIcon-TagByte8.png"

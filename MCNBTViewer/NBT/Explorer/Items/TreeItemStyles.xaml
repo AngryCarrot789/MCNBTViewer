@@ -3,78 +3,90 @@
                     xmlns:c="clr-namespace:MCNBTViewer.Controls"
                     xmlns:converters="clr-namespace:MCNBTViewer.Converters"
                     xmlns:explorer="clr-namespace:MCNBTViewer.NBT.Explorer"
-                    xmlns:nbt="clr-namespace:MCNBTViewer.Core.Explorer.Items;assembly=MCNBTViewer.Core">
+                    xmlns:nbt="clr-namespace:MCNBTViewer.Core.Explorer.Items;assembly=MCNBTViewer.Core"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib"
+                    xmlns:ap="clr-namespace:MCNBTViewer.AttachedProperties"
+                    xmlns:acs="clr-namespace:MCNBTViewer.AdvancedContextService">
     <HierarchicalDataTemplate x:Key="TreeTagCompoundTemplate" DataType="{x:Type nbt:NBTCompoundViewModel}" ItemsSource="{Binding Children}">
-        <StackPanel Orientation="Horizontal" Height="18">
+        <StackPanel Orientation="Horizontal" Height="18" acs:ContextMenuHelper.ContextProvider="{Binding}">
             <Image x:Name="Img" Width="16" Height="16"/>
             <TextBlock Margin="4 0 0 0">
-                <TextBlock.Text>
-                    <MultiBinding Converter="{StaticResource NBTCollectionNameConverter}">
+                <ap:TextBlockHelper.BindableInlines>
+                    <MultiBinding Converter="{StaticResource NbtCollectiveInlinesNameConverter}">
                         <Binding Path="Name"/>
                         <Binding Path="Children"/>
                     </MultiBinding>
-                </TextBlock.Text>
+                </ap:TextBlockHelper.BindableInlines>
             </TextBlock>
         </StackPanel>
         <HierarchicalDataTemplate.Triggers>
             <MultiDataTrigger>
                 <MultiDataTrigger.Conditions>
-                    <Condition Binding="{Binding IsExpanded}" Value="True"/>
+                    <Condition Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type TreeViewItem}}, Path=IsExpanded}" Value="True"/>
                     <Condition Binding="{Binding IsEmpty}" Value="True"/>
                 </MultiDataTrigger.Conditions>
                 <Setter TargetName="Img" Property="Source" Value="/MCNBTViewer;component/Resources/Icons/icons8-empty-box-48.png"/>
             </MultiDataTrigger>
             <MultiDataTrigger>
                 <MultiDataTrigger.Conditions>
-                    <Condition Binding="{Binding IsExpanded}" Value="True"/>
+                    <Condition Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type TreeViewItem}}, Path=IsExpanded}" Value="True"/>
                     <Condition Binding="{Binding IsEmpty}" Value="False"/>
                 </MultiDataTrigger.Conditions>
                 <Setter TargetName="Img" Property="Source" Value="/MCNBTViewer;component/Resources/Icons/icons8-open-box-48.png"/>
             </MultiDataTrigger>
-            <DataTrigger Binding="{Binding IsExpanded}" Value="False">
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type TreeViewItem}}, Path=IsExpanded}" Value="False">
                 <Setter TargetName="Img" Property="Source" Value="/MCNBTViewer;component/Resources/Icons/icons8-closed-box-48.png"/>
             </DataTrigger>
         </HierarchicalDataTemplate.Triggers>
     </HierarchicalDataTemplate>
 
     <HierarchicalDataTemplate x:Key="TreeTagListTemplate" DataType="{x:Type nbt:NBTListViewModel}" ItemsSource="{Binding Children}">
-        <StackPanel Orientation="Horizontal" Height="18">
+        <StackPanel Orientation="Horizontal" Height="18" acs:ContextMenuHelper.ContextProvider="{Binding}">
             <Image Width="16" Height="16" Source="/MCNBTViewer;component/Resources/Icons/icons8-bulleted-list-48.png"/>
             <TextBlock Margin="4 0 0 0">
-                <TextBlock.Text>
-                    <MultiBinding Converter="{StaticResource NBTCollectionNameConverter}">
+                <ap:TextBlockHelper.BindableInlines>
+                    <MultiBinding Converter="{StaticResource NbtCollectiveInlinesNameConverter}">
                         <Binding Path="Name"/>
                         <Binding Path="Children"/>
                     </MultiBinding>
-                </TextBlock.Text>
+                </ap:TextBlockHelper.BindableInlines>
             </TextBlock>
         </StackPanel>
     </HierarchicalDataTemplate>
 
     <HierarchicalDataTemplate x:Key="TreeTagArrayTemplate" DataType="{x:Type nbt:BaseNBTArrayViewModel}">
-        <StackPanel Orientation="Horizontal" Height="18">
+        <StackPanel Orientation="Horizontal" Height="18" acs:ContextMenuHelper.ContextProvider="{Binding}">
             <Image Source="{Binding NBTType, Converter={StaticResource TagIconConverter}}" Width="16" Height="16"/>
+            <TextBlock  Visibility="Collapsed" Margin="4 0 0 0"><Run Text="{Binding Name}"/><Run Text=": "/><Run Text="{Binding Data}"/></TextBlock>
             <TextBlock Margin="4 0 0 0">
-                <TextBlock.Text>
-                    <MultiBinding Converter="{StaticResource NBTArrayNameConverter}">
+                <TextBlock.Inlines>
+                    <MultiBinding Converter="{StaticResource NBTArrayInlinesNameConverter}">
                         <Binding Path="Name"/>
                         <Binding Path="Data"/>
                     </MultiBinding>
-                </TextBlock.Text>
+                </TextBlock.Inlines>
+            </TextBlock>
+            <TextBlock Margin="4 0 0 0" Visibility="Collapsed">
+                <ap:TextBlockHelper.BindableInlines>
+                    <MultiBinding Converter="{StaticResource NBTArrayInlinesNameConverter}">
+                        <Binding Path="Name"/>
+                        <Binding Path="Data"/>
+                    </MultiBinding>
+                </ap:TextBlockHelper.BindableInlines>
             </TextBlock>
         </StackPanel>
     </HierarchicalDataTemplate>
 
     <HierarchicalDataTemplate x:Key="TreeTagPrimitive" DataType="{x:Type nbt:NBTPrimitiveViewModel}">
-        <StackPanel Orientation="Horizontal" Height="18">
+        <StackPanel Orientation="Horizontal" Height="18" acs:ContextMenuHelper.ContextProvider="{Binding}">
             <Image Source="{Binding NBTType, Converter={StaticResource TagIconConverter}}" Width="16" Height="16"/>
             <TextBlock Margin="4 0 0 0">
-                <TextBlock.Text>
-                    <MultiBinding Converter="{StaticResource NBTPrimitiveNameConverter}">
+                <ap:TextBlockHelper.BindableInlines>
+                    <MultiBinding Converter="{StaticResource NBTPrimitiveInlinesNameConverter}">
                         <Binding Path="Name"/>
                         <Binding Path="Data"/>
                     </MultiBinding>
-                </TextBlock.Text>
+                </ap:TextBlockHelper.BindableInlines>
             </TextBlock>        </StackPanel>
     </HierarchicalDataTemplate>
 

@@ -50,7 +50,7 @@ namespace MCNBTViewer.Core.NBT {
         public static void WriteTag(DataOutputStream output, string name, NBTBase tag) {
             output.WriteByte(tag.Id);
             if (tag.Id != 0) {
-                output.WriteStringLabelledUTF8(name);
+                output.WriteStringLabelledUTF8(name ?? "");
                 tag.Write(output);
             }
         }

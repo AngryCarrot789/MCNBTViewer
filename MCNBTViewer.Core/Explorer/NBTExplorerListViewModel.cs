@@ -1,5 +1,5 @@
-﻿using MCNBTViewer.Core.Explorer.Items;
-using REghZy.MVVM.ViewModels;
+﻿using FramePFX.Core;
+using MCNBTViewer.Core.Explorer.Items;
 
 namespace MCNBTViewer.Core.Explorer {
     public class NBTExplorerListViewModel : BaseViewModel {

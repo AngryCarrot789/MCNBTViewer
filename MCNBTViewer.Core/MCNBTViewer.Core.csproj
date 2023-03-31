@@ -6,9 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="REghZy.MVVM, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\REghZy\DLL\REghZy.MVVM.dll</HintPath>
-    </Reference>
     <Reference Include="REghZy.Streams, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\REghZy\DLL\REghZy.Streams.dll</HintPath>
     </Reference>

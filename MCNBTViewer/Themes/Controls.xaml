@@ -2408,7 +2408,7 @@
             </MultiTrigger>
         </Style.Triggers>
     </Style>
-    
+
     <Style TargetType="{x:Type PasswordBox}">
         <Setter Property="PasswordChar" Value="●" />
         <Setter Property="Background" Value="{DynamicResource TextBox.Static.Background}" />
@@ -2783,7 +2783,7 @@
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
-    
+
     <Style TargetType="{x:Type Slider}">
         <Setter Property="Stylus.IsPressAndHoldEnabled" Value="false" />
         <Setter Property="Background" Value="Transparent" />
@@ -3384,14 +3384,19 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition/>
                         </Grid.RowDefinitions>
+                        <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Background="{TemplateBinding Background}" Grid.Column="0"
+                                Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true" Grid.ColumnSpan="3">
+                        </Border>
                         <ToggleButton x:Name="Expander" ClickMode="Press" 
                                       IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}" 
                                       Style="{StaticResource ExpandCollapseToggleStyle}"/>
-                        <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" 
-                                BorderThickness="{TemplateBinding BorderThickness}" 
-                                Background="{TemplateBinding Background}" Grid.Column="1" 
+                        <Border BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Background="{TemplateBinding Background}" Grid.Column="1"
                                 Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true">
-                            <ContentPresenter x:Name="PART_Header" ContentSource="Header" 
+                            <ContentPresenter x:Name="PART_Header" ContentSource="Header"
                                               HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                               SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                         </Border>

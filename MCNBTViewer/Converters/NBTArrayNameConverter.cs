@@ -17,7 +17,7 @@ namespace MCNBTViewer.Converters {
                 return string.IsNullOrEmpty(name) ? $"{intArray.Length} integer elements" : $"{name}: {intArray.Length} integer elements";
             }
             else if (value is byte[] byteArray) {
-                return string.IsNullOrEmpty(name) ? $"{byteArray.Length} integer elements" : $"{name}: {byteArray.Length} integer elements";
+                return string.IsNullOrEmpty(name) ? $"{byteArray.Length} byte elements" : $"{name}: {byteArray.Length} byte elements";
             }
             else {
                 return name;

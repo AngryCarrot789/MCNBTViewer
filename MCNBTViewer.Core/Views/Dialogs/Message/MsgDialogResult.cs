@@ -1,4 +1,4 @@
-namespace FramePFX.Core.Views.Dialogs.Message {
+namespace MCNBTViewer.Core.Views.Dialogs.Message {
     public enum MsgDialogResult {
         OK = 1,
         Yes = 6,

@@ -14,10 +14,17 @@
     <Window.Resources>
         <nbtexp:ListFallbackSourceConverter x:Key="FallbackConverter"/>
     </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding Modifiers="Control" Key="O" Command="{Binding OpenFileCommand}"/>
+        <KeyBinding Modifiers="Control+Shift" Key="O" Command="{Binding OpenFolderCommand}"/>
+    </Window.InputBindings>
     <Grid>
         <Menu VerticalAlignment="Top">
             <MenuItem Header="File">
-                <MenuItem Header="Open file" Command="{Binding OpenFileCommand, Mode=OneTime}"/>
+                <MenuItem Header="Open File..." Command="{Binding OpenFileCommand, Mode=OneTime}" InputGestureText="Ctrl+O"/>
+                <MenuItem Header="Open Folder..." Command="{Binding OpenFolderCommand, Mode=OneTime}" InputGestureText="Ctrl+Shift+O"/>
+                <Separator Style="{DynamicResource MenuItemSeparator}"/>
+                <MenuItem Header="Save All" Command="{Binding SaveAllDatFilesCommands, Mode=OneTime}" InputGestureText="Ctrl+Shift+O"/>
             </MenuItem>
         </Menu>
         <Grid Margin="0,18,0,0">
@@ -29,18 +36,17 @@
             <Grid Grid.Column="0" DataContext="{Binding Explorer}">
                 <Border>
                     <Grid Margin="0,0,0,0">
-                        <c:ExtendedTreeView Explorer="{Binding}" 
+                        <c:ExtendedTreeView Explorer="{Binding}" AllowDrop="True" Drop="OnTreeViewDrop"
                                             ItemsSource="{Binding LoadedDataFiles}"
                                             ItemTemplateSelector="{StaticResource NBTTreeItemSelector}" 
                                             BorderThickness="1 1 1 1"
-                                            BorderBrush="{DynamicResource AREghZyBrush.Primary.2.Border.Static}" Margin="0,19,0,0"
+                                            BorderBrush="{DynamicResource AREghZyBrush.Primary.2.Border.Static}"
                                             Background="{DynamicResource AREghZyBrush.Primary.1.Background.Static}">
                             <c:ExtendedTreeView.Style>
                                 <Style TargetType="{x:Type c:ExtendedTreeView}" BasedOn="{StaticResource {x:Type TreeView}}"/>
                             </c:ExtendedTreeView.Style>
                             <c:ExtendedTreeView.ItemContainerStyle>
                                 <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource {x:Type TreeViewItem}}">
-                                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
                                 </Style>
                             </c:ExtendedTreeView.ItemContainerStyle>
                         </c:ExtendedTreeView>
@@ -52,16 +58,6 @@
                                 <ColumnDefinition Width="5"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <Button Content="Sort by type" BorderThickness="1 1 1 0"
-                                    Background="{DynamicResource AREghZyBrush.Primary.1.Background.Static}"
-                                    Command="{Binding SortByTypeCommand, Mode=OneTime}" Margin="0"/>
-                            <Button Content="Sort by name" BorderThickness="1 1 1 0" Grid.Column="2"
-                                    Background="{DynamicResource AREghZyBrush.Primary.1.Background.Static}"
-                                    Command="{Binding SortByNameCommand, Mode=OneTime}" Margin="0"/>
-                            <Button Content="Sort by both" BorderThickness="1 1 1 0" Grid.Column="4"
-                                    Background="{DynamicResource AREghZyBrush.Primary.1.Background.Static}"
-                                    Command="{Binding SortByBothCommand, Mode=OneTime}" Margin="0"
-                                    ToolTip="This is what NBTExplorer sorts by. Order by compound,list,array,primitve and then by name"/>
                         </Grid>
                     </Grid>
                 </Border>

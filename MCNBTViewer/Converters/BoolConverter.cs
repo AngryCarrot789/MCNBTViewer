@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace FramePFX.Converters {
+namespace MCNBTViewer.Converters {
     public class BoolConverter : IValueConverter {
         public object TrueValue { get; set; }
 

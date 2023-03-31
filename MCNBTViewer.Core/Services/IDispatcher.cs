@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace FramePFX.Core.Services {
+namespace MCNBTViewer.Core.Services {
     public interface IDispatcher {
         /// <summary>
         /// Schedules a task to be invoked later. The action will not be called during this method's call

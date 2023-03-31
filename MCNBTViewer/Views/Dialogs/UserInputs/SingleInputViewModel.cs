@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using FramePFX.Core.Views.Dialogs;
-using FramePFX.Core.Views.ViewModels;
+using MCNBTViewer.Core.Views.Dialogs;
+using MCNBTViewer.Core.Views.ViewModels;
 
-namespace FramePFX.Views.Dialogs.UserInputs {
+namespace MCNBTViewer.Views.Dialogs.UserInputs {
     public class SingleInputViewModel : BaseConfirmableDialogViewModel, IErrorInfoHandler {
         private string title;
         public string Title {

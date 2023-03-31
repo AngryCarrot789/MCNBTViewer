@@ -1,6 +1,6 @@
-using FramePFX.Core.Views.Dialogs.UserInputs;
+using MCNBTViewer.Core.Views.Dialogs.UserInputs;
 
-namespace FramePFX.Views.Dialogs.UserInputs {
+namespace MCNBTViewer.Views.Dialogs.UserInputs {
     public class UserInputDialogService : IUserInputDialogService {
         public string ShowSingleInputDialog(string title = "Input a value", string message = "Input a new valid", string def = null, InputValidator validator = null) {
             SingleUserInputWindow window = new SingleUserInputWindow();

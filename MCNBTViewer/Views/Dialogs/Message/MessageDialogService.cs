@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
 using System.Windows;
-using FramePFX.Core.Views.Dialogs.Message;
+using MCNBTViewer.Core.Views.Dialogs.Message;
 
-namespace FramePFX.Views.Dialogs.Message {
+namespace MCNBTViewer.Views.Dialogs.Message {
     public class MessageDialogService : IMessageDialogService {
         public async Task ShowMessageAsync(string caption, string message) {
             await Application.Current.Dispatcher.InvokeAsync(() => {

@@ -1,36 +1,25 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Windows.Input;
+using FramePFX.Core;
+using MCNBTViewer.Core.AdvancedContextService;
 using MCNBTViewer.Core.NBT;
-using REghZy.MVVM.ViewModels;
+using MCNBTViewer.Core.Utils;
+using REghZy.Streams;
 
 namespace MCNBTViewer.Core.Explorer.Items {
-    public abstract class BaseNBTViewModel : BaseViewModel {
+    public abstract class BaseNBTViewModel : BaseViewModel, IContextProvider {
         private NBTType nbtType;
         public NBTType NBTType {
             get => this.nbtType;
             set => this.RaisePropertyChanged(ref this.nbtType, value);
         }
 
-        private bool canExpand;
-        public bool CanExpand {
-            get => this.canExpand = this.CanExpandTreeItem();
-            set => this.RaisePropertyChanged(ref this.canExpand, value);
-        }
-
-        private bool isExpanded;
-        public bool IsExpanded {
-            get => this.isExpanded;
-            set => this.RaisePropertyChanged(ref this.isExpanded, value);
-        }
-
-
         protected string name;
         public string Name {
             get => this.name;
-            set {
-                if (this.CanChangeName(this.name, value)) {
-                    this.RaisePropertyChanged(ref this.name, value);
-                }
-            }
+            set => this.RaisePropertyChanged(ref this.name, value);
         }
 
         private BaseNBTCollectionViewModel parent;
@@ -44,8 +33,8 @@ namespace MCNBTViewer.Core.Explorer.Items {
         /// </summary>
         public BaseNBTCollectionViewModel RootParent {
             get {
-                BaseNBTCollectionViewModel topLevel = null;
-                for (BaseNBTCollectionViewModel next = this.Parent; next != null; next = next.Parent)
+                BaseNBTCollectionViewModel topLevel = this.Parent;
+                for (BaseNBTCollectionViewModel next = topLevel; next != null; next = next.Parent)
                     topLevel = next;
                 return topLevel;
             }
@@ -63,9 +52,36 @@ namespace MCNBTViewer.Core.Explorer.Items {
             }
         }
 
+        public RelayCommand RemoveFromParentCommand { get; }
+
+        public ICommand CopyKeyNameCommand { get; }
+
+        public ICommand CopyBinaryToClipboardCommand { get; }
+
         protected BaseNBTViewModel(string name, NBTType type) {
             this.Name = name;
             this.NBTType = type;
+            this.RemoveFromParentCommand = new RelayCommand(this.RemoveFromParentAction, () => this.Parent != null && !(this is NBTDataFileViewModel));
+            this.CopyKeyNameCommand = new RelayCommand(async () => {
+                await ClipboardUtils.SetClipboardOrShowErrorDialog(this.Name ?? "");
+            }, () => !string.IsNullOrEmpty(this.Name));
+            this.CopyBinaryToClipboardCommand = new RelayCommand(async () => {
+                if (IoC.Clipboard == null) {
+                    await IoC.MessageDialogs.ShowMessageAsync("No clipboard", "Clipboard is unavailable. Cannot copy the NBT to the clipboard");
+                }
+                else {
+                    using (MemoryStream stream = new MemoryStream()) {
+                        try {
+                            NBTBase nbt = this.ToNBT();
+                            NBTBase.WriteTag(new DataOutputStream(stream), this.Name, nbt);
+                            IoC.Clipboard.SetBinaryTag("TAG_NBT", stream.ToArray());
+                        }
+                        catch (Exception e) {
+                            await IoC.MessageDialogs.ShowMessageAsync("Failed to write NBT", "Failed to write NBT to clipboard: " + e.Message);
+                        }
+                    }
+                }
+            });
         }
 
         protected BaseNBTViewModel(NBTType type) : this(null, type) {
@@ -73,24 +89,6 @@ namespace MCNBTViewer.Core.Explorer.Items {
         }
 
         protected BaseNBTViewModel() : this(null, NBTType.End) {
-
-        }
-
-        public abstract NBTBase ToNBT();
-
-        protected virtual bool CanExpandTreeItem() {
-            return false;
-        }
-
-        protected virtual bool CanChangeName(string oldName, string newName) {
-            return true;
-        }
-
-        public virtual void OnRemovedFromFolder() {
-
-        }
-
-        public virtual void OnAddedToFolder() {
 
         }
 
@@ -128,6 +126,39 @@ namespace MCNBTViewer.Core.Explorer.Items {
                 case NBTTagEnd _: return new NBTPrimitiveViewModel(name, NBTType.End);
                 default: return new NBTPrimitiveViewModel(name, nbt.Type);
             }
+        }
+
+        public abstract NBTBase ToNBT();
+
+        protected virtual bool CanExpandTreeItem() {
+            return false;
+        }
+
+        protected virtual bool CanChangeName(string oldName, string newName) {
+            return true;
+        }
+
+        public virtual void OnRemovedFromFolder() {
+
+        }
+
+        public virtual void OnAddedToFolder() {
+
+        }
+
+        private void RemoveFromParentAction() {
+            if (this.Parent != null) {
+                this.Parent.RemoveChild(this);
+            }
+        }
+
+        public virtual IEnumerable<IBaseContextEntry> GetContextEntries() {
+            yield return new ContextEntry("Copy Key Name", this.CopyKeyNameCommand);
+            yield return new ContextEntry("Copy", this.CopyBinaryToClipboardCommand);
+            yield return ContextEntrySeparator.Instance;
+            yield return new ContextEntry("Delete Tag", this.RemoveFromParentCommand) {
+                ToolTip = this.Parent != null ? "Removes this NBT entry from its parent" : "This Tag has no parent?"
+            };
         }
     }
 }

@@ -1,47 +1,75 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 
 namespace MCNBTViewer.Core.Views.Dialogs.FilePicking {
-    public class FileFilter {
+    public sealed class Filter {
         private readonly StringBuilder sb;
         private bool hasFirst;
 
-        public FileFilter(StringBuilder sb) {
-            this.sb = sb;
+        public Filter() {
+            this.sb = new StringBuilder(32);
         }
 
-        public FileFilter AddFilter(string readableName, string extension) {
-            if (string.IsNullOrEmpty(extension)) {
-                throw new ArgumentException("Extension cannot be null, empty, or consist of only whitespaces");
-            }
+        public Filter(string filter) {
+            this.sb = new StringBuilder(filter ?? "");
+        }
 
-            if (string.IsNullOrWhiteSpace(readableName)) {
-                readableName = extension.ToUpper();
-            }
+        public static Filter Of() {
+            return new Filter();
+        }
 
+        private StringBuilder Prepare() {
             if (this.hasFirst) {
-                this.sb.Append('|');
+                return this.sb.Append('|');
             }
             else {
                 this.hasFirst = true;
+                return this.sb;
             }
+        }
 
-            this.sb.Append(readableName).Append('|').Append(extension);
+        public Filter AddAllFiles() {
+            this.Prepare().Append("All Files|*.*");
             return this;
         }
 
-        public string GetFilter() {
-            string filter = string.Empty;
-            if (this.filters.Count > 0) {
-                filter = string.Join("|", this.filters.Select(f => $"{f.Name ?? f.Extension.ToUpper()} ({f.Extension.ToUpper()})|*.{f.Extension}"));
-                filter += "|";
+        public Filter AddFilter(string readableName, params string[] extensions) {
+            if (string.IsNullOrWhiteSpace(readableName)) {
+                throw new ArgumentException("Readable name cannot be null, empty, or consist of only whitespaces", nameof(readableName));
             }
 
-            filter += "All Files (*.*)|*.*";
-            return filter;
+            if (extensions.Any(string.IsNullOrEmpty)) {
+                throw new ArgumentException("One of the extension was null, empty, or consisted of only whitespaces", nameof(extensions));
+            }
+
+            this.Prepare().Append(readableName).Append('|').Append(string.Join(";", extensions.Select(x => "*." + x)));
+            return this;
+        }
+
+        public Filter AddFilter(string readableName, string extension) {
+            if (string.IsNullOrWhiteSpace(readableName)) {
+                throw new ArgumentException("Readable name cannot be null, empty, or consist of only whitespaces", nameof(readableName));
+            }
+
+            if (string.IsNullOrEmpty(extension)) {
+                throw new ArgumentException("Extension was null, empty, or consisted of only whitespaces", nameof(extension));
+            }
+
+            this.Prepare().Append(readableName).Append('|').Append("*.").Append(extension);
+            return this;
+        }
+
+        public override string ToString() {
+            return this.sb.ToString();
+        }
+
+        public override int GetHashCode() {
+            return this.sb.ToString().GetHashCode();
+        }
+
+        public override bool Equals(object obj) {
+            return obj is Filter filter && this.sb.Equals(filter.sb);
         }
     }
 }

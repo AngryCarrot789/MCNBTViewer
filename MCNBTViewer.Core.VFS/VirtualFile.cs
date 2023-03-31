@@ -1,5 +1,7 @@
 namespace MCNBTViewer.Core.VFS {
-    public class VirtualFile {
-        
+    public abstract class VirtualFile : VirtualFileBase {
+        protected VirtualFile() {
+            
+        }
     }
 }

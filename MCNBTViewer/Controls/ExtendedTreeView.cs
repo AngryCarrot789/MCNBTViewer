@@ -37,19 +37,31 @@ namespace MCNBTViewer.Controls {
         }
 
         public void SetSelectedFile(object file) {
-            if (file is BaseNBTCollectionViewModel folder) {
-                for (BaseNBTCollectionViewModel parent = folder.Parent; parent != null; parent = parent.Parent) {
-                    if (!parent.IsExpanded && parent.CanExpand) {
-                        parent.IsExpanded = true;
-                    }
-                }
-
-                folder.IsExpanded = true;
-            }
+            // if (file is BaseNBTCollectionViewModel folder) {
+            //     for (BaseNBTCollectionViewModel parent = folder.Parent; parent != null; parent = parent.Parent) {
+            //         if (!parent.IsExpanded && parent.CanExpand) {
+            //             parent.IsExpanded = true;
+            //         }
+            //     }
+            //     folder.IsExpanded = true;
+            // }
         }
 
         public object GetSelectedItem() {
             return this.SelectedItem;
+        }
+
+        public bool IsItemExpanded(BaseNBTViewModel item) {
+            if (item == null) {
+                return false;
+            }
+
+            DependencyObject container = this.ItemContainerGenerator.ContainerFromItem(item);
+            if (container is TreeViewItem treeItem && treeItem.IsExpanded) {
+                return true;
+            }
+
+            return false;
         }
     }
 }

@@ -1,9 +1,9 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
-using FramePFX.Core.AdvancedContextService;
+using MCNBTViewer.Core.AdvancedContextService;
 
-namespace FramePFX.AdvancedContextService {
+namespace MCNBTViewer.AdvancedContextService {
     public class AdvancedContextMenu : ContextMenu {
         private object currentItem;
 

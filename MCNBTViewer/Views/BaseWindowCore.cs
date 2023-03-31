@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using FramePFX.Core.Views;
-using FramePFX.Core.Views.ViewModels;
+using MCNBTViewer.Core.Views;
+using MCNBTViewer.Core.Views.ViewModels;
 
-namespace FramePFX.Views {
+namespace MCNBTViewer.Views {
     /// <summary>
     /// A base <see cref="Window"/> implementation which implements <see cref="IViewBase"/> and <see cref="IHasErrorInfo"/> to
     /// extract <see cref="ValidationError"/> instances and update the view model in the event of errors

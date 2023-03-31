@@ -1,8 +1,8 @@
 using System.Globalization;
 using System.Windows.Controls;
-using FramePFX.Core.Views.Dialogs.UserInputs;
+using MCNBTViewer.Core.Views.Dialogs.UserInputs;
 
-namespace FramePFX.Views.Dialogs.UserInputs {
+namespace MCNBTViewer.Views.Dialogs.UserInputs {
     public class SingleInputValidationRule : ValidationRule {
         public InputValidator Validator { get; set; }
 

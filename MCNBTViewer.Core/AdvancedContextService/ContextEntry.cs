@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Windows.Input;
+using FramePFX.Core;
 
-namespace FramePFX.Core.AdvancedContextService {
+namespace MCNBTViewer.Core.AdvancedContextService {
     /// <summary>
     /// The default implementation for a context entry (aka menu item), which also supports modifying the header,
     /// input gesture text, command and command parameter to reflect the UI menu item
@@ -9,6 +10,7 @@ namespace FramePFX.Core.AdvancedContextService {
     public class ContextEntry : BaseViewModel, IBaseContextEntry {
         private string header;
         private string inputGestureText;
+        private string toolTip;
         private ICommand command;
         private object commandParameter;
 
@@ -26,6 +28,14 @@ namespace FramePFX.Core.AdvancedContextService {
         public string InputGestureText {
             get => this.inputGestureText;
             set => this.RaisePropertyChanged(ref this.inputGestureText, value);
+        }
+
+        /// <summary>
+        /// A mouse over tooltip for this entry
+        /// </summary>
+        public string ToolTip {
+            get => this.toolTip;
+            set => this.RaisePropertyChanged(ref this.toolTip, value);
         }
 
         /// <summary>

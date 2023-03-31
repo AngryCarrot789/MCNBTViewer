@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
-using FramePFX.Core.Views.Windows;
+using MCNBTViewer.Core.Views.Windows;
 
-namespace FramePFX.Views {
+namespace MCNBTViewer.Views {
     public class BaseWindow : BaseWindowCore, IWindow {
         public void CloseWindow() {
             this.Close();

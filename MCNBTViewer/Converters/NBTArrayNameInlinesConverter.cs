@@ -1,27 +1,33 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Windows.Data;
+using System.Windows.Documents;
 
 namespace MCNBTViewer.Converters {
-    public class NBTArrayNameConverter : IMultiValueConverter {
+    public class NBTArrayNameInlinesConverter : BaseNBTTextRunConverter, IMultiValueConverter {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
             if (values.Length != 2) {
                 throw new Exception("Expected 2 values: [original Name] [array instance]");
             }
 
-            return FormatName(values[0] as string, values[1]);
-        }
-
-        public static string FormatName(string name, object value) {
-            if (value is int[] intArray) {
-                return string.IsNullOrEmpty(name) ? $"{intArray.Length} integer elements" : $"{name}: {intArray.Length} integer elements";
+            List<Run> runs = new List<Run>();
+            string name = values[0] as string;
+            if (!string.IsNullOrEmpty(name)) {
+                runs.Add(this.CreateNormalRun($"{name} "));
             }
-            else if (value is byte[] byteArray) {
-                return string.IsNullOrEmpty(name) ? $"{byteArray.Length} byte elements" : $"{name}: {byteArray.Length} byte elements";
+
+            if (values[1] is int[] intArray) {
+                runs.Add(this.CreateExtraRun($"({intArray.Length} integer elements)"));
+            }
+            else if (values[1] is byte[] byteArray) {
+                runs.Add(this.CreateExtraRun($"({byteArray.Length} byte elements)"));
             }
             else {
-                return name;
+                runs.Add(this.CreateNormalRun("<invalid data>"));
             }
+
+            return runs;
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) {

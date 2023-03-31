@@ -1,6 +1,6 @@
 using System;
 
-namespace FramePFX.Core.Views.Dialogs.UserInputs {
+namespace MCNBTViewer.Core.Views.Dialogs.UserInputs {
     public class InputValidator {
         public delegate bool IsInputInvalidDelegate(string input, out string errorMessage);
 

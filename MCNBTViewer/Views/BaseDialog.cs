@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
 using System.Windows;
-using FramePFX.Core.Views.Dialogs;
-using FramePFX.Views.Dialogs.FilePicking;
+using MCNBTViewer.Core.Views.Dialogs;
+using MCNBTViewer.Views.Dialogs.FilePicking;
 
-namespace FramePFX.Views {
+namespace MCNBTViewer.Views {
     public class BaseDialog : BaseWindowCore, IDialog {
         public BaseDialog() {
             this.Owner = FolderPicker.GetCurrentActiveWindow();

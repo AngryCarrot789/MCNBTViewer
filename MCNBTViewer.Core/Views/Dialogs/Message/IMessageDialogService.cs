@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace FramePFX.Core.Views.Dialogs.Message {
+namespace MCNBTViewer.Core.Views.Dialogs.Message {
     public interface IMessageDialogService {
         Task ShowMessageAsync(string caption, string message);
 

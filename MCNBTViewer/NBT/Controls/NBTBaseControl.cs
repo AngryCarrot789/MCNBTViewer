@@ -1,4 +1,3 @@
-using System.Windows;
 using System.Windows.Controls;
 using MCNBTViewer.Core.NBT;
 

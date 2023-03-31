@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
+using FramePFX.Core;
 using MCNBTViewer.Core.Explorer.Items;
 using MCNBTViewer.Core.NBT;
-using REghZy.MVVM.Commands;
-using REghZy.MVVM.ViewModels;
 
 namespace MCNBTViewer.Core.Explorer {
     public class NBTExplorerViewModel : BaseViewModel {
-        private bool isUpdatingSelection;
+        public bool IgnoreSelectionChanged { get; set; }
 
-        public NBTDataFileViewModel SelectedDataFile {
+        public NBTDataFileViewModel RootDataFileForSelectedItem {
             get {
                 BaseNBTViewModel item = this.SelectedFile;
                 if (item is NBTDataFileViewModel model) {
@@ -46,35 +45,35 @@ namespace MCNBTViewer.Core.Explorer {
                 BaseNBTViewModel selected = this.SelectedFile;
                 if (selected != null && (selected is BaseNBTCollectionViewModel || (selected = selected.Parent) is BaseNBTCollectionViewModel)) {
                     BaseNBTCollectionViewModel collection = (BaseNBTCollectionViewModel) selected;
-                    this.isUpdatingSelection = true;
+                    this.IgnoreSelectionChanged = true;
                     List<BaseNBTViewModel> list = collection.Children.OrderByDescending((a) => a.NBTType).ToList();
                     collection.Children.Clear();
                     foreach (BaseNBTViewModel model in list) {
                         collection.Children.Add(model);
                     }
 
-                    this.isUpdatingSelection = false;
+                    this.IgnoreSelectionChanged = false;
                 }
             });
             this.SortByNameCommand = new RelayCommand(() => {
                 BaseNBTViewModel selected = this.SelectedFile;
                 if (selected != null && (selected is BaseNBTCollectionViewModel || (selected = selected.Parent) is BaseNBTCollectionViewModel)) {
                     BaseNBTCollectionViewModel collection = (BaseNBTCollectionViewModel) selected;
-                    this.isUpdatingSelection = true;
+                    this.IgnoreSelectionChanged = true;
                     List<BaseNBTViewModel> list = collection.Children.OrderBy((a) => a.Name ?? "").ToList();
                     collection.Children.Clear();
                     foreach (BaseNBTViewModel model in list) {
                         collection.Children.Add(model);
                     }
 
-                    this.isUpdatingSelection = false;
+                    this.IgnoreSelectionChanged = false;
                 }
             });
             this.SortByBothCommand = new RelayCommand(() => {
                 BaseNBTViewModel selected = this.SelectedFile;
                 if (selected != null && (selected is BaseNBTCollectionViewModel || (selected = selected.Parent) is BaseNBTCollectionViewModel)) {
                     BaseNBTCollectionViewModel collection = (BaseNBTCollectionViewModel) selected;
-                    this.isUpdatingSelection = true;
+                    this.IgnoreSelectionChanged = true;
                     List<BaseNBTViewModel> list = new List<BaseNBTViewModel>(collection.Children);
                     list.Sort((a, b) => {
                         int cmp = a.NBTType.Compare4(b.NBTType);
@@ -89,17 +88,36 @@ namespace MCNBTViewer.Core.Explorer {
                         collection.Children.Add(model);
                     }
 
-                    this.isUpdatingSelection = false;
+                    this.IgnoreSelectionChanged = false;
                 }
             });
         }
 
+        public void RemoveDatFile(NBTDataFileViewModel file) {
+            bool isSelected = this.RootDataFileForSelectedItem == file;
+            if (this.LoadedDataFiles.Remove(file)) {
+                if (isSelected) {
+                    NBTDataFileViewModel any = this.LoadedDataFiles.FirstOrDefault();
+                    if (any == null) {
+                        this.ExplorerList.CurrentFolder = null;
+                        this.ExplorerList.SelectedItem = null;
+                    }
+                    else {
+                        this.ExplorerList.CurrentFolder = any;
+                        if (any.Children.Count > 0) {
+                            this.ExplorerList.SelectedItem = any.Children[0];
+                        }
+                    }
+                }
+            }
+        }
+
         public void OnTreeSelectItem(BaseNBTViewModel item) {
-            if (this.isUpdatingSelection) {
+            if (this.IgnoreSelectionChanged) {
                 return;
             }
 
-            this.isUpdatingSelection = true;
+            this.IgnoreSelectionChanged = true;
             try {
                 if (item is NBTDataFileViewModel model && this.LoadedDataFiles.Contains(item)) {
                     this.ExplorerList.CurrentFolder = model;
@@ -108,7 +126,7 @@ namespace MCNBTViewer.Core.Explorer {
                     }
                 }
                 else if (item != null) {
-                    if (item is BaseNBTCollectionViewModel collection) {
+                    if (item is BaseNBTCollectionViewModel collection) { // && this.TreeView.IsItemExpanded(collection)
                         this.ExplorerList.CurrentFolder = collection;
                         if (collection.Children.Count > 0) {
                             this.ExplorerList.SelectedItem = collection.Children[0];
@@ -130,7 +148,7 @@ namespace MCNBTViewer.Core.Explorer {
                 }
             }
             finally {
-                this.isUpdatingSelection = false;
+                this.IgnoreSelectionChanged = false;
             }
         }
 

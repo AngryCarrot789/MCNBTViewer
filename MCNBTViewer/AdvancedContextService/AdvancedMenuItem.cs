@@ -2,7 +2,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace FramePFX.AdvancedContextService {
+namespace MCNBTViewer.AdvancedContextService {
     public class AdvancedMenuItem : MenuItem {
         private object currentItem;
 

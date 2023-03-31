@@ -3,9 +3,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
-using FramePFX.Core.AdvancedContextService;
+using MCNBTViewer.Core.AdvancedContextService;
 
-namespace FramePFX.AdvancedContextService {
+namespace MCNBTViewer.AdvancedContextService {
     public static class ContextMenuHelper {
         public static readonly DependencyProperty ContextProviderProperty =
             DependencyProperty.RegisterAttached(

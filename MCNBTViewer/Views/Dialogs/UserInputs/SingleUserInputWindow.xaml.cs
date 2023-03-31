@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace FramePFX.Views.Dialogs.UserInputs {
+namespace MCNBTViewer.Views.Dialogs.UserInputs {
     /// <summary>
     /// Interaction logic for SingleUserInputWindow.xaml
     /// </summary>

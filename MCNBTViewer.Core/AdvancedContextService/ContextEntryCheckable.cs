@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Windows.Input;
 
-namespace FramePFX.Core.AdvancedContextService {
+namespace MCNBTViewer.Core.AdvancedContextService {
     public class ContextEntryCheckable : ContextEntry {
         private bool isChecked;
         public bool IsChecked {

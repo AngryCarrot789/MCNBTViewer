@@ -1,15 +1,27 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Windows.Data;
+using System.Windows.Documents;
 
 namespace MCNBTViewer.Converters {
-    public class NBTPrimitiveNameConverter  : IMultiValueConverter {
+    public class NBTPrimitiveNameInlinesConverter : BaseNBTTextRunConverter, IMultiValueConverter {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
             if (values.Length != 2) {
                 throw new Exception("Expected 2 values: [original Name] [string data]");
             }
 
-            return FormatName(values[0] as string, values[1] as string);
+            List<Run> runs = new List<Run>();
+            string name = values[0] as string ?? "<unnamed>";
+            if (values[1] is object value) {
+                runs.Add(this.CreateNormalRun(name + " "));
+                runs.Add(this.CreateExtraRun("(" + value.ToString() + ")"));
+            }
+            else {
+                runs.Add(this.CreateNormalRun(name));
+            }
+
+            return runs;
         }
 
         public static string FormatName(string name, string data) {

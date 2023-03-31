@@ -1,10 +1,10 @@
-using FramePFX.Core.Views.Dialogs;
-using FramePFX.Core.Views.Dialogs.FilePicking;
+using MCNBTViewer.Core.Views.Dialogs;
+using MCNBTViewer.Core.Views.Dialogs.FilePicking;
 using Microsoft.Win32;
 
-namespace FramePFX.Views.Dialogs.FilePicking {
+namespace MCNBTViewer.Views.Dialogs.FilePicking {
     public class FilePickDialogService : IFilePickDialogService {
-        public DialogResult<string[]> ShowFilePickerDialogAsync(string filter, string defaultPath = null, string titleBar = null, bool multiSelect = false) {
+        public DialogResult<string[]> ShowFilePickerDialog(string filter, string defaultPath = null, string titleBar = null, bool multiSelect = false) {
             OpenFileDialog dialog = new OpenFileDialog {
                 Filter = filter,
                 Multiselect = multiSelect,
@@ -18,7 +18,7 @@ namespace FramePFX.Views.Dialogs.FilePicking {
             return dialog.ShowDialog() == true ? new DialogResult<string[]>(dialog.FileNames) : new DialogResult<string[]>(false);
         }
 
-        public DialogResult<string> ShowFolderPickerDialogAsync(string defaultPath = null, string titleBar = null) {
+        public DialogResult<string> ShowFolderPickerDialog(string defaultPath = null, string titleBar = null) {
             FolderPicker picker = new FolderPicker {
                 Title = titleBar ?? "Select a folder"
             };

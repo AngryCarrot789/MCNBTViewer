@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.33130.400
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCNBTViewer", "MCNBTViewer\MCNBTViewer.csproj", "{7F835617-2898-41C0-9A7E-8D6CD989E8AD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCNBTViewer.Core", "MCNBTViewer.Core\MCNBTViewer.Core.csproj", "{EBDDAA92-38B1-4501-B4EB-9EEB02909258}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MCNBTViewer.Core", "MCNBTViewer.Core\MCNBTViewer.Core.csproj", "{EBDDAA92-38B1-4501-B4EB-9EEB02909258}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCNBTViewer.Core.VFS", "MCNBTViewer.Core.VFS\MCNBTViewer.Core.VFS.csproj", "{FD1E0971-B06A-4A2F-8DFA-4CACDDF10E7A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{EBDDAA92-38B1-4501-B4EB-9EEB02909258}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EBDDAA92-38B1-4501-B4EB-9EEB02909258}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EBDDAA92-38B1-4501-B4EB-9EEB02909258}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD1E0971-B06A-4A2F-8DFA-4CACDDF10E7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD1E0971-B06A-4A2F-8DFA-4CACDDF10E7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD1E0971-B06A-4A2F-8DFA-4CACDDF10E7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD1E0971-B06A-4A2F-8DFA-4CACDDF10E7A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
