@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Input;
-using FramePFX.Core;
 using MCNBTViewer.Core.AdvancedContextService;
 using MCNBTViewer.Core.NBT;
 using MCNBTViewer.Core.Utils;
+using MCNBTViewer.Core.Views.Dialogs.UserInputs;
 using REghZy.Streams;
 
 namespace MCNBTViewer.Core.Explorer.Items {
@@ -58,6 +59,8 @@ namespace MCNBTViewer.Core.Explorer.Items {
 
         public ICommand CopyBinaryToClipboardCommand { get; }
 
+        public ICommand RenameCommand { get; }
+
         protected BaseNBTViewModel(string name, NBTType type) {
             this.Name = name;
             this.NBTType = type;
@@ -82,6 +85,27 @@ namespace MCNBTViewer.Core.Explorer.Items {
                     }
                 }
             });
+
+            this.RenameCommand = new RelayCommand(this.RenameAction, () => this.Parent is NBTCompoundViewModel);
+        }
+
+        private void RenameAction() {
+            if (!(this.Parent is NBTCompoundViewModel compound)) {
+                return;
+            }
+
+            string newName = IoC.UserInput.ShowSingleInputDialog("Rename tag", "Input a new name for this element", this.Name ?? "", InputValidator.FromFunc(input => {
+                BaseNBTViewModel first = compound.Children.FirstOrDefault(item => item.Name == input);
+                if (first != null) {
+                    return "A tag already exists with that name: " + first;
+                }
+
+                return null;
+            }));
+
+            if (newName != null) {
+                this.Name = newName;
+            }
         }
 
         protected BaseNBTViewModel(NBTType type) : this(null, type) {
@@ -130,6 +154,10 @@ namespace MCNBTViewer.Core.Explorer.Items {
 
         public abstract NBTBase ToNBT();
 
+        public override string ToString() {
+            return this.NBTType.ToString();
+        }
+
         protected virtual bool CanExpandTreeItem() {
             return false;
         }
@@ -153,8 +181,22 @@ namespace MCNBTViewer.Core.Explorer.Items {
         }
 
         public virtual IEnumerable<IBaseContextEntry> GetContextEntries() {
-            yield return new ContextEntry("Copy Key Name", this.CopyKeyNameCommand);
-            yield return new ContextEntry("Copy", this.CopyBinaryToClipboardCommand);
+            yield return new ContextEntry("Copy Name", this.CopyKeyNameCommand);
+            if (this is NBTPrimitiveViewModel item) {
+                yield return new ContextEntry("Copy Value", item.CopyValueCommand);
+            }
+            else if (this is NBTIntArrayViewModel intArray) {
+                yield return new LazyASFContextEntry("Copy Int Values (CSV)", async () => {
+                    await ClipboardUtils.SetClipboardOrShowErrorDialog(intArray.Data == null ? "" : string.Join(",", intArray.Data));
+                });
+            }
+            else if (this is NBTByteArrayViewModel byteArray) {
+                yield return new LazyASFContextEntry("Copy Byte Values (CSV)", async () => {
+                    await ClipboardUtils.SetClipboardOrShowErrorDialog(byteArray.Data == null ? "" : string.Join(",", byteArray.Data));
+                });
+            }
+
+            yield return new ContextEntry("Copy (Binary)", this.CopyBinaryToClipboardCommand);
             yield return ContextEntrySeparator.Instance;
             yield return new ContextEntry("Delete Tag", this.RemoveFromParentCommand) {
                 ToolTip = this.Parent != null ? "Removes this NBT entry from its parent" : "This Tag has no parent?"

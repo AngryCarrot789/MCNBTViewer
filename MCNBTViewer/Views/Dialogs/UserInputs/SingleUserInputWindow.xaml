@@ -5,15 +5,16 @@
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                   xmlns:views="clr-namespace:MCNBTViewer.Views"
                   xmlns:userInputs="clr-namespace:MCNBTViewer.Views.Dialogs.UserInputs"
+                  xmlns:ui="clr-namespace:MCNBTViewer.Core.Views.Dialogs.UserInputs;assembly=MCNBTViewer.Core"
                   mc:Ignorable="d"
-                  d:DataContext="{d:DesignInstance userInputs:SingleInputViewModel}"
-                  Title="{Binding Title, Mode=OneTime}" Height="132" Width="320"
+                  d:DataContext="{d:DesignInstance ui:SingleInputViewModel}"
+                  Title="{Binding Title}" Height="132" Width="320"
                   Style="{DynamicResource CustomWindowStyle}" 
                   WindowStartupLocation="CenterOwner" 
                   Background="{DynamicResource AREghZyBrush.Deep.3.Background.Static}"
                   WindowStyle="ToolWindow" ResizeMode="NoResize">
     <Window.Resources>
-        <userInputs:SingleInputValidationRule x:Key="SIVR"/>
+        <userInputs:SingleInputValidationRule x:Key="ValidatorInput"/>
     </Window.Resources>
     <Window.InputBindings>
         <KeyBinding Key="Enter" Command="{Binding ConfirmCommand, Mode=OneTime}"/>
@@ -25,7 +26,7 @@
             <TextBox.Text>
                 <Binding Path="Input" UpdateSourceTrigger="PropertyChanged" NotifyOnValidationError="True">
                     <Binding.ValidationRules>
-                        <StaticResource ResourceKey="SIVR"/>
+                        <StaticResource ResourceKey="ValidatorInput"/>
                     </Binding.ValidationRules>
                 </Binding>
             </TextBox.Text>

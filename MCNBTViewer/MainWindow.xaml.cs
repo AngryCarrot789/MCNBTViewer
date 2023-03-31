@@ -1,8 +1,5 @@
-﻿using System.IO;
-using System.Windows;
+﻿using System.Windows;
 using MCNBTViewer.Core;
-using MCNBTViewer.Core.NBT;
-using REghZy.Streams;
 
 namespace MCNBTViewer {
     /// <summary>

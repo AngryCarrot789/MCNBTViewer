@@ -1,5 +1,4 @@
-﻿using FramePFX.Core;
-using MCNBTViewer.Core.Explorer.Items;
+﻿using MCNBTViewer.Core.Explorer.Items;
 
 namespace MCNBTViewer.Core.Explorer {
     public class NBTExplorerListViewModel : BaseViewModel {

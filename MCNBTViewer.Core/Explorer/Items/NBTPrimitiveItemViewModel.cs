@@ -1,5 +1,10 @@
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using MCNBTViewer.Core.AdvancedContextService;
 using MCNBTViewer.Core.NBT;
+using MCNBTViewer.Core.Utils;
 
 namespace MCNBTViewer.Core.Explorer.Items {
     /// <summary>
@@ -12,8 +17,16 @@ namespace MCNBTViewer.Core.Explorer.Items {
             set => this.RaisePropertyChanged(ref this.data, value);
         }
 
-        public NBTPrimitiveViewModel(string name, NBTType type) : base(name, type) {
+        public ICommand CopyValueCommand { get; }
 
+        public NBTPrimitiveViewModel(string name, NBTType type) : base(name, type) {
+            this.CopyValueCommand = new RelayCommand(async () => await this.CopyValueAction());
+        }
+
+        private async Task CopyValueAction() {
+            if (this.Data != null) {
+                await ClipboardUtils.SetClipboardOrShowErrorDialog(this.Data);
+            }
         }
 
         public override NBTBase ToNBT() {

@@ -12,28 +12,17 @@ namespace MCNBTViewer.Converters {
             }
 
             List<Run> runs = new List<Run>();
-            string name = values[0] as string ?? "<unnamed>";
+            string name = values[0] as string ?? "";
             if (values[1] is object value) {
-                runs.Add(this.CreateNormalRun(name + " "));
-                runs.Add(this.CreateExtraRun("(" + value.ToString() + ")"));
+                if (!string.IsNullOrEmpty(name))
+                    runs.Add(this.CreateNormalRun(name + " "));
+                runs.Add(this.CreateExtraRun("(" + value + ")"));
             }
             else {
                 runs.Add(this.CreateNormalRun(name));
             }
 
             return runs;
-        }
-
-        public static string FormatName(string name, string data) {
-            if (string.IsNullOrEmpty(name)) {
-                return data ?? "<invalid data>";
-            }
-            else if (data != null) {
-                return $"{name}: {data}";
-            }
-            else {
-                return name;
-            }
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) {

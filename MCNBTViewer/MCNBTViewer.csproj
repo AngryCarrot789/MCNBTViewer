@@ -37,29 +37,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationFramework.Aero2" />
-    <Reference Include="REghZy.Collections">
-      <HintPath>..\..\REghZy\DLL\REghZy.Collections.dll</HintPath>
-    </Reference>
-    <Reference Include="REghZy.Maths">
-      <HintPath>..\..\REghZy\DLL\REghZy.Maths.dll</HintPath>
-    </Reference>
-    <Reference Include="REghZy.MathsF">
-      <HintPath>..\..\REghZy\DLL\REghZy.MathsF.dll</HintPath>
-    </Reference>
-    <Reference Include="REghZy.MVVM">
-      <HintPath>..\..\REghZy\DLL\REghZy.MVVM.dll</HintPath>
-    </Reference>
-    <Reference Include="REghZy.MVVM.Framework">
-      <HintPath>..\..\REghZy\DLL\REghZy.MVVM.Framework.dll</HintPath>
-    </Reference>
-    <Reference Include="REghZy.Streams">
+    <Reference Include="REghZy.Streams, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\REghZy\DLL\REghZy.Streams.dll</HintPath>
-    </Reference>
-    <Reference Include="REghZy.Utils">
-      <HintPath>..\..\REghZy\DLL\REghZy.Utils.dll</HintPath>
-    </Reference>
-    <Reference Include="REghZy.WPF">
-      <HintPath>..\..\REghZy\DLL\REghZy.WPF.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -105,12 +85,16 @@
     <Compile Include="Converters\SelectedParentToPathConverter.cs" />
     <Compile Include="NBT\Controls\NBTBaseControl.cs" />
     <Compile Include="NBT\Controls\NBTCompoundControl.cs" />
+    <Compile Include="NBT\Explorer\Dialogs\NewTagDialogService.cs" />
     <Compile Include="NBT\Explorer\ListFallbackSourceConverter.cs" />
     <Compile Include="NBT\Explorer\NBTItemTemplateSelector.cs" />
     <Compile Include="Services\ClipboardService.cs" />
     <Compile Include="Services\WinOSFileExplorer.cs" />
-    <Compile Include="Themes\AttachedProperties\PasswordAttachedProperty.cs" />
-    <Compile Include="Themes\AttachedProperties\TextHinting.cs" />
+    <Compile Include="Themes\Attached\CornerHelper.cs" />
+    <Compile Include="Themes\Attached\MenuHelper.cs" />
+    <Compile Include="Themes\Attached\PasswordBoxHelper.cs" />
+    <Compile Include="Themes\Attached\TextBoxAutoSelect.cs" />
+    <Compile Include="Themes\Attached\TextHinting.cs" />
     <Compile Include="Themes\Controls.xaml.cs">
       <DependentUpon>Controls.xaml</DependentUpon>
     </Compile>
@@ -122,8 +106,10 @@
     <Compile Include="Views\Dialogs\FilePicking\FilePickDialogService.cs" />
     <Compile Include="Views\Dialogs\FilePicking\FolderPicker.cs" />
     <Compile Include="Views\Dialogs\Message\MessageDialogService.cs" />
+    <Compile Include="Views\Dialogs\UserInputs\DoubleUserInputWindow.xaml.cs">
+      <DependentUpon>DoubleUserInputWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Dialogs\UserInputs\SingleInputValidationRule.cs" />
-    <Compile Include="Views\Dialogs\UserInputs\SingleInputViewModel.cs" />
     <Compile Include="Views\Dialogs\UserInputs\SingleUserInputWindow.xaml.cs">
       <DependentUpon>SingleUserInputWindow.xaml</DependentUpon>
     </Compile>
@@ -176,6 +162,10 @@
     <Page Include="Themes\VeryDarkTheme.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Dialogs\UserInputs\DoubleUserInputWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Dialogs\UserInputs\SingleUserInputWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -237,6 +227,5 @@
       <Name>MCNBTViewer.Core</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

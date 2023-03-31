@@ -29,6 +29,11 @@ namespace MCNBTViewer.Controls {
         }
 
         private void OnSelectedItemChanged(BaseNBTViewModel nbt) {
+            if (nbt == null) {
+                this.PathElements = new List<object>();
+                return;
+            }
+
             using (List<BaseNBTViewModel>.Enumerator chain = nbt.ParentChain.GetEnumerator()) {
                 List<object> list = new List<object>();
                 if (chain.MoveNext()) {

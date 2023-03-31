@@ -1,7 +1,7 @@
 using System;
 using System.Windows.Input;
 
-namespace FramePFX.Core {
+namespace MCNBTViewer.Core {
     /// <summary>
     /// A base relay command class, that implements ICommand, and also has a simple
     /// implementation for dealing with the <see cref="CanExecuteChanged"/> event handler

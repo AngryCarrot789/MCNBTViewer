@@ -1,6 +1,6 @@
 using System;
 
-namespace FramePFX.Core {
+namespace MCNBTViewer.Core {
     /// <summary>
     /// A relay command, that allows passing a parameter to the command
     /// </summary>

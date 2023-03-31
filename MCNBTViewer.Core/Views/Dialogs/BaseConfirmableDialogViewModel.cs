@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using FramePFX.Core;
 using MCNBTViewer.Core.Views.ViewModels;
 
 namespace MCNBTViewer.Core.Views.Dialogs {
@@ -7,7 +6,7 @@ namespace MCNBTViewer.Core.Views.Dialogs {
         public RelayCommand ConfirmCommand { get; }
         public RelayCommand CancelCommand { get; }
 
-        protected BaseConfirmableDialogViewModel(IDialog dialog) : base(dialog) {
+        protected BaseConfirmableDialogViewModel() {
             this.ConfirmCommand = new RelayCommand(async () => await this.ConfirmAction());
             this.CancelCommand = new RelayCommand(async () => await this.CancelAction());
         }

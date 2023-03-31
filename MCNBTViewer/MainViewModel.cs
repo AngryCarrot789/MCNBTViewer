@@ -2,15 +2,12 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using FramePFX.Core;
 using MCNBTViewer.Core;
 using MCNBTViewer.Core.Explorer;
 using MCNBTViewer.Core.Explorer.Items;
 using MCNBTViewer.Core.NBT;
 using MCNBTViewer.Core.Utils;
 using MCNBTViewer.Core.Views.Dialogs;
-using MCNBTViewer.Core.Views.Dialogs.FilePicking;
-using BaseViewModel = REghZy.MVVM.ViewModels.BaseViewModel;
 
 namespace MCNBTViewer {
     public class MainViewModel : BaseViewModel {
@@ -54,17 +51,13 @@ namespace MCNBTViewer {
         private async Task OpenFolderAction() {
             DialogResult<string> result = IoC.FilePicker.ShowFolderPickerDialog(titleBar: "Select a folder to open");
             if (result.IsSuccess) {
-                if (await IoC.MessageDialogs.ShowYesNoDialogAsync("Open all files?", "Do you want to open all files deep in this folder (all subdirectories), or just this folder specifically?")) {
-                    await this.ParseFilesAction(CollectAllFiles(result.Value));
+                if (await IoC.MessageDialogs.ShowYesNoDialogAsync("Open all files?", "Do you want to open all files in all subdirectories in this folder? (otherwise, just this folder specifically)", false)) {
+                    await this.ParseFilesAction(Directory.GetFiles(result.Value, "*.dat", SearchOption.AllDirectories));
                 }
                 else {
                     await this.ParseFilesAction(Directory.GetFiles(result.Value, "*.dat"));
                 }
             }
-        }
-
-        private static string[] CollectAllFiles(string folder) {
-            return Directory.GetFiles(folder, "*.dat", SearchOption.AllDirectories);
         }
 
         public async Task OpenFileAction() {

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
-using FramePFX.Core;
 using MCNBTViewer.Core.Explorer.Items;
 using MCNBTViewer.Core.NBT;
 
@@ -17,7 +16,7 @@ namespace MCNBTViewer.Core.Explorer {
                 if (item is NBTDataFileViewModel model) {
                     return model;
                 }
-                else if ((item = item.RootParent) is NBTDataFileViewModel) {
+                else if (item != null && (item = item.RootParent) is NBTDataFileViewModel) {
                     return (NBTDataFileViewModel) item;
                 }
                 else {

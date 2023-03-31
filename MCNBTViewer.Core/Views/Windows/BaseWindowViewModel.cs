@@ -1,5 +1,3 @@
-using FramePFX.Core;
-
 namespace MCNBTViewer.Core.Views.Windows {
     public abstract class BaseWindowViewModel : BaseViewModel {
         public IWindow Window { get; }

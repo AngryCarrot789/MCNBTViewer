@@ -1,11 +1,9 @@
-using FramePFX.Core;
-
 namespace MCNBTViewer.Core.Views.Dialogs {
     public abstract class BaseDialogViewModel : BaseViewModel {
-        public IDialog Dialog { get; }
+        public IDialog Dialog { get; set; }
 
-        protected BaseDialogViewModel(IDialog dialog) {
-            this.Dialog = dialog;
+        protected BaseDialogViewModel() {
+
         }
     }
 }

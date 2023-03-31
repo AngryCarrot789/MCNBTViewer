@@ -1,4 +1,5 @@
 using MCNBTViewer.Core.Explorer;
+using MCNBTViewer.Core.Explorer.Dialogs;
 using MCNBTViewer.Core.Services;
 using MCNBTViewer.Core.Views.Dialogs.FilePicking;
 using MCNBTViewer.Core.Views.Dialogs.Message;
@@ -14,6 +15,7 @@ namespace MCNBTViewer.Core {
         public static IFilePickDialogService FilePicker { get; set; }
         public static IUserInputDialogService UserInput { get; set; }
         public static IOSFileExplorer OsFileExplorer { get; set; }
+        public static INewTagDialogService TagDialogService { get; set; }
 
         public static NBTExplorerViewModel MainExplorer { get; set; }
     }

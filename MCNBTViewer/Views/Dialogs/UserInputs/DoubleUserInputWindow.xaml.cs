@@ -1,24 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+﻿using System.Windows;
 
 namespace MCNBTViewer.Views.Dialogs.UserInputs {
     /// <summary>
     /// Interaction logic for DoubleUserInputWindow.xaml
     /// </summary>
-    public partial class DoubleUserInputWindow : Window {
+    public partial class DoubleUserInputWindow : BaseDialog {
+        public SingleInputValidationRule InputValidationRuleA => this.Resources["ValidatorInputA"] as SingleInputValidationRule;
+        public SingleInputValidationRule InputValidationRuleB => this.Resources["ValidatorInputB"] as SingleInputValidationRule;
+
         public DoubleUserInputWindow() {
-            InitializeComponent();
+            this.InitializeComponent();
+            this.Loaded += this.WindowOnLoaded;
+        }
+
+        private void WindowOnLoaded(object sender, RoutedEventArgs e) {
+            this.InputBoxA.Focus();
+            this.InputBoxA.SelectAll();
         }
     }
 }

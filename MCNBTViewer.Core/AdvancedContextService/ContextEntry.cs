@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Windows.Input;
-using FramePFX.Core;
 
 namespace MCNBTViewer.Core.AdvancedContextService {
     /// <summary>

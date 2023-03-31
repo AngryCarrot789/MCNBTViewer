@@ -2,7 +2,7 @@
 using MCNBTViewer.Core.Views.ViewModels;
 
 namespace MCNBTViewer.Core.Views.Dialogs.UserInputs {
-    public class MySingleInputViewModel : BaseConfirmableDialogViewModel, IErrorInfoHandler {
+    public class SingleInputViewModel : BaseConfirmableDialogViewModel, IErrorInfoHandler {
         private string title;
         public string Title {
             get => this.title;
@@ -23,7 +23,7 @@ namespace MCNBTViewer.Core.Views.Dialogs.UserInputs {
 
         public InputValidator ValidateInput { get; set; }
 
-        public MySingleInputViewModel(IDialog dialog) : base(dialog) {
+        public SingleInputViewModel() {
 
         }
 

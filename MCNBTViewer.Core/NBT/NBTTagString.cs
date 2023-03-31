@@ -6,16 +6,16 @@ namespace MCNBTViewer.Core.NBT {
 
         public string data;
 
-        public NBTTagString() {
+        public NBTTagString() : this("") {
 
         }
 
         public NBTTagString(string data) {
-            this.data = data;
+            this.data = data ?? "";
         }
 
         public override void Write(DataOutputStream output) {
-            if (this.data == null) {
+            if (string.IsNullOrEmpty(this.data)) {
                 output.WriteUShort(0);
             }
             else {
@@ -45,7 +45,7 @@ namespace MCNBTViewer.Core.NBT {
         }
 
         public override int GetHashCode() {
-            return base.GetHashCode() ^ this.data.GetHashCode();
+            return base.GetHashCode() ^ (this.data != null ? this.data.GetHashCode() : 0);
         }
     }
 }

@@ -6,6 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Views\Dialogs\DoubleInputWindow.xaml" />
+    <None Remove="Views\Dialogs\UserInputs\DoubleInputWindow.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="REghZy.Streams, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\REghZy\DLL\REghZy.Streams.dll</HintPath>
     </Reference>
