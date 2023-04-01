@@ -16,12 +16,13 @@ namespace MCNBTViewer.Core {
         public static IFilePickDialogService FilePicker { get; set; }
         public static IUserInputDialogService UserInput { get; set; }
         public static IExplorerService ExplorerService { get; set; }
-        public static INewTagDialogService TagDialogService { get; set; }
+        public static INBTDialogService TagDialogService { get; set; }
 
         public static NBTExplorerViewModel MainExplorer { get; set; }
 
         public static IFindView FindView { get; set; }
 
         public static bool IsBigEndian { get; set; }
+        public static bool UseCompression { get; set; }
     }
 }

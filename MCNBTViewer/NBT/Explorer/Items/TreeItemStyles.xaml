@@ -15,6 +15,7 @@
                     <MultiBinding Converter="{StaticResource NbtCollectiveInlinesNameConverter}">
                         <Binding Path="Name"/>
                         <Binding Path="Children"/>
+                        <Binding Path="Children.Count"/>
                     </MultiBinding>
                 </ap:TextBlockHelper.BindableInlines>
             </TextBlock>
@@ -48,6 +49,7 @@
                     <MultiBinding Converter="{StaticResource NbtCollectiveInlinesNameConverter}">
                         <Binding Path="Name"/>
                         <Binding Path="Children"/>
+                        <Binding Path="Children.Count"/>
                     </MultiBinding>
                 </ap:TextBlockHelper.BindableInlines>
             </TextBlock>

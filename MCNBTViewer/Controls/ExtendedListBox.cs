@@ -18,6 +18,39 @@ namespace MCNBTViewer.Controls {
             set => this.SetValue(ExplorerProperty, value);
         }
 
+        private ScrollViewer PART_ScrollViewer;
+
+        public ExtendedListBox() {
+            this.PreviewMouseWheel += this.ExtendedListBox_PreviewMouseWheel;
+        }
+
+        public override void OnApplyTemplate() {
+            base.OnApplyTemplate();
+            this.PART_ScrollViewer = GetTemplateChild("PART_ScrollViewer") as ScrollViewer;
+        }
+
+        private void ExtendedListBox_PreviewMouseWheel(object sender, MouseWheelEventArgs e) {
+            if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift && this.PART_ScrollViewer != null) {
+                if (e.Delta < 0) {
+                    // scroll right
+                    this.PART_ScrollViewer.LineRight();
+                    this.PART_ScrollViewer.LineRight();
+                    this.PART_ScrollViewer.LineRight();
+                }
+                else if (e.Delta > 0) {
+                    this.PART_ScrollViewer.LineLeft();
+                    this.PART_ScrollViewer.LineLeft();
+                    this.PART_ScrollViewer.LineLeft();
+                }
+                else {
+                    return;
+                }
+
+                e.Handled = true;
+                return;
+            }
+        }
+
         protected override void OnMouseDoubleClick(MouseButtonEventArgs e) {
             base.OnMouseDoubleClick(e);
             if (e.Handled) {

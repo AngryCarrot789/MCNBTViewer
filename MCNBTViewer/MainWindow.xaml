@@ -32,6 +32,7 @@
                 <MenuItem Header="Save All" Command="{Binding SaveAllDatFilesCommands, Mode=OneTime}" InputGestureText="Ctrl+Shift+O"/>
                 <Separator Style="{DynamicResource MenuItemSeparator}"/>
                 <MenuItem IsCheckable="True" Header="Use Big Endianness" IsChecked="{Binding IsBigEndian, UpdateSourceTrigger=PropertyChanged}"/>
+                <MenuItem IsCheckable="True" Header="Use Compressed (GZIP)" IsChecked="{Binding UseCompression, UpdateSourceTrigger=PropertyChanged}"/>
             </MenuItem>
             <MenuItem Header="Search">
                 <MenuItem Header="Find..." InputGestureText="Ctrl+F" Command="{Binding ShowFindViewCommand, Mode=OneTime}"/>

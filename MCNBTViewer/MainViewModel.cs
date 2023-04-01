@@ -30,8 +30,17 @@ namespace MCNBTViewer {
             });
         }
 
+        private bool useCompression;
+        public bool UseCompression {
+            get => this.useCompression;
+            set => this.RaisePropertyChanged(ref this.useCompression, value, () => {
+                IoC.UseCompression = this.UseCompression;
+            });
+        }
+
         public MainViewModel() {
             this.IsBigEndian = true;
+            this.UseCompression = true;
             this.Explorer = new NBTExplorerViewModel();
             IoC.MainExplorer = this.Explorer;
             this.OpenFileCommand = new RelayCommand(async () => await this.OpenFileAction());
@@ -101,11 +110,11 @@ namespace MCNBTViewer {
 
                 NBTTagCompound compound;
                 try {
-                    compound = CompressedStreamTools.ReadCompressed(files[i], out _);
+                    compound = CompressedStreamTools.ReadCompressed(files[i], out _, IoC.UseCompression, IoC.IsBigEndian);
                 }
                 catch (Exception e) {
                     if ((i + 1) >= files.Length) {
-                        await IoC.MessageDialogs.ShowMessageAsync("Failed to read NBT", $"Failed to read NBT file at:\n{files[i]}\n{e.Message}");
+                        await IoC.MessageDialogs.ShowMessageAsync("Failed to read NBT", $"Failed to read NBT file at:\n{files[i]}\n{e.Message}\n. Try turning on/off compression; the file may or may not be using compressed NBT (File->Use Compression)");
                         break;
                     }
                     else if (!await IoC.MessageDialogs.ShowYesNoDialogAsync("Failed to read NBT", $"Failed to read NBT file at:\n{files[i]}\n{e.Message}\nDo you want to continue reading the rest of the files?")) {
@@ -143,7 +152,8 @@ namespace MCNBTViewer {
             NBTTagList list = new NBTTagList();
             list.tags.Add(new NBTTagByte(23));
             list.tags.Add(new NBTTagFloat(0.357f));
-            list.tags.Add(new NBTTagString("23"));
+            list.tags.Add(new NBTTagString("Yes this list is technically invalid :>"));
+            list.tags.Add(new NBTTagString("NBTTagList can only contain 1 specific type of tag"));
             root.Put("listA", list);
 
             NBTTagCompound inner = new NBTTagCompound();

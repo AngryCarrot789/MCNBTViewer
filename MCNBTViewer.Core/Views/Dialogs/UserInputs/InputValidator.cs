@@ -35,4 +35,10 @@ namespace MCNBTViewer.Core.Views.Dialogs.UserInputs {
             return new InputValidator((string input, out string msg) => (msg = inputToError(input)) != null);
         }
     }
+
+    public static class Validators {
+        public static InputValidator ForNonEmptyString(string nullMessage) {
+            return InputValidator.FromFunc((x) => string.IsNullOrEmpty(x) ? (nullMessage ?? "Input value cannot be null") : null);
+        }
+    }
 }

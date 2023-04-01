@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 
 namespace MCNBTViewer.Views.Dialogs.UserInputs {
     /// <summary>
@@ -14,6 +15,8 @@ namespace MCNBTViewer.Views.Dialogs.UserInputs {
         }
 
         private void WindowOnLoaded(object sender, RoutedEventArgs e) {
+            this.InputBoxA.GetBindingExpression(TextBox.TextProperty)?.UpdateSource();
+            this.InputBoxB.GetBindingExpression(TextBox.TextProperty)?.UpdateSource();
             this.InputBoxA.Focus();
             this.InputBoxA.SelectAll();
         }

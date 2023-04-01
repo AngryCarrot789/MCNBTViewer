@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MCNBTViewer.Core.AdvancedContextService;
@@ -26,7 +27,7 @@ namespace MCNBTViewer.Core.Explorer.Items {
         public RelayCommand SortByNameCommand { get; }
         public RelayCommand SortByBothCommand { get; }
 
-        public RelayCommand PasteNBTBinaryDataCommand { get; }
+        public AsyncRelayCommand PasteNBTBinaryDataCommand { get; }
 
         public RelayCommand<int> CreateTagCommand { get; }
 
@@ -64,57 +65,106 @@ namespace MCNBTViewer.Core.Explorer.Items {
                 IgnoreMainExplorerSelectionChange = false;
             });
 
-            this.PasteNBTBinaryDataCommand = new RelayCommand(this.PasteNBTBinaryDataAction);
+            this.PasteNBTBinaryDataCommand = new AsyncRelayCommand(async () => {
+                if (IoC.Clipboard == null) {
+                    await IoC.MessageDialogs.ShowMessageAsync("Clipboard unavailable", "Clipboard is unavailable. Cannot paste");
+                    return;
+                }
+
+                byte[] bytes = IoC.Clipboard.GetBinaryTag("TAG_NBT");
+                if (bytes == null || bytes.Length < 1) {
+                    await IoC.MessageDialogs.ShowMessageAsync("Invalid clipboard", "Clipboard did not contain a copied tag");
+                    return;
+                }
+
+                string tagName;
+                NBTBase nbt;
+                using (MemoryStream stream = new MemoryStream(bytes)) {
+                    bool result;
+                    try {
+                        result = NBTBase.ReadTag(CompressedStreamTools.CreateInput(stream), 0, out tagName, out nbt);
+                    }
+                    catch (Exception e) {
+                        await IoC.MessageDialogs.ShowMessageAsync("Invalid clipboard", "Failed to read NBT from clipboard");
+                        return;
+                    }
+
+                    if (!result) {
+                        await IoC.MessageDialogs.ShowMessageAsync("Invalid clipboard", "Clipboard did not contain a valid tag? That's weird...");
+                        return;
+                    }
+
+                    await this.PasteNBTBinaryDataAction(tagName, nbt);
+                }
+            });
         }
 
-        private async Task NewTagAction(int type) {
+        protected virtual Task<bool> CanAddTagOfType(int type) {
+            return Task.FromResult(true);
+        }
+
+        protected virtual async Task NewTagAction(int type) {
+            // await IoC.MessageDialogs.ShowMessageAsync("Cannot create child", "Children cannot be added to this tag");
+
+            bool isCompound = this is NBTCompoundViewModel;
             string name;
             NBTBase nbt;
-            switch (type) {
-                case 1:  { (string, NBTTagByte)? x = IoC.TagDialogService.CreateTagByte(this is NBTCompoundViewModel);            if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; }break;
-                case 2:  { (string, NBTTagShort)? x = IoC.TagDialogService.CreateTagShort(this is NBTCompoundViewModel);          if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; }break;
-                case 3:  { (string, NBTTagInt)? x = IoC.TagDialogService.CreateTagInt(this is NBTCompoundViewModel);              if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; }break;
-                case 4:  { (string, NBTTagLong)? x = IoC.TagDialogService.CreateTagLong(this is NBTCompoundViewModel);            if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; }break;
-                case 5:  { (string, NBTTagFloat)? x = IoC.TagDialogService.CreateTagFloat(this is NBTCompoundViewModel);          if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; }break;
-                case 6:  { (string, NBTTagDouble)? x = IoC.TagDialogService.CreateTagDouble(this is NBTCompoundViewModel);        if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; }break;
-                case 8:  { (string, NBTTagByteArray)? x = IoC.TagDialogService.CreateTagByteArray(this is NBTCompoundViewModel);  if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; }break;
-                case 7:  { (string, NBTTagString)? x = IoC.TagDialogService.CreateTagString(this is NBTCompoundViewModel);        if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; }break;
-                case 11: { (string, NBTTagIntArray)? x = IoC.TagDialogService.CreateTagIntArray(this is NBTCompoundViewModel);    if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; }break;
+            switch ((NBTType) type) {
+                case NBTType.Byte      :  { (string, NBTTagByte)? x = IoC.TagDialogService.CreateTagByte(isCompound);            if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
+                case NBTType.Short     :  { (string, NBTTagShort)? x = IoC.TagDialogService.CreateTagShort(isCompound);          if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
+                case NBTType.Int    :  { (string, NBTTagInt)? x = IoC.TagDialogService.CreateTagInt(isCompound);              if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
+                case NBTType.Long      :  { (string, NBTTagLong)? x = IoC.TagDialogService.CreateTagLong(isCompound);            if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
+                case NBTType.Float     :  { (string, NBTTagFloat)? x = IoC.TagDialogService.CreateTagFloat(isCompound);          if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
+                case NBTType.Double    :  { (string, NBTTagDouble)? x = IoC.TagDialogService.CreateTagDouble(isCompound);        if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
+                case NBTType.String   :  { (string, NBTTagString)? x = IoC.TagDialogService.CreateTagString(isCompound);        if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
+                case NBTType.ByteArray   :  { (string, NBTTagByteArray)? x = IoC.TagDialogService.CreateTagByteArray(isCompound);  if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
+                case NBTType.IntArray: { (string, NBTTagIntArray)? x = IoC.TagDialogService.CreateTagIntArray(isCompound);    if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
+                case NBTType.Compound : {
+                    if (isCompound) {
+                        (string, NBTTagList)? x = IoC.TagDialogService.CreateTagList(true);
+                        if (!x.HasValue)
+                            return;
+                        name = x.Value.Item1;
+                        nbt = x.Value.Item2;
+                    }
+                    else {
+                        name = null;
+                        nbt = new NBTTagList();
+                    }
+
+                    break;
+                }
+                case NBTType.List: {
+                    if (isCompound) {
+                        (string, NBTTagCompound)? x = IoC.TagDialogService.CreateTagCompound(true);
+                        if (!x.HasValue)
+                            return;
+                        name = x.Value.Item1;
+                        nbt = x.Value.Item2;
+                    }
+                    else {
+                        name = null;
+                        nbt = new NBTTagCompound();
+                    }
+                } break;
                 default: return;
             }
 
-            if (this is NBTCompoundViewModel && string.IsNullOrEmpty(name)) {
-                await IoC.MessageDialogs.ShowMessageAsync("Tag name is empty", "The tag name cannot be an empty string");
-                return;
-            }
-
-            if (this.Children.Any(x => x.Name == name)) {
-                await IoC.MessageDialogs.ShowMessageAsync("Tag already exists", "A tag already exists with the name " + name + ": " + this.Children.FirstOrDefault(x => x.Name == name));
-                return;
+            if (isCompound) {
+                if (string.IsNullOrEmpty(name)) {
+                    await IoC.MessageDialogs.ShowMessageAsync("Tag name is empty", "The tag name cannot be an empty string");
+                    return;
+                }
+                else if (this.Children.Any(x => x.Name == name)) {
+                    await IoC.MessageDialogs.ShowMessageAsync("Tag already exists", "A tag already exists with the name " + name + ": " + this.Children.FirstOrDefault(x => x.Name == name));
+                    return;
+                }
             }
 
             this.Children.Add(CreateFrom(name, nbt));
         }
 
-        private void PasteNBTBinaryDataAction() {
-            // this.CopyBinaryToClipboardCommand = new RelayCommand(async () => {
-            //     if (IoC.Clipboard == null) {
-            //         await IoC.MessageDialogs.ShowMessageAsync("No clipboard", "Clipboard is unavailable. Cannot copy the NBT to the clipboard");
-            //     }
-            //     else {
-            //         using (MemoryStream stream = new MemoryStream()) {
-            //             try {
-            //                 NBTBase nbt = this.ToNBT();
-            //                 NBTBase.WriteTag(new DataOutputStream(stream), this.Name, nbt);
-            //                 IoC.Clipboard.SetBinaryTag("TAG_NBT", stream.ToArray());
-            //             }
-            //             catch (Exception e) {
-            //                 await IoC.MessageDialogs.ShowMessageAsync("Failed to write NBT", "Failed to write NBT to clipboard: " + e.Message);
-            //             }
-            //         }
-            //     }
-            // });
-        }
+        public abstract Task PasteNBTBinaryDataAction(string name, NBTBase nbt);
 
         protected void ApplySort(List<BaseNBTViewModel> sorted) {
             for (int index = 0; index < sorted.Count; index++) {
@@ -138,10 +188,6 @@ namespace MCNBTViewer.Core.Explorer.Items {
             }
 
             this.IsEmpty = this.Children.Count == 0;
-        }
-
-        protected override bool CanExpandTreeItem() {
-            return this.Children.Count > 0;
         }
 
         public bool RemoveChild(BaseNBTViewModel nbt) {
@@ -169,6 +215,10 @@ namespace MCNBTViewer.Core.Explorer.Items {
             yield return new ContextEntry("Sort By Both", this.SortByBothCommand) {
                 ToolTip = "This is what NBTExplorer sorts by; compound, list, array, primitive and then finally by name"
             };
+
+            yield return new LazyASFContextEntry("Expand hierarchy", () => {
+                IoC.MainExplorer.TreeView.Behaviour.ExpandItemHierarchy(this);
+            },  () => this.Children.Count > 0);
         }
 
         public IEnumerable<IBaseContextEntry> GetNewItemsEntries() {
@@ -182,8 +232,8 @@ namespace MCNBTViewer.Core.Explorer.Items {
             yield return new ContextEntry("String", this.CreateTagCommand, 8);
             yield return new ContextEntry("Byte Array", this.CreateTagCommand, 7);
             yield return new ContextEntry("Int Array", this.CreateTagCommand, 11);
-            // yield return new ContextEntry("List", this.CreateTagCommand, 9);
-            // yield return new ContextEntry("Compound", this.CreateTagCommand, 10);
+            yield return new ContextEntry("List", this.CreateTagCommand, 9);
+            yield return new ContextEntry("Compound", this.CreateTagCommand, 10);
         }
 
         public BaseNBTViewModel FindChildByName(string name) {

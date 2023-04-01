@@ -3,12 +3,13 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using MCNBTViewer.Core.Views.Dialogs.Message;
+using MCNBTViewer.Views.Dialogs.FilePicking;
 
 namespace MCNBTViewer.Views.Dialogs.Message {
     public class MessageDialogService : IMessageDialogService {
         public async Task ShowMessageAsync(string caption, string message) {
             void Action() {
-                MessageBox.Show(message, caption);
+                MessageBox.Show(FolderPicker.GetCurrentActiveWindow(), message, caption);
             }
 
             await InvokeAsync(Action);
@@ -20,7 +21,7 @@ namespace MCNBTViewer.Views.Dialogs.Message {
 
         public async Task<MsgDialogResult> ShowDialogAsync(string caption, string message, MsgDialogType type, MsgDialogResult defaultResult) {
             MsgDialogResult Action() {
-                switch (MessageBox.Show(message, caption, (MessageBoxButton) type, MessageBoxImage.Information, (MessageBoxResult) defaultResult)) {
+                switch (MessageBox.Show(FolderPicker.GetCurrentActiveWindow(), message, caption, (MessageBoxButton) type, MessageBoxImage.Information, (MessageBoxResult) defaultResult)) {
                     case MessageBoxResult.OK: return MsgDialogResult.OK;
                     case MessageBoxResult.Cancel: return MsgDialogResult.Cancel;
                     case MessageBoxResult.Yes: return MsgDialogResult.Yes;
@@ -34,7 +35,7 @@ namespace MCNBTViewer.Views.Dialogs.Message {
 
         public async Task<bool> ShowYesNoDialogAsync(string caption, string message, bool defaultResult = true) {
             bool Action() {
-                switch (MessageBox.Show(message, caption, MessageBoxButton.YesNo, MessageBoxImage.Information, defaultResult ? MessageBoxResult.Yes : MessageBoxResult.No)) {
+                switch (MessageBox.Show(FolderPicker.GetCurrentActiveWindow(), message, caption, MessageBoxButton.YesNo, MessageBoxImage.Information, defaultResult ? MessageBoxResult.Yes : MessageBoxResult.No)) {
                     case MessageBoxResult.Yes: return true;
                     default: return false;
                 }

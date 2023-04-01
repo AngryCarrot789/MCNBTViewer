@@ -178,10 +178,6 @@ namespace MCNBTViewer.Core.Explorer.Items {
             return this.NBTType.ToString();
         }
 
-        protected virtual bool CanExpandTreeItem() {
-            return false;
-        }
-
         protected virtual bool CanChangeName(string oldName, string newName) {
             return true;
         }
@@ -202,8 +198,10 @@ namespace MCNBTViewer.Core.Explorer.Items {
 
         public virtual IEnumerable<IBaseContextEntry> GetContextEntries() {
             yield return new ContextEntry("Copy Name", this.CopyKeyNameCommand);
+            yield return new ContextEntry("Edit Name", this.RenameCommand);
             if (this is NBTPrimitiveViewModel item) {
                 yield return new ContextEntry("Copy Value", item.CopyValueCommand);
+                yield return new ContextEntry("Edit Value", item.EditValueCommand);
             }
             else if (this is NBTIntArrayViewModel intArray) {
                 yield return new LazyASFContextEntry("Copy Int Values (CSV)", async () => {
@@ -217,6 +215,9 @@ namespace MCNBTViewer.Core.Explorer.Items {
             }
 
             yield return new ContextEntry("Copy (Binary)", this.CopyBinaryToClipboardCommand);
+            if (this is BaseNBTCollectionViewModel collective) {
+                yield return new ContextEntry("Paste (Binary)", collective.PasteNBTBinaryDataCommand);
+            }
             yield return ContextEntrySeparator.Instance;
             yield return new ContextEntry("Delete Tag", this.RemoveFromParentCommand) {
                 ToolTip = "Removes this NBT entry from its parent"

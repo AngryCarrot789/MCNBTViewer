@@ -1,3 +1,5 @@
+using System.IO;
+using System.Threading;
 using REghZy.Streams;
 
 namespace MCNBTViewer.Core.NBT {
@@ -42,7 +44,10 @@ namespace MCNBTViewer.Core.NBT {
                     name = null;
                 }
 
-                nbt = CreateTag(id);
+                if ((nbt = CreateTag(id)) == null) {
+                    return false;
+                }
+
                 nbt.Read(input, deep);
                 return true;
             }

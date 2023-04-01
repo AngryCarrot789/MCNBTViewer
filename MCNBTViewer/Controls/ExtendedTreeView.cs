@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 using MCNBTViewer.Core;
 using MCNBTViewer.Core.Explorer;
@@ -35,8 +37,34 @@ namespace MCNBTViewer.Controls {
             set => this.SetValue(ExplorerProperty, value);
         }
 
+        private ScrollViewer PART_ScrollViewier;
+
         public ExtendedTreeView() {
 
+        }
+
+        protected override void OnPreviewMouseWheel(MouseWheelEventArgs e) {
+            if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift && this.PART_ScrollViewier != null) {
+                if (e.Delta < 0) {
+                    // scroll right
+                    this.PART_ScrollViewier.LineRight();
+                    this.PART_ScrollViewier.LineRight();
+                    this.PART_ScrollViewier.LineRight();
+                }
+                else if (e.Delta > 0) {
+                    this.PART_ScrollViewier.LineLeft();
+                    this.PART_ScrollViewier.LineLeft();
+                    this.PART_ScrollViewier.LineLeft();
+                }
+                else {
+                    return;
+                }
+
+                e.Handled = true;
+                return;
+            }
+
+            base.OnPreviewMouseWheel(e);
         }
 
         protected override void OnSelectedItemChanged(RoutedPropertyChangedEventArgs<object> e) {
@@ -48,6 +76,34 @@ namespace MCNBTViewer.Controls {
             if (e.NewValue is BaseNBTViewModel file) {
                 this.Explorer.OnTreeSelectItem(file);
             }
+        }
+
+        public override void OnApplyTemplate() {
+            base.OnApplyTemplate();
+            this.PART_ScrollViewier = (ScrollViewer) this.GetTemplateChild("_tv_scrollviewer_");
+            // this.RequestBringIntoView += this.OnRequestBringIntoView;
+        }
+
+        // Modified version of https://github.com/KirillOsenkov/PublicBugs/issues/13
+        // Doesn't work though
+        // sender is always ExtendedTreeView, e.TargetObject seems to always be PART_ScrollViewerz
+        private void OnRequestBringIntoView(object sender, RequestBringIntoViewEventArgs e) {
+            // if (this.PART_ScrollViewier == null || e.TargetObject == null) {
+            //     return;
+            // }
+            // TreeViewItem treeItem = e.TargetObject as TreeViewItem ?? this.ItemContainerGenerator.ContainerFromItem(e.TargetObject) as TreeViewItem;
+            // if (treeItem == null || ItemsControlFromItemContainer(treeItem) != this || PresentationSource.FromDependencyObject(treeItem) == null) {
+            //     // the item might have disconnected by the time we run this
+            //     return;
+            // }
+            // Point topLeftInTreeViewCoordinates = treeItem.TransformToAncestor(this).Transform(new Point(0, 0));
+            // double itemTop = topLeftInTreeViewCoordinates.Y;
+            // if (itemTop < 0 || itemTop + treeItem.ActualHeight > this.PART_ScrollViewier.ViewportHeight || treeItem.ActualHeight > this.PART_ScrollViewier.ViewportHeight) {
+            //     // if the item is not visible or too "tall", don't do anything; let them scroll it into view
+            //     return;
+            // }
+            // // if the item is already fully within the viewport vertically, disallow horizontal scrolling
+            // e.Handled = true;
         }
 
         public static TreeViewItem ContainerFromItemRecursive(ItemContainerGenerator root, object item) {
@@ -193,12 +249,8 @@ namespace MCNBTViewer.Controls {
                 return false;
             }
 
-            DependencyObject container = this.ItemContainerGenerator.ContainerFromItem(item);
-            if (container is TreeViewItem treeItem && treeItem.IsExpanded) {
-                return true;
-            }
-
-            return false;
+            DependencyObject container = ContainerFromItemRecursive(this.ItemContainerGenerator, item);
+            return container is TreeViewItem treeItem && treeItem.IsExpanded;
         }
 
         public ITreeBehaviour Behaviour => this;
@@ -231,6 +283,13 @@ namespace MCNBTViewer.Controls {
             }
 
             return result;
+        }
+
+        public async Task ExpandItemHierarchy(BaseNBTViewModel item) {
+            DependencyObject container = ContainerFromItemRecursive(this.ItemContainerGenerator, item);
+            if (container is TreeViewItem treeItem) {
+                this.ExpandSubtree(treeItem);
+            }
         }
 
         public bool ExpandHierarchyFromRoot(IEnumerable<BaseNBTViewModel> items, bool select) {

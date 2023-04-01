@@ -8,8 +8,8 @@ using System.Windows.Documents;
 namespace MCNBTViewer.Converters {
     public class NbtCollectiveNameInlinesConverter : BaseNBTTextRunConverter, IMultiValueConverter {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
-            if (values.Length != 2) {
-                throw new Exception("Expected 2 values: [original Name] [number of items, or collection instance]");
+            if (values.Length != 3) {
+                throw new Exception("Expected 3 values: [original Name] [number of items, or collection instance] [dummy count]");
             }
 
             List<Run> runs = new List<Run>();

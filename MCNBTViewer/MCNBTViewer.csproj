@@ -95,7 +95,7 @@
     <Compile Include="NBT\Explorer\Dialogs\Inlines\BaseInlineHighlightConverter.cs" />
     <Compile Include="NBT\Explorer\Dialogs\Inlines\InlineHelper.cs" />
     <Compile Include="NBT\Explorer\Dialogs\Inlines\HighlightingInlinesConverter.cs" />
-    <Compile Include="NBT\Explorer\Dialogs\NewTagDialogService.cs" />
+    <Compile Include="NBT\Explorer\Dialogs\NBTDialogService.cs" />
     <Compile Include="NBT\Explorer\Finding\FindView.cs" />
     <Compile Include="NBT\Explorer\ListFallbackSourceConverter.cs" />
     <Compile Include="NBT\Explorer\NBTItemTemplateSelector.cs" />

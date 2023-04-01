@@ -26,7 +26,7 @@ namespace MCNBTViewer {
             IoC.FilePicker = new FilePickDialogService();
             IoC.UserInput = new UserInputDialogService();
             IoC.ExplorerService = new WinExplorerService();
-            IoC.TagDialogService = new NewTagDialogService();
+            IoC.TagDialogService = new NBTDialogService();
             IoC.FindView = new FindView();
 
             this.MainWindow = new MainWindow();

@@ -6,7 +6,8 @@ namespace MCNBTViewer.Views.Dialogs.UserInputs {
             SingleInputViewModel vm = new SingleInputViewModel() {
                 Title = title,
                 Message = message,
-                Input = def
+                Input = def,
+                ValidateInput = validator
             };
 
             return this.ShowSingleInputDialog(vm) ? vm.Input ?? "" : null;

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using MCNBTViewer.Core.AdvancedContextService;
 using MCNBTViewer.Core.NBT;
@@ -65,7 +66,7 @@ namespace MCNBTViewer.Core.Explorer.Items {
             if (File.Exists(this.FilePath)) {
                 NBTTagCompound compound;
                 try {
-                    compound = CompressedStreamTools.ReadCompressed(this.FilePath, out _);
+                    compound = CompressedStreamTools.ReadCompressed(this.FilePath, out _, IoC.UseCompression, IoC.IsBigEndian);
                 }
                 catch (Exception e) {
                     await IoC.MessageDialogs.ShowMessageAsync("Failed to refresh NBT", $"Failed to read NBT file at:\n{this.FilePath}\n{e.Message}");
@@ -117,12 +118,12 @@ namespace MCNBTViewer.Core.Explorer.Items {
         }
 
         public void SaveToFile(string filePath) {
-            CompressedStreamTools.WriteCompressed(this.ToNBT(), filePath);
+            CompressedStreamTools.WriteCompressed(this.ToNBT(), filePath, IoC.UseCompression, IoC.IsBigEndian);
         }
 
         public async Task SaveToFileAction(bool saveAs) {
             string path;
-            if (saveAs || (!this.hasFileSavedOnce && !File.Exists(this.FilePath))) {
+            if (saveAs || string.IsNullOrEmpty(this.FilePath) || (!this.hasFileSavedOnce && !File.Exists(this.FilePath))) {
                 DialogResult<string> result = IoC.FilePicker.ShowSaveFileDialog(Filters.NBTDatAndAllFilesFilter, titleBar: "Select a save location for the NBT file");
                 if (!result.IsSuccess || string.IsNullOrEmpty(result.Value)) {
                     return;
@@ -134,12 +135,21 @@ namespace MCNBTViewer.Core.Explorer.Items {
                 path = this.FilePath;
             }
 
+            string name = System.IO.Path.GetFileName(path);
+            if (IoC.MainExplorer.LoadedDataFiles.Any(x => x.Name == name)) {
+                if (!await IoC.MessageDialogs.ShowYesNoDialogAsync("Same name already in tree", $"A DAT file with the name '{name}' already exists in the tree. Continue and remove the existing DAT tag from the tree? (otherwise, don't load the new file)")) {
+                    return;
+                }
+            }
+
             try {
                 this.SaveToFile(path);
                 this.hasFileSavedOnce = true;
                 if (!path.Equals(this.FilePath)) {
                     this.FilePath = path;
                 }
+
+                this.Name = name;
             }
             catch (Exception e) {
                 await IoC.MessageDialogs.ShowMessageAsync("Failed to write NBT", $"Failed to write compressed NBT to file at:\n{this.FilePath}\n{e.Message}");
@@ -171,6 +181,9 @@ namespace MCNBTViewer.Core.Explorer.Items {
             yield return ContextEntrySeparator.Instance;
             yield return new ContextEntry("Show in explorer", this.ShowInExplorerCommand);
             yield return new ContextEntry("Copy File Path", this.CopyFilePathToClipboardCommand);
+            yield return ContextEntrySeparator.Instance;
+            yield return new ContextEntry("Copy (Binary)", this.CopyBinaryToClipboardCommand);
+            yield return new ContextEntry("Paste (Binary)", this.PasteNBTBinaryDataCommand);
             yield return ContextEntrySeparator.Instance;
             yield return new ContextEntry("Remove this root tag", this.RemoveDatFileFromTreeCommand) {
                 ToolTip = "Removes this root DAT file tag from the tree. Does not delete the file"
