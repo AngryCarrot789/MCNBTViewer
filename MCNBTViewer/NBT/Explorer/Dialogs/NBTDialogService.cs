@@ -7,7 +7,7 @@ using MCNBTViewer.Core.NBT;
 using MCNBTViewer.Core.Views.Dialogs.UserInputs;
 
 namespace MCNBTViewer.NBT.Explorer.Dialogs {
-    public class NewTagDialogService : INewTagDialogService {
+    public class InbtDialogService : INBTDialogService {
         public (string, string)? CreatePrimitiveTag(int tagType, bool canEditName = true, string titlebar = "Create a new tag compound", string initialName = null, string initialValue = null) {
             InputValidator validator = InputValidator.FromFunc((a) => {
                 switch (tagType) {
