@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using MCNBTViewer.Core.AdvancedContextService;
 using MCNBTViewer.Core.Explorer.Items;
@@ -37,11 +38,11 @@ namespace MCNBTViewer.Core.Explorer.Finding {
             this.PrimitiveOrArrayFoundValue = primitiveOrArrayFoundValue;
             this.NameMatches = nameMatches;
             this.ValueMatches = valueMatches;
-            this.NavigateToItemCommand = new RelayCommand(this.NavigateToItemAction);
+            this.NavigateToItemCommand = new AsyncRelayCommand(this.NavigateToItemAction);
         }
 
-        private void NavigateToItemAction() {
-            IoC.MainExplorer.SetSelectedItem(this.NBT);
+        private async Task NavigateToItemAction() {
+            await IoC.MainExplorer.TreeView.Behaviour.ExpandHierarchyFromRootAsync(this.NBT.ParentChain, true);
         }
 
         public IEnumerable<IBaseContextEntry> GetContextEntries() {

@@ -7,6 +7,7 @@
                 xmlns:converters="clr-namespace:MCNBTViewer.Converters"
                 xmlns:nbtexp="clr-namespace:MCNBTViewer.NBT.Explorer"
                 xmlns:views="clr-namespace:MCNBTViewer.Views"
+                xmlns:ap="clr-namespace:MCNBTViewer.AttachedProperties"
                 d:DataContext="{d:DesignInstance Type=local:MainViewModel}"
                 mc:Ignorable="d"
                 Title="MainWindow" Height="576" Width="1024"
@@ -18,9 +19,9 @@
         <nbtexp:ListFallbackSourceConverter x:Key="FallbackConverter"/>
     </Window.Resources>
     <Window.InputBindings>
-        <KeyBinding Modifiers="Control" Key="O" Command="{Binding OpenFileCommand}"/>
-        <KeyBinding Modifiers="Control+Shift" Key="O" Command="{Binding OpenFolderCommand}"/>
-        <KeyBinding Modifiers="Control" Key="F" Command="{Binding ShowFindViewCommand}"/>
+        <KeyBinding Modifiers="Control" Key="O" Command="{Binding OpenFileCommand, Mode=OneTime}"/>
+        <KeyBinding Modifiers="Control+Shift" Key="O" Command="{Binding OpenFolderCommand, Mode=OneTime}"/>
+        <KeyBinding Modifiers="Control" Key="F" Command="{Binding ShowFindViewCommand, Mode=OneTime}"/>
     </Window.InputBindings>
     <Grid>
         <Menu VerticalAlignment="Top">
@@ -31,6 +32,9 @@
                 <MenuItem Header="Save All" Command="{Binding SaveAllDatFilesCommands, Mode=OneTime}" InputGestureText="Ctrl+Shift+O"/>
                 <Separator Style="{DynamicResource MenuItemSeparator}"/>
                 <MenuItem IsCheckable="True" Header="Use Big Endianness" IsChecked="{Binding IsBigEndian, UpdateSourceTrigger=PropertyChanged}"/>
+            </MenuItem>
+            <MenuItem Header="Search">
+                <MenuItem Header="Find..." InputGestureText="Ctrl+F" Command="{Binding ShowFindViewCommand, Mode=OneTime}"/>
             </MenuItem>
         </Menu>
         <Grid Margin="0,18,0,0">
@@ -71,10 +75,13 @@
             <Border Grid.Column="2" BorderBrush="{DynamicResource AREghZyBrush.Primary.2.Border.Static}" BorderThickness="0 1 0 0">
                 <Grid Background="{DynamicResource AREghZyBrush.Deep.3.Background.Static}">
                     <Grid.Resources>
-                        <converters:SelectedParentToPathConverter x:Key="PathConverter"/>
+                        <nbtexp:PathNavigationGeneratorConveter x:Key="PathNavigationGenerator" AcceptNBT="True"/>
                     </Grid.Resources>
 
+                    <!--
                     <c:PathViewer Height="20" SelectedItem="{Binding Explorer.ExplorerList.CurrentFolder, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" FontFamily="Consolas" Padding="5" Margin="0,3,0,0"/>
+                    -->
+                    <TextBlock Height="20" VerticalAlignment="Top" FontFamily="Consolas" Padding="5" Margin="0,3,0,0" ap:TextBlockHelper.BindableInlines="{Binding Explorer.ExplorerList.CurrentFolder, Converter={StaticResource PathNavigationGenerator}}"/>
                     <c:ExtendedListBox x:Name="MainListBox" Margin="0,24,0,20"
                                        DataContext="{Binding Explorer.ExplorerList}"
                                        Explorer="{Binding Explorer}"

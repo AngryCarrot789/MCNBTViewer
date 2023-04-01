@@ -53,24 +53,25 @@ namespace MCNBTViewer.Core.Explorer.Items {
             }
         }
 
-        public List<string> PathChain {
+        public IEnumerable<(BaseNBTViewModel, string)> ParentAndNameChain {
             get {
-                List<string> list = new List<string>();
                 foreach (BaseNBTViewModel item in this.ParentChain) {
                     if (item.Parent is NBTListViewModel tagList) {
-                        list.Add(new StringBuilder().Append('[').Append(tagList.Children.IndexOf(item)).Append(']').ToString());
+                        yield return (item, new StringBuilder().Append('[').Append(tagList.Children.IndexOf(item)).Append(']').ToString());
                     }
                     else if (string.IsNullOrEmpty(item.Name)) {
-                        list.Add("<unnamed>");
+                        yield return (item, "<unnamed>");
                     }
                     else {
-                        list.Add(item.Name);
+                        yield return (item, item.Name);
                     }
                 }
-
-                return list;
             }
         }
+
+        public List<string> PathChain => this.ParentAndNameChain.Select(x => x.Item2).ToList();
+
+        public string Path => string.Join("/", this.PathChain);
 
         public RelayCommand RemoveFromParentCommand { get; }
 
@@ -218,7 +219,7 @@ namespace MCNBTViewer.Core.Explorer.Items {
             yield return new ContextEntry("Copy (Binary)", this.CopyBinaryToClipboardCommand);
             yield return ContextEntrySeparator.Instance;
             yield return new ContextEntry("Delete Tag", this.RemoveFromParentCommand) {
-                ToolTip = this.Parent != null ? "Removes this NBT entry from its parent" : "This Tag has no parent?"
+                ToolTip = "Removes this NBT entry from its parent"
             };
         }
     }

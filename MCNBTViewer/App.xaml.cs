@@ -25,20 +25,24 @@ namespace MCNBTViewer {
             IoC.Clipboard = new ClipboardService();
             IoC.FilePicker = new FilePickDialogService();
             IoC.UserInput = new UserInputDialogService();
-            IoC.OsFileExplorer = new WinOSFileExplorer();
+            IoC.ExplorerService = new WinExplorerService();
             IoC.TagDialogService = new NewTagDialogService();
             IoC.FindView = new FindView();
+
+            Task.Run(() => {
+
+            });
 
             this.MainWindow = new MainWindow();
             this.MainWindow.Show();
 
-            if (this.MainWindow.DataContext is MainViewModel view) {
-                const string debugPath = "C:\\Users\\kettl\\Desktop\\TheRareCarrot.dat";
-                if (File.Exists(debugPath)) {
-                    NBTTagCompound compound = CompressedStreamTools.ReadCompressed(debugPath, out _);
-                    view.AddDataFile(new NBTDataFileViewModel(Path.GetFileName(debugPath), compound) { FilePath = debugPath });
-                }
-            }
+            // if (this.MainWindow.DataContext is MainViewModel view) {
+            //     const string debugPath = "C:\\Users\\kettl\\Desktop\\TheRareCarrot.dat";
+            //     if (File.Exists(debugPath)) {
+            //         NBTTagCompound compound = CompressedStreamTools.ReadCompressed(debugPath, out _);
+            //         view.AddDataFile(new NBTDataFileViewModel(Path.GetFileName(debugPath), compound) { FilePath = debugPath });
+            //     }
+            // }
         }
 
         private class DispatcherDelegate : IDispatcher {

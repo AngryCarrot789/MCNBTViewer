@@ -3,13 +3,13 @@ using System.Windows.Controls;
 using MCNBTViewer.Core.AdvancedContextService;
 
 namespace MCNBTViewer.AdvancedContextService {
-    public class MenuItemStyleSelector : StyleSelector {
+    public class AdvancedMenuItemStyleSelector : StyleSelector {
         public Style NonCheckableMenuItemStyle { get; set; }
         public Style CheckableMenuItemStyle { get; set; }
 
         public Style SeparatorStyle { get; set; }
 
-        public MenuItemStyleSelector() {
+        public AdvancedMenuItemStyleSelector() {
 
         }
 

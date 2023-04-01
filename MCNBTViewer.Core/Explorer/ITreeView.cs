@@ -7,5 +7,7 @@ namespace MCNBTViewer.Core.Explorer {
         object GetSelectedItem();
 
         bool IsItemExpanded(BaseNBTViewModel item);
+
+        ITreeBehaviour Behaviour { get; }
     }
 }

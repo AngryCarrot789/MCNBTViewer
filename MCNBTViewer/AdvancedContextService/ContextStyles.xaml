@@ -13,19 +13,20 @@
         <Setter Property="ItemsSource" Value="{Binding Children}"/>
     </Style>
 
-    <advancedContextService:MenuItemStyleSelector x:Shared="True" x:Key="AdvancedMenuItemContainerStyleSelector" SeparatorStyle="{StaticResource {x:Type Separator}}">
-        <advancedContextService:MenuItemStyleSelector.NonCheckableMenuItemStyle>
+    <advancedContextService:AdvancedMenuItemStyleSelector x:Shared="True" x:Key="AdvancedMenuItemContainerStyleSelector" SeparatorStyle="{StaticResource {x:Type Separator}}">
+        <advancedContextService:AdvancedMenuItemStyleSelector.NonCheckableMenuItemStyle>
             <Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource AdvancedMenuItemMainStyle}" d:DataContext="{d:DesignInstance acs:ContextEntry}">
             </Style>
-        </advancedContextService:MenuItemStyleSelector.NonCheckableMenuItemStyle>
-        <advancedContextService:MenuItemStyleSelector.CheckableMenuItemStyle>
+        </advancedContextService:AdvancedMenuItemStyleSelector.NonCheckableMenuItemStyle>
+        <advancedContextService:AdvancedMenuItemStyleSelector.CheckableMenuItemStyle>
             <Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource AdvancedMenuItemMainStyle}" d:DataContext="{d:DesignInstance acs:ContextEntry}">
                 <Setter Property="IsCheckable" Value="True"/>
             </Style>
-        </advancedContextService:MenuItemStyleSelector.CheckableMenuItemStyle>
-    </advancedContextService:MenuItemStyleSelector>
+        </advancedContextService:AdvancedMenuItemStyleSelector.CheckableMenuItemStyle>
+    </advancedContextService:AdvancedMenuItemStyleSelector>
     <Style TargetType="{x:Type advancedContextService:AdvancedContextMenu}" BasedOn="{StaticResource {x:Type ContextMenu}}">
         <Setter Property="UsesItemContainerTemplate" Value="False"/>
         <Setter Property="ItemContainerStyleSelector" Value="{StaticResource AdvancedMenuItemContainerStyleSelector}"/>
+        <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="True"/>
     </Style>
 </ResourceDictionary>

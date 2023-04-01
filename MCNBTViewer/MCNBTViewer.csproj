@@ -63,8 +63,7 @@
     </ApplicationDefinition>
     <Compile Include="AdvancedContextService\AdvancedContextMenu.cs" />
     <Compile Include="AdvancedContextService\AdvancedMenuItem.cs" />
-    <Compile Include="AdvancedContextService\ContextMenuHelper.cs" />
-    <Compile Include="AdvancedContextService\MenuItemStyleSelector.cs" />
+    <Compile Include="AdvancedContextService\AdvancedMenuItemStyleSelector.cs" />
     <Compile Include="AttachedProperties\AttachedInteractivity.cs" />
     <Compile Include="AttachedProperties\TextBlockHelper.cs" />
     <Compile Include="Controls\IconTextPair.cs" />
@@ -100,8 +99,9 @@
     <Compile Include="NBT\Explorer\Finding\FindView.cs" />
     <Compile Include="NBT\Explorer\ListFallbackSourceConverter.cs" />
     <Compile Include="NBT\Explorer\NBTItemTemplateSelector.cs" />
+    <Compile Include="NBT\Explorer\PathNavigationGeneratorConveter.cs" />
     <Compile Include="Services\ClipboardService.cs" />
-    <Compile Include="Services\WinOSFileExplorer.cs" />
+    <Compile Include="Services\WinExplorerService.cs" />
     <Compile Include="Themes\Attached\CornerHelper.cs" />
     <Compile Include="Themes\Attached\MenuHelper.cs" />
     <Compile Include="Themes\Attached\PasswordBoxHelper.cs" />
@@ -112,6 +112,7 @@
     </Compile>
     <Compile Include="Themes\ThemesController.cs" />
     <Compile Include="Themes\ThemeTypes.cs" />
+    <Compile Include="Utils\UIUtils.cs" />
     <Compile Include="Views\BaseDialog.cs" />
     <Compile Include="Views\BaseWindow.cs" />
     <Compile Include="Views\BaseWindowCore.cs" />

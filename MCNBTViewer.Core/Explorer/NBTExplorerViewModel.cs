@@ -1,10 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.Design;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using MCNBTViewer.Core.Explorer.Items;
 using MCNBTViewer.Core.NBT;
+using MCNBTViewer.Core.Utils;
 
 namespace MCNBTViewer.Core.Explorer {
     public class NBTExplorerViewModel : BaseViewModel {
@@ -34,66 +38,77 @@ namespace MCNBTViewer.Core.Explorer {
 
         public ITreeView TreeView { get; set; }
 
-        public ICommand SortByTypeCommand { get; }
-        public ICommand SortByNameCommand { get; }
-        public ICommand SortByBothCommand { get; }
-
         public IMainList ExplorerListHandle { get; set; }
 
         public NBTExplorerViewModel() {
             this.loadedDataFiles = new ObservableCollection<NBTDataFileViewModel>();
             this.LoadedDataFiles = new ReadOnlyObservableCollection<NBTDataFileViewModel>(this.loadedDataFiles);
             this.ExplorerList = new NBTExplorerListViewModel(this);
-            this.SortByTypeCommand = new RelayCommand(() => {
-                BaseNBTViewModel selected = this.SelectedFile;
-                if (selected != null && (selected is BaseNBTCollectionViewModel || (selected = selected.Parent) is BaseNBTCollectionViewModel)) {
-                    BaseNBTCollectionViewModel collection = (BaseNBTCollectionViewModel) selected;
-                    this.IgnoreSelectionChanged = true;
-                    List<BaseNBTViewModel> list = collection.Children.OrderByDescending((a) => a.NBTType).ToList();
-                    collection.Children.Clear();
-                    foreach (BaseNBTViewModel model in list) {
-                        collection.Children.Add(model);
-                    }
+        }
 
-                    this.IgnoreSelectionChanged = false;
+        public async Task NavigateToPath(string path) {
+            List<BaseNBTViewModel> list;
+            try {
+                list = this.ResolvePath(path).ToList();
+            }
+            catch (Exception e) {
+                await IoC.MessageDialogs.ShowMessageAsync("Failed to resolve path", e.Message);
+                return;
+            }
+
+            await this.TreeView.Behaviour.ExpandHierarchyFromRootAsync(list);
+        }
+
+        public IEnumerable<BaseNBTViewModel> ResolvePath(string path) {
+            int i, j = 0;
+            string name;
+            BaseNBTViewModel tag;
+            IEnumerable<BaseNBTViewModel> source = this.LoadedDataFiles;
+            while ((i = path.IndexOf('/', j)) >= 0) {
+                tag = GetChild(source, name = path.JSubstring(j, i));
+                if (tag == null) {
+                    throw GetNameException(name, j == 0 ? "<root>" : path.Substring(0, j - 1));
                 }
-            });
-            this.SortByNameCommand = new RelayCommand(() => {
-                BaseNBTViewModel selected = this.SelectedFile;
-                if (selected != null && (selected is BaseNBTCollectionViewModel || (selected = selected.Parent) is BaseNBTCollectionViewModel)) {
-                    BaseNBTCollectionViewModel collection = (BaseNBTCollectionViewModel) selected;
-                    this.IgnoreSelectionChanged = true;
-                    List<BaseNBTViewModel> list = collection.Children.OrderBy((a) => a.Name ?? "").ToList();
-                    collection.Children.Clear();
-                    foreach (BaseNBTViewModel model in list) {
-                        collection.Children.Add(model);
-                    }
-
-                    this.IgnoreSelectionChanged = false;
+                else if (tag is BaseNBTCollectionViewModel) {
+                    source = ((BaseNBTCollectionViewModel) tag).Children;
+                    yield return tag;
                 }
-            });
-            this.SortByBothCommand = new RelayCommand(() => {
-                BaseNBTViewModel selected = this.SelectedFile;
-                if (selected != null && (selected is BaseNBTCollectionViewModel || (selected = selected.Parent) is BaseNBTCollectionViewModel)) {
-                    BaseNBTCollectionViewModel collection = (BaseNBTCollectionViewModel) selected;
-                    this.IgnoreSelectionChanged = true;
-                    List<BaseNBTViewModel> list = new List<BaseNBTViewModel>(collection.Children);
-                    list.Sort((a, b) => {
-                        int cmp = a.NBTType.Compare4(b.NBTType);
-                        if (cmp != 0) {
-                            return cmp; // reverse order; compound on top, list below, then rest
-                        }
-
-                        return string.Compare(a.Name ?? "", b.Name ?? "", StringComparison.CurrentCulture);
-                    });
-                    collection.Children.Clear();
-                    foreach (BaseNBTViewModel model in list) {
-                        collection.Children.Add(model);
-                    }
-
-                    this.IgnoreSelectionChanged = false;
+                else {
+                    throw new Exception($"Expected collection at '{(j == 0 ? "<root>" : path.Substring(0, i))}', but got {tag.NBTType}");
                 }
-            });
+
+                j = i + 1;
+            }
+
+            tag = GetChild(source, name = path.Substring(j));
+            if (tag == null) {
+                throw GetNameException(name, j == 0 ? "<root>" : path.Substring(0, j - 1));
+            }
+
+            yield return tag;
+        }
+
+        private static BaseNBTViewModel GetChild(IEnumerable<BaseNBTViewModel> children, string name) {
+            if (!string.IsNullOrEmpty(name) && name[0] == '[' && name[name.Length - 1] == ']') {
+                name = name.JSubstring(1, name.Length - 1);
+            }
+
+            foreach (BaseNBTViewModel child in children) {
+                if (child.Name == name) {
+                    return child;
+                }
+            }
+
+            return null;
+        }
+
+        private static Exception GetNameException(string name, string path) {
+            if (name[0] == '[' && name[name.Length - 1] == ']') {
+                throw new Exception($"No such child at index '{name.JSubstring(1, name.Length - 1)}' in: '{path}'");
+            }
+            else {
+                throw new Exception($"No such child by the name of '{name}' in: '{path}'");
+            }
         }
 
         public void RemoveDatFile(NBTDataFileViewModel file) {

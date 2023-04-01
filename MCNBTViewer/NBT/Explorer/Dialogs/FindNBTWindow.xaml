@@ -52,6 +52,7 @@
                  Margin="0,91,0,0" BorderThickness="0"
                  ItemTemplateSelector="{StaticResource FindResultSelector}"
                  HorizontalContentAlignment="Stretch"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  ScrollViewer.CanContentScroll="False">
             <ListBox.ItemContainerStyle>
                 <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">

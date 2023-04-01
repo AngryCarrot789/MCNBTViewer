@@ -46,7 +46,7 @@ namespace MCNBTViewer.Core.Explorer.Items {
             this.RefreshDatFileCommand = new RelayCommand(async () => await this.RefreshAction(), () => File.Exists(this.FilePath));
             this.RemoveDatFileFromTreeCommand = new RelayCommand(async () => await this.RemoveSelfAction(), () => IoC.MainExplorer != null && IoC.MainExplorer.LoadedDataFiles.Contains(this));
             this.DeleteDatFileCommand = new RelayCommand(async () => await this.DeleteFileAction(), () => File.Exists(this.FilePath));
-            this.ShowInExplorerCommand = new RelayCommand(async () => await this.OpenInExplorerAction(), () => File.Exists(this.FilePath) && IoC.OsFileExplorer != null);
+            this.ShowInExplorerCommand = new RelayCommand(async () => await this.OpenInExplorerAction(), () => File.Exists(this.FilePath) && IoC.ExplorerService != null);
             this.CopyFilePathToClipboardCommand = new RelayCommand(async () => {
                 if (!string.IsNullOrEmpty(this.FilePath)) {
                     if (IoC.Clipboard != null) {
@@ -107,8 +107,8 @@ namespace MCNBTViewer.Core.Explorer.Items {
         }
 
         private async Task OpenInExplorerAction() {
-            if (IoC.OsFileExplorer != null) {
-                IoC.OsFileExplorer.OpenFileInExplorer(this.FilePath);
+            if (IoC.ExplorerService != null) {
+                IoC.ExplorerService.OpenFileInExplorer(this.FilePath);
             }
         }
 

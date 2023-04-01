@@ -8,7 +8,7 @@
     <converters:NBTToPathConverter x:Key="NBTPathConverter"/>
     <dialogs:InlinesTagNameValueConverter x:Key="InlinesTagNameValueConverter"/>
     <DataTemplate x:Key="FindTemplateCompoundTemplate" DataType="{x:Type f:NBTMatchResult}">
-        <DockPanel Height="18" acs:ContextMenuHelper.ContextProvider="{Binding}">
+        <DockPanel Height="18" acs:AdvancedContextMenu.ContextProvider="{Binding}">
             <TextBlock Text="{Binding NBT, Converter={StaticResource NBTPathConverter}}" DockPanel.Dock="Right" FontStyle="Italic"/>
             <Image x:Name="Img" Width="16" Height="16"/>
             <TextBlock Margin="4 0 0 0">
@@ -33,7 +33,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="FindTemplateListTemplate" DataType="{x:Type f:NBTMatchResult}">
-        <DockPanel Height="18" acs:ContextMenuHelper.ContextProvider="{Binding}">
+        <DockPanel Height="18" acs:AdvancedContextMenu.ContextProvider="{Binding}">
             <TextBlock Text="{Binding NBT, Converter={StaticResource NBTPathConverter}}" DockPanel.Dock="Right" FontStyle="Italic"/>
             <Image Width="16" Height="16" Source="/MCNBTViewer;component/Resources/Icons/icons8-bulleted-list-48.png"/>
             <TextBlock Margin="4 0 0 0">
@@ -50,7 +50,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="FindTemplateArrayTemplate" DataType="{x:Type f:NBTMatchResult}">
-        <DockPanel Height="18" acs:ContextMenuHelper.ContextProvider="{Binding}">
+        <DockPanel Height="18" acs:AdvancedContextMenu.ContextProvider="{Binding}">
             <TextBlock Text="{Binding NBT, Converter={StaticResource NBTPathConverter}}" DockPanel.Dock="Right" FontStyle="Italic"/>
             <Image Source="{Binding NBT.NBTType, Converter={StaticResource TagIconConverter}}" Width="16" Height="16"/>
             <TextBlock Margin="4 0 0 0">
@@ -67,7 +67,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="FindTemplatePrimitive" DataType="{x:Type f:NBTMatchResult}">
-        <DockPanel Height="18" acs:ContextMenuHelper.ContextProvider="{Binding}">
+        <DockPanel Height="18" acs:AdvancedContextMenu.ContextProvider="{Binding}">
             <TextBlock Text="{Binding NBT, Converter={StaticResource NBTPathConverter}}" DockPanel.Dock="Right" FontStyle="Italic"/>
             <Image Source="{Binding NBT.NBTType, Converter={StaticResource TagIconConverter}}" Width="16" Height="16"/>
             <TextBlock Margin="4 0 0 0">

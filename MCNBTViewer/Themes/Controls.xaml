@@ -2007,9 +2007,11 @@
             </Setter.Value>
         </Setter>
     </Style>
-
     <Style TargetType="{x:Type MenuItem}">
         <Style.Triggers>
+            <Trigger Property="IsCheckable" Value="True">
+                <Setter Property="StaysOpenOnClick" Value="True"/>
+            </Trigger>
             <Trigger Property="Role" Value="SubmenuHeader">
                 <Setter Property="Template" Value="{DynamicResource SubLevelMenuItemWithChildrenControlTemplate}" />
             </Trigger>

@@ -1,14 +1,18 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Threading;
+using MCNBTViewer.Core;
 using MCNBTViewer.Core.Explorer;
 using MCNBTViewer.Core.Explorer.Items;
 
 namespace MCNBTViewer.Controls {
-    public class ExtendedTreeView : TreeView, ITreeView {
+    public class ExtendedTreeView : TreeView, ITreeView, ITreeBehaviour {
         public static readonly DependencyProperty ExplorerProperty =
             DependencyProperty.Register(
                 "Explorer",
@@ -130,7 +134,7 @@ namespace MCNBTViewer.Controls {
         }
 
         public static void GenerateChildren(IItemContainerGenerator generator) {
-            using (generator.StartAt(new GeneratorPosition(0, 0), GeneratorDirection.Forward)) {
+            using (generator.StartAt(new GeneratorPosition(-1, 0), GeneratorDirection.Forward)) {
                 while (generator.GenerateNext() is UIElement next) {
                     generator.PrepareItemContainer(next);
                 }
@@ -195,6 +199,107 @@ namespace MCNBTViewer.Controls {
             }
 
             return false;
+        }
+
+        public ITreeBehaviour Behaviour => this;
+
+        public void SetExpanded(BaseNBTViewModel nbt) {
+            if (nbt == null) {
+                return;
+            }
+
+            DependencyObject container = ContainerFromItemRecursive(this.ItemContainerGenerator, nbt);
+            if (container is TreeViewItem treeItem) {
+                if (!treeItem.IsExpanded) {
+                    treeItem.IsExpanded = true;
+                }
+            }
+
+            // BaseViewModel.SetInternalData(nbt, nameof(TreeViewItem.IsExpanded), true);
+        }
+
+        public bool IsExpanded(BaseNBTViewModel nbt) {
+            return this.IsItemExpanded(nbt);
+            // return BaseViewModel.GetInternalData<bool>(nbt, nameof(TreeViewItem.IsExpanded));
+        }
+
+        public async Task<bool> ExpandHierarchyFromRootAsync(IEnumerable<BaseNBTViewModel> items, bool select) {
+            List<BaseNBTViewModel> list = items as List<BaseNBTViewModel> ?? items.ToList();
+            bool result = false;
+            for (int i = 0; i < list.Count; i++) {
+                result |= await this.Dispatcher.InvokeAsync(() => this.ExpandHierarchyFromRoot(list, true), DispatcherPriority.Background);
+            }
+
+            return result;
+        }
+
+        public bool ExpandHierarchyFromRoot(IEnumerable<BaseNBTViewModel> items, bool select) {
+            // return await this.ExpandAsync(items, select);
+
+            ItemContainerGenerator root = this.ItemContainerGenerator;
+            TreeViewItem lastItem = null;
+            using (IEnumerator<BaseNBTViewModel> enumerator = items.GetEnumerator()) {
+                while (enumerator.MoveNext()) {
+                    // GenerateChildren(root);
+                    BaseNBTViewModel item = enumerator.Current;
+                    if (root.ContainerFromItem(item) is TreeViewItem treeItem) {
+                        if (!treeItem.IsExpanded) {
+                            treeItem.IsExpanded = true;
+                        }
+
+                        root = treeItem.ItemContainerGenerator;
+                        lastItem = treeItem;
+                        lastItem.BringIntoView();
+                    }
+                    else {
+                        return false;
+                    }
+                }
+            }
+
+            if (select && lastItem != null) {
+                lastItem.IsSelected = true;
+                lastItem.BringIntoView();
+            }
+
+            return true;
+        }
+
+
+        public async Task<bool> ExpandAsync(IEnumerable<BaseNBTViewModel> items, bool select) {
+            ItemContainerGenerator root = this.ItemContainerGenerator;
+            TreeViewItem lastItem = null;
+            using (IEnumerator<BaseNBTViewModel> enumerator = items.GetEnumerator()) {
+                while (enumerator.MoveNext()) {
+                    await this.Dispatcher.InvokeAsync(() => {
+                        GenerateChildren(root);
+                    });
+                    BaseNBTViewModel item = enumerator.Current;
+                    if (root.ContainerFromItem(item) is TreeViewItem treeItem) {
+                        if (!treeItem.IsExpanded) {
+                            treeItem.IsExpanded = true;
+                        }
+
+                        root = treeItem.ItemContainerGenerator;
+                        lastItem = treeItem;
+                        await this.Dispatcher.InvokeAsync(() => {
+                            lastItem.BringIntoView();
+                        });
+                    }
+                    else {
+                        return false;
+                    }
+                }
+            }
+
+            if (select && lastItem != null) {
+                lastItem.IsSelected = true;
+                await this.Dispatcher.InvokeAsync(() => {
+                    lastItem.BringIntoView();
+                });
+            }
+
+            return true;
         }
     }
 }

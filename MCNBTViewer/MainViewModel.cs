@@ -34,9 +34,7 @@ namespace MCNBTViewer {
             this.Explorer = new NBTExplorerViewModel();
             IoC.MainExplorer = this.Explorer;
             this.OpenFileCommand = new RelayCommand(async () => await this.OpenFileAction());
-            this.OpenFolderCommand = new RelayCommand(async () => {
-                await this.OpenFolderAction();
-            });
+            this.OpenFolderCommand = new AsyncRelayCommand(this.OpenFolderActionAsync);
 
             this.SaveAllDatFilesCommands = new RelayCommand(async () => {
                 int count = this.Explorer.LoadedDataFiles.Count, i = 0;
@@ -58,14 +56,19 @@ namespace MCNBTViewer {
                 }
             });
 
-            this.ShowFindViewCommand = new RelayCommand(this.ShowFindViewAction);
+            this.ShowFindViewCommand = new AsyncRelayCommand(this.ShowFindViewAsync, () => true);
+        }
+
+        public async Task ShowFindViewAsync() {
+            await Task.Delay(1);
+            IoC.FindView.ShowFindView();
         }
 
         private void ShowFindViewAction() {
             IoC.FindView.ShowFindView();
         }
 
-        private async Task OpenFolderAction() {
+        private async Task OpenFolderActionAsync() {
             DialogResult<string> result = IoC.FilePicker.ShowFolderPickerDialog(titleBar: "Select a folder to open");
             if (result.IsSuccess) {
                 if (await IoC.MessageDialogs.ShowYesNoDialogAsync("Open all files?", "Do you want to open all files in all subdirectories in this folder? (otherwise, just this folder specifically)", false)) {

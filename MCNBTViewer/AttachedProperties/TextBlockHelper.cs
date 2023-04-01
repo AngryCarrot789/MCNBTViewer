@@ -6,7 +6,12 @@ using System.Windows.Documents;
 
 namespace MCNBTViewer.AttachedProperties {
     public static class TextBlockHelper {
-        public static readonly DependencyProperty BindableInlinesProperty = DependencyProperty.RegisterAttached("BindableInlines", typeof(IEnumerable<Inline>), typeof(TextBlockHelper), new PropertyMetadata(null, OnBindableInlinesChanged));
+        public static readonly DependencyProperty BindableInlinesProperty =
+            DependencyProperty.RegisterAttached(
+                "BindableInlines",
+                typeof(IEnumerable<Inline>),
+                typeof(TextBlockHelper),
+                new PropertyMetadata(null, OnBindableInlinesChanged));
 
         public static IEnumerable<Inline> GetBindableInlines(DependencyObject o) {
             return (IEnumerable<Inline>) o.GetValue(BindableInlinesProperty);
@@ -18,6 +23,7 @@ namespace MCNBTViewer.AttachedProperties {
 
         private static void OnBindableInlinesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
             if (d is TextBlock target && e.NewValue is IEnumerable enumerable) {
+                target.Inlines.Clear();
                 target.Inlines.AddRange(enumerable);
             }
         }

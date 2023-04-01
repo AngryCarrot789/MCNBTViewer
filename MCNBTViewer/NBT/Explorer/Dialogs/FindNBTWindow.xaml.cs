@@ -20,6 +20,9 @@ namespace MCNBTViewer.NBT.Explorer.Dialogs {
             base.OnClosed(e);
 
             ((FindView) IoC.FindView).OnClosedInternal(this);
+            if (this.DataContext is FindViewModel findViewModel) {
+                findViewModel.Dispose();
+            }
         }
     }
 }

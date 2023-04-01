@@ -23,5 +23,11 @@ namespace MCNBTViewer.Core.Utils {
                 consumer(value);
             }
         }
+
+        public static void EnsureLength<T>(T[] array, int count) {
+            if (array == null || array.Length != count) {
+                throw new Exception("Expected an array of size " + count + ". Got: " + (array != null ? array.Length.ToString() : "null"));
+            }
+        }
     }
 }

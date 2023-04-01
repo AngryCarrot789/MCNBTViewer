@@ -33,7 +33,7 @@ namespace MCNBTViewer.Core {
             if (value is IConvertible convertible) {
                 return convertible.ToType(typeof(T), null);
             }
-            else if (value == null && typeof(ValueType).IsAssignableFrom(typeof(T))) {
+            else if (value == null) {
                 return default(T);
             }
             else {

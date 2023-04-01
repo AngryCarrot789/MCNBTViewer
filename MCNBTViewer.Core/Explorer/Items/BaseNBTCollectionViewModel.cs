@@ -185,5 +185,9 @@ namespace MCNBTViewer.Core.Explorer.Items {
             // yield return new ContextEntry("List", this.CreateTagCommand, 9);
             // yield return new ContextEntry("Compound", this.CreateTagCommand, 10);
         }
+
+        public BaseNBTViewModel FindChildByName(string name) {
+            return this.Children.FirstOrDefault(x => x.Name == name);
+        }
     }
 }

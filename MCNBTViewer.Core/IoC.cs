@@ -15,7 +15,7 @@ namespace MCNBTViewer.Core {
         public static IMessageDialogService MessageDialogs { get; set; }
         public static IFilePickDialogService FilePicker { get; set; }
         public static IUserInputDialogService UserInput { get; set; }
-        public static IOSFileExplorer OsFileExplorer { get; set; }
+        public static IExplorerService ExplorerService { get; set; }
         public static INewTagDialogService TagDialogService { get; set; }
 
         public static NBTExplorerViewModel MainExplorer { get; set; }
