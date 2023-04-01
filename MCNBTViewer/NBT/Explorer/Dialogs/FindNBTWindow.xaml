@@ -17,7 +17,7 @@
     <Grid>
         <TextBlock Text="Search for NBT" FontWeight="Bold" VerticalAlignment="Top" Padding="10,10,5,10" HorizontalAlignment="Left"/>
         <TextBlock Text="{Binding FoundItems.Count, StringFormat='{}{0} items'}" VerticalAlignment="Top" Padding="5,10,10,10" HorizontalAlignment="Left" Margin="105,0,0,0"/>
-        <TextBox Text="{Binding SearchForNameText, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Margin="-1,36,78,0" Height="28" BorderBrush="{DynamicResource AREghZyBrush.Primary.2.Border.Static}" Background="{DynamicResource AREghZyBrush.Primary.1.Background.Static}" Padding="5,3" VerticalContentAlignment="Center"
+        <TextBox x:Name="NameBox" Text="{Binding SearchForNameText, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Margin="-1,36,78,0" Height="28" BorderBrush="{DynamicResource AREghZyBrush.Primary.2.Border.Static}" Background="{DynamicResource AREghZyBrush.Primary.1.Background.Static}" Padding="5,3" VerticalContentAlignment="Center"
                  tap:TextHinting.ShowWhenFocused="True" Tag="Input the name of the Tag here"
                  Style="{DynamicResource HintedTextBox}"/>
         <Border Background="{DynamicResource AREghZyBrush.Primary.1.Background.Static}" BorderBrush="{DynamicResource AREghZyBrush.Primary.2.Border.Static}" BorderThickness="0 1 0 1" Margin="0,36,0,0" Height="28" VerticalAlignment="Top" HorizontalAlignment="Right" Width="78">

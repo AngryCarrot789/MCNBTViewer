@@ -3,5 +3,6 @@ namespace MCNBTViewer.Core.Views.Dialogs.FilePicking {
         DialogResult<string[]> ShowFilePickerDialog(string filter, string defaultPath = null, string titleBar = null, bool multiSelect = false);
 
         DialogResult<string> ShowFolderPickerDialog(string defaultPath = null, string titleBar = null);
+        DialogResult<string> ShowSaveFileDialog(string filter, string defaultPath = null, string titleBar = null);
     }
 }

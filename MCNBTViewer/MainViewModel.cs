@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using MCNBTViewer.Core;
@@ -40,7 +41,9 @@ namespace MCNBTViewer {
                 int count = this.Explorer.LoadedDataFiles.Count, i = 0;
                 foreach (NBTDataFileViewModel file in this.Explorer.LoadedDataFiles) {
                     try {
-                        file.SaveToFile();
+                        if (File.Exists(file.FilePath)) {
+                            file.SaveToFile();
+                        }
                     }
                     catch (Exception e) {
                         if ((i + 1) >= count) {
@@ -89,6 +92,13 @@ namespace MCNBTViewer {
 
         public async Task ParseFilesAction(string[] files) {
             for (int i = 0; i < files.Length; i++) {
+                string fileName = Path.GetFileName(files[0]);
+                NBTDataFileViewModel match = this.Explorer.LoadedDataFiles.FirstOrDefault(x => x.Name == fileName);
+                if (match != null) {
+                    await IoC.MessageDialogs.ShowMessageAsync("Already added", $"A root DAT file with the name '{fileName}'{(string.IsNullOrEmpty(match.FilePath) ? "" : $" already exists at path:\n{match.FilePath}")}");
+                    continue;
+                }
+
                 NBTTagCompound compound;
                 try {
                     compound = CompressedStreamTools.ReadCompressed(files[i], out _);
@@ -107,7 +117,7 @@ namespace MCNBTViewer {
                 }
 
                 try {
-                    this.AddDataFile(new NBTDataFileViewModel(Path.GetFileName(files[0]), compound) {
+                    this.AddDataFile(new NBTDataFileViewModel(fileName, compound) {
                         FilePath = files[0]
                     });
                 }
@@ -128,7 +138,7 @@ namespace MCNBTViewer {
             this.Explorer.AddDataFile(file);
         }
 
-        public static NBTCompoundViewModel CreateRoot() {
+        public static NBTTagCompound CreateRoot() {
             NBTTagCompound root = new NBTTagCompound();
             NBTTagList list = new NBTTagList();
             list.tags.Add(new NBTTagByte(23));
@@ -142,7 +152,7 @@ namespace MCNBTViewer {
             inner2.Put("234y57894t", new NBTTagInt());
             inner.Put("inner2", inner2);
             root.Put("inner", inner);
-            return BaseNBTViewModel.CreateFrom(null, root);
+            return root;
         }
     }
 }

@@ -42,7 +42,7 @@ namespace MCNBTViewer.Core.Explorer.Finding {
         }
 
         private async Task NavigateToItemAction() {
-            await IoC.MainExplorer.TreeView.Behaviour.ExpandHierarchyFromRootAsync(this.NBT.ParentChain, true);
+            await IoC.MainExplorer.TreeView.Behaviour.RepeatExpandHierarchyFromRootAsync(this.NBT.ParentChain, true);
         }
 
         public IEnumerable<IBaseContextEntry> GetContextEntries() {

@@ -29,5 +29,18 @@ namespace MCNBTViewer.Views.Dialogs.FilePicking {
 
             return picker.ShowDialog() == true ? new DialogResult<string>(picker.ResultPath) : new DialogResult<string>(false);
         }
+
+        public DialogResult<string> ShowSaveFileDialog(string filter, string defaultPath = null, string titleBar = null) {
+            SaveFileDialog dialog = new SaveFileDialog {
+                Title = titleBar ?? "Save a file",
+                Filter = filter ?? "All files|*.*"
+            };
+
+            if (defaultPath != null) {
+                dialog.FileName = defaultPath;
+            }
+
+            return dialog.ShowDialog() == true ? new DialogResult<string>(dialog.FileName) : new DialogResult<string>(false);
+        }
     }
 }

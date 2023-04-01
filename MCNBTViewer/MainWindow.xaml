@@ -14,7 +14,7 @@
                 Style="{DynamicResource CustomWindowStyleEx}"
                 Background="{DynamicResource AREghZyBrush.Deep.3.Background.Static}"
                 TitlebarBrush="{DynamicResource AREghZyBrush.Deep.3.Background.Static}"
-                BorderBrush="DodgerBlue" >
+                BorderBrush="DodgerBlue">
     <Window.Resources>
         <nbtexp:ListFallbackSourceConverter x:Key="FallbackConverter"/>
     </Window.Resources>

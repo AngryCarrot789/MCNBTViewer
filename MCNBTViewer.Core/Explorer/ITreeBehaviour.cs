@@ -6,6 +6,7 @@ namespace MCNBTViewer.Core.Explorer {
     public interface ITreeBehaviour {
         void SetExpanded(BaseNBTViewModel nbt);
         bool IsExpanded(BaseNBTViewModel nbt);
-        Task<bool> ExpandHierarchyFromRootAsync(IEnumerable<BaseNBTViewModel> items, bool select = true);
+        Task<bool> RepeatExpandHierarchyFromRootAsync(IEnumerable<BaseNBTViewModel> items, bool select = true);
+        bool ExpandHierarchyFromRoot(IEnumerable<BaseNBTViewModel> items, bool select = true);
     }
 }

@@ -14,6 +14,12 @@ namespace MCNBTViewer.NBT.Explorer.Dialogs {
             this.DataContext = new FindViewModel() {
                 Window = this
             };
+
+            this.Loaded += (sender, args) => {
+                if (this.NameBox.IsFocused || (this.NameBox.Focusable && this.NameBox.Focus())) {
+                    this.NameBox.SelectAll();
+                }
+            };
         }
 
         protected override void OnClosed(EventArgs e) {

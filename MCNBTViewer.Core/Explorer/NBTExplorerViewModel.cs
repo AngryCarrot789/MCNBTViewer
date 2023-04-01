@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Design;
@@ -56,14 +57,14 @@ namespace MCNBTViewer.Core.Explorer {
                 return;
             }
 
-            await this.TreeView.Behaviour.ExpandHierarchyFromRootAsync(list);
+            await this.TreeView.Behaviour.RepeatExpandHierarchyFromRootAsync(list);
         }
 
         public IEnumerable<BaseNBTViewModel> ResolvePath(string path) {
             int i, j = 0;
             string name;
             BaseNBTViewModel tag;
-            IEnumerable<BaseNBTViewModel> source = this.LoadedDataFiles;
+            IList source = this.LoadedDataFiles;
             while ((i = path.IndexOf('/', j)) >= 0) {
                 tag = GetChild(source, name = path.JSubstring(j, i));
                 if (tag == null) {
@@ -88,9 +89,11 @@ namespace MCNBTViewer.Core.Explorer {
             yield return tag;
         }
 
-        private static BaseNBTViewModel GetChild(IEnumerable<BaseNBTViewModel> children, string name) {
+        private static BaseNBTViewModel GetChild(IList children, string name) {
             if (!string.IsNullOrEmpty(name) && name[0] == '[' && name[name.Length - 1] == ']') {
-                name = name.JSubstring(1, name.Length - 1);
+                if (int.TryParse(name.JSubstring(1, name.Length - 1), out int index) && index >= 0 && index < children.Count) {
+                    return (BaseNBTViewModel) children[index];
+                }
             }
 
             foreach (BaseNBTViewModel child in children) {
@@ -171,7 +174,9 @@ namespace MCNBTViewer.Core.Explorer {
         }
 
         public void UseItem(BaseNBTViewModel file) {
-
+            if (file is BaseNBTCollectionViewModel) {
+                this.TreeView.Behaviour.ExpandHierarchyFromRoot(file.ParentChain);
+            }
         }
 
         public void SetSelectedItem(BaseNBTViewModel item) {

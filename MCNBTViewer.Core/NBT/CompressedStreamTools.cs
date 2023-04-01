@@ -35,7 +35,7 @@ namespace MCNBTViewer.Core.NBT {
 
         public static void WriteCompressed(NBTBase nbt, Stream stream) {
             using (GZipStream gzip = new GZipStream(stream, CompressionMode.Compress, true)) {
-                NBTBase.WriteTag(CreateOutput(stream), null, nbt);
+                NBTBase.WriteTag(CreateOutput(gzip), null, nbt);
             }
         }
 

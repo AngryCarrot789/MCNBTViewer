@@ -223,7 +223,7 @@ namespace MCNBTViewer.Controls {
             // return BaseViewModel.GetInternalData<bool>(nbt, nameof(TreeViewItem.IsExpanded));
         }
 
-        public async Task<bool> ExpandHierarchyFromRootAsync(IEnumerable<BaseNBTViewModel> items, bool select) {
+        public async Task<bool> RepeatExpandHierarchyFromRootAsync(IEnumerable<BaseNBTViewModel> items, bool select) {
             List<BaseNBTViewModel> list = items as List<BaseNBTViewModel> ?? items.ToList();
             bool result = false;
             for (int i = 0; i < list.Count; i++) {

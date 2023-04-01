@@ -17,18 +17,18 @@ namespace MCNBTViewer.Core.Explorer.Items {
 
         private bool hasFileSavedOnce;
 
-        public RelayCommand RefreshDatFileCommand { get; }
+        public AsyncRelayCommand RefreshDatFileCommand { get; }
 
-        public RelayCommand ShowInExplorerCommand { get; }
+        public AsyncRelayCommand ShowInExplorerCommand { get; }
 
-        public RelayCommand RemoveDatFileFromTreeCommand { get; }
+        public AsyncRelayCommand RemoveDatFileFromTreeCommand { get; }
 
-        public RelayCommand DeleteDatFileCommand { get; }
+        public AsyncRelayCommand DeleteDatFileCommand { get; }
+        public AsyncRelayCommand CopyFilePathToClipboardCommand { get; }
 
-        public RelayCommand SaveDatFileCommand { get; }
-        public RelayCommand SaveDatFileAsCommand { get; }
+        public AsyncRelayCommand SaveDatFileCommand { get; }
+        public AsyncRelayCommand SaveDatFileAsCommand { get; }
 
-        public RelayCommand CopyFilePathToClipboardCommand { get; }
 
         public NBTDataFileViewModel(BaseNBTCollectionViewModel nbt, bool deepCopy = false) : this(nbt.Name) {
             foreach (BaseNBTViewModel pair in nbt.Children) {
@@ -43,11 +43,11 @@ namespace MCNBTViewer.Core.Explorer.Items {
         }
 
         public NBTDataFileViewModel(string name) : base(name) {
-            this.RefreshDatFileCommand = new RelayCommand(async () => await this.RefreshAction(), () => File.Exists(this.FilePath));
-            this.RemoveDatFileFromTreeCommand = new RelayCommand(async () => await this.RemoveSelfAction(), () => IoC.MainExplorer != null && IoC.MainExplorer.LoadedDataFiles.Contains(this));
-            this.DeleteDatFileCommand = new RelayCommand(async () => await this.DeleteFileAction(), () => File.Exists(this.FilePath));
-            this.ShowInExplorerCommand = new RelayCommand(async () => await this.OpenInExplorerAction(), () => File.Exists(this.FilePath) && IoC.ExplorerService != null);
-            this.CopyFilePathToClipboardCommand = new RelayCommand(async () => {
+            this.RefreshDatFileCommand = new AsyncRelayCommand(this.RefreshAction, () => File.Exists(this.FilePath));
+            this.RemoveDatFileFromTreeCommand = new AsyncRelayCommand(this.RemoveSelfAction, () => IoC.MainExplorer != null && IoC.MainExplorer.LoadedDataFiles.Contains(this));
+            this.DeleteDatFileCommand = new AsyncRelayCommand(this.DeleteFileAction, () => File.Exists(this.FilePath));
+            this.ShowInExplorerCommand = new AsyncRelayCommand(this.OpenInExplorerAction, () => File.Exists(this.FilePath) && IoC.ExplorerService != null);
+            this.CopyFilePathToClipboardCommand = new AsyncRelayCommand(async () => {
                 if (!string.IsNullOrEmpty(this.FilePath)) {
                     if (IoC.Clipboard != null) {
                         IoC.Clipboard.ReadableText = this.FilePath;
@@ -57,8 +57,8 @@ namespace MCNBTViewer.Core.Explorer.Items {
                     }
                 }
             }, () => IoC.Clipboard != null && !string.IsNullOrEmpty(this.FilePath));
-            this.SaveDatFileCommand = new RelayCommand(async () => await this.SaveToFileAction(false));
-            this.SaveDatFileAsCommand = new RelayCommand(async () => await this.SaveToFileAction(true));
+            this.SaveDatFileCommand = new AsyncRelayCommand(() => this.SaveToFileAction(false));
+            this.SaveDatFileAsCommand = new AsyncRelayCommand(() => this.SaveToFileAction(true));
         }
 
         private async Task RefreshAction() {
@@ -123,12 +123,12 @@ namespace MCNBTViewer.Core.Explorer.Items {
         public async Task SaveToFileAction(bool saveAs) {
             string path;
             if (saveAs || (!this.hasFileSavedOnce && !File.Exists(this.FilePath))) {
-                DialogResult<string[]> result = IoC.FilePicker.ShowFilePickerDialog(Filters.NBTDatAndAllFilesFilter, titleBar: "Select a save location for the NBT file", multiSelect: false);
-                if (!result.IsSuccess || result.Value.Length < 1) {
+                DialogResult<string> result = IoC.FilePicker.ShowSaveFileDialog(Filters.NBTDatAndAllFilesFilter, titleBar: "Select a save location for the NBT file");
+                if (!result.IsSuccess || string.IsNullOrEmpty(result.Value)) {
                     return;
                 }
 
-                path = result.Value[0];
+                path = result.Value;
             }
             else {
                 path = this.FilePath;
@@ -172,7 +172,9 @@ namespace MCNBTViewer.Core.Explorer.Items {
             yield return new ContextEntry("Show in explorer", this.ShowInExplorerCommand);
             yield return new ContextEntry("Copy File Path", this.CopyFilePathToClipboardCommand);
             yield return ContextEntrySeparator.Instance;
-            yield return new ContextEntry("Delete root tag", this.RemoveDatFileFromTreeCommand);
+            yield return new ContextEntry("Remove this root tag", this.RemoveDatFileFromTreeCommand) {
+                ToolTip = "Removes this root DAT file tag from the tree. Does not delete the file"
+            };
             yield return new ContextEntry("Delete FILE", this.DeleteDatFileCommand) {
                 ToolTip = File.Exists(this.FilePath) ? "Deletes the DAT file from your computer" : "File was already deleted"
             };
