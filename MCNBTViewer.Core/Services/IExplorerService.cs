@@ -1,5 +1,5 @@
 namespace MCNBTViewer.Core.Services {
-    public interface IOSFileExplorer {
+    public interface IExplorerService {
         void OpenFileInExplorer(string filePath);
     }
 }

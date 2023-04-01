@@ -3,11 +3,7 @@ using System.Windows.Input;
 
 namespace MCNBTViewer.Core.AdvancedContextService {
     public class ContextEntryCheckable : ContextEntry {
-        private bool isChecked;
-        public bool IsChecked {
-            get => this.isChecked;
-            set => this.RaisePropertyChanged(ref this.isChecked, value);
-        }
+
 
         public ContextEntryCheckable() {
         }
