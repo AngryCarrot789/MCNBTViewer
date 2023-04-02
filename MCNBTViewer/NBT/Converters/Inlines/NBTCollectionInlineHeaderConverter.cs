@@ -1,12 +1,11 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Documents;
 using MCNBTViewer.Converters;
 
-namespace MCNBTViewer.NBT.Explorer.Converters.Inlines {
+namespace MCNBTViewer.NBT.Converters.Inlines {
     public class NBTCollectionInlineHeaderConverter : BaseNBTHeaderRunConverter, IMultiValueConverter {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
             if (values == null || (values.Length != 2 && values.Length != 3)) {

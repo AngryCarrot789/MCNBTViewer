@@ -1,10 +1,14 @@
+using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
+using MCNBTViewer.Core.AdvancedContextService;
 using MCNBTViewer.Core.NBT;
 
 namespace MCNBTViewer.Core.Explorer.Items {
     public class NBTListViewModel : BaseNBTCollectionViewModel {
         private NBTType targetType;
+
         public NBTType TargetType {
             get => this.targetType;
             set => RaisePropertyChangedIfChanged(ref this.targetType, value);
@@ -28,6 +32,7 @@ namespace MCNBTViewer.Core.Explorer.Items {
             foreach (BaseNBTViewModel item in this.Children) {
                 list.tags.Add(item.ToNBT());
             }
+
             return list;
         }
 
@@ -39,6 +44,23 @@ namespace MCNBTViewer.Core.Explorer.Items {
             }
 
             this.TargetType = this.Children[0].NBTType;
+        }
+
+        public override IBaseContextEntry GetNewItemEntry() {
+            switch (this.TargetType) {
+                case NBTType.Byte:      return new ContextEntry("Add new Byte...", this.CreateTagCommand, 1);
+                case NBTType.Short:     return new ContextEntry("Add new Short...", this.CreateTagCommand, 2);
+                case NBTType.Int:       return new ContextEntry("Add new Int...", this.CreateTagCommand, 3);
+                case NBTType.Long:      return new ContextEntry("Add new Long...", this.CreateTagCommand, 4);
+                case NBTType.Float:     return new ContextEntry("Add new Float...", this.CreateTagCommand, 5);
+                case NBTType.Double:    return new ContextEntry("Add new Double...", this.CreateTagCommand, 6);
+                case NBTType.String:    return new ContextEntry("Add new String...", this.CreateTagCommand, 8);
+                case NBTType.ByteArray: return new ContextEntry("Add new Byte Array...", this.CreateTagCommand, 7);
+                case NBTType.IntArray:  return new ContextEntry("Add new Int Array...", this.CreateTagCommand, 11);
+                case NBTType.List:      return new ContextEntry("Add new List...", this.CreateTagCommand, 9);
+                case NBTType.Compound:  return new ContextEntry("Add new Compound...", this.CreateTagCommand, 10);
+                default:                return base.GetNewItemEntry();
+            }
         }
     }
 }

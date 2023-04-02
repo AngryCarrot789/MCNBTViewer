@@ -90,15 +90,21 @@ namespace MCNBTViewer.Core.Explorer {
         }
 
         private static BaseNBTViewModel GetChild(IList children, string name) {
-            if (!string.IsNullOrEmpty(name) && name[0] == '[' && name[name.Length - 1] == ']') {
-                if (int.TryParse(name.JSubstring(1, name.Length - 1), out int index) && index >= 0 && index < children.Count) {
-                    return (BaseNBTViewModel) children[index];
-                }
+            if (string.IsNullOrEmpty(name)) {
+                return null;
             }
+
 
             foreach (BaseNBTViewModel child in children) {
                 if (child.Name == name) {
                     return child;
+                }
+            }
+
+            // finally try to parse the index. the above checks just in case a tag was actually named [3] for example
+            if (name[0] == '[' && name[name.Length - 1] == ']') {
+                if (int.TryParse(name.JSubstring(1, name.Length - 1), out int index) && index >= 0 && index < children.Count) {
+                    return (BaseNBTViewModel) children[index];
                 }
             }
 

@@ -101,7 +101,7 @@ namespace MCNBTViewer {
 
         public async Task ParseFilesAction(string[] files) {
             for (int i = 0; i < files.Length; i++) {
-                string fileName = Path.GetFileName(files[0]);
+                string fileName = Path.GetFileName(files[i]);
                 NBTDataFileViewModel match = this.Explorer.LoadedDataFiles.FirstOrDefault(x => x.Name == fileName);
                 if (match != null) {
                     await IoC.MessageDialogs.ShowMessageAsync("Already added", $"A root DAT file with the name '{fileName}'{(string.IsNullOrEmpty(match.FilePath) ? "" : $" already exists at path:\n{match.FilePath}")}");
@@ -127,7 +127,7 @@ namespace MCNBTViewer {
 
                 try {
                     this.AddDataFile(new NBTDataFileViewModel(fileName, compound) {
-                        FilePath = files[0]
+                        FilePath = files[i]
                     });
                 }
                 catch (Exception e) {

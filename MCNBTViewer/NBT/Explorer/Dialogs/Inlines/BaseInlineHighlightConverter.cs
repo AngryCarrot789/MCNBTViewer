@@ -21,7 +21,7 @@ namespace MCNBTViewer.NBT.Explorer.Dialogs.Inlines {
         }
 
         public IEnumerable<Run> CreateString(string text, IEnumerable<TextRange> ranges) {
-            return InlineHelper.CreateString(text, ranges, this.CreateNormalRun, this.CreateHighlightedRun);
+            return InlineHelper.CreateHighlight(text, ranges, this.CreateNormalRun, this.CreateHighlightedRun);
         }
     }
 }

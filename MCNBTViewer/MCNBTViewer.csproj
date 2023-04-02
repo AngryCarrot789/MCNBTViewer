@@ -67,25 +67,18 @@
     <Compile Include="AttachedProperties\AttachedInteractivity.cs" />
     <Compile Include="AttachedProperties\TextBlockHelper.cs" />
     <Compile Include="Controls\IconTextPair.cs" />
-    <Compile Include="Controls\NBTNavigationButton.cs" />
-    <Compile Include="Controls\PathViewer.cs" />
-    <Compile Include="Converters\BaseNBTTextRunConverter.cs" />
     <Compile Include="Converters\BoolConverter.cs" />
-    <Compile Include="Converters\NBTArrayNameConverter.cs" />
-    <Compile Include="Converters\NBTArrayNameInlinesConverter.cs" />
-    <Compile Include="Converters\NbtCollectiveNameConverter.cs" />
     <Compile Include="Converters\EnumConverter.cs" />
-    <Compile Include="Converters\NbtCollectiveNameInlinesConverter.cs" />
-    <Compile Include="Converters\NBTItemNameConverter.cs" />
-    <Compile Include="Converters\NBTPrimitiveNameConverter.cs" />
-    <Compile Include="Converters\NBTPrimitiveNameInlinesConverter.cs" />
-    <Compile Include="Converters\NBTToPathConverter.cs" />
     <Compile Include="Converters\NullConverter.cs" />
-    <Compile Include="Converters\SelectedItemToPathListConverter.cs" />
-    <Compile Include="Converters\TagIconConverter.cs" />
-    <Compile Include="Converters\SelectedParentToPathConverter.cs" />
-    <Compile Include="NBT\Controls\NBTBaseControl.cs" />
-    <Compile Include="NBT\Controls\NBTCompoundControl.cs" />
+    <Compile Include="NBT\Converters\BaseNBTHeaderRunConverter.cs" />
+    <Compile Include="NBT\Converters\Basic\NBTArrayNameConverter.cs" />
+    <Compile Include="NBT\Converters\Basic\NbtCollectiveNameConverter.cs" />
+    <Compile Include="NBT\Converters\Basic\NBTPrimitiveNameConverter.cs" />
+    <Compile Include="NBT\Converters\Inlines\NBTArrayInlineHeaderConverter.cs" />
+    <Compile Include="NBT\Converters\Inlines\NBTCollectionInlineHeaderConverter.cs" />
+    <Compile Include="NBT\Converters\Inlines\NBTPrimitiveInlineHeaderConverter.cs" />
+    <Compile Include="NBT\Converters\NBTToPathConverter.cs" />
+    <Compile Include="NBT\Converters\TagIconConverter.cs" />
     <Compile Include="NBT\Explorer\Dialogs\ChainConverter.cs" />
     <Compile Include="NBT\Explorer\Dialogs\FindNBTWindow.xaml.cs">
       <DependentUpon>FindNBTWindow.xaml</DependentUpon>
@@ -149,7 +142,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="NBT\Controls\ControlStyles.xaml" />
     <Page Include="NBT\Explorer\Dialogs\FindNBTWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -160,6 +152,10 @@
     </Page>
     <Page Include="NBT\Explorer\Items\ListItemStyles.xaml" />
     <Page Include="NBT\Explorer\Items\TreeItemStyles.xaml" />
+    <Page Include="Themes\ControlColoursSoftDarkBlue.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Themes\ControlColours.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -173,6 +169,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Themes\RedBlackTheme.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\SoftDarkAndBlue.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

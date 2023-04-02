@@ -6,7 +6,7 @@ using TextRange = MCNBTViewer.Core.Explorer.Finding.TextRange;
 
 namespace MCNBTViewer.NBT.Explorer.Dialogs.Inlines {
     public static class InlineHelper {
-        public static IEnumerable<Run> CreateString(string text, IEnumerable<TextRange> ranges, Func<string, Run> normalRunProvider, Func<string, Run> highlightedRunProvider) {
+        public static IEnumerable<Run> CreateHighlight(string text, IEnumerable<TextRange> ranges, Func<string, Run> normalRunProvider, Func<string, Run> highlightedRunProvider) {
             int lastIndex = 0;
             foreach (TextRange range in ranges) {
                 if ((range.Index - lastIndex) > 0) {

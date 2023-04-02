@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Controls.Primitives;
 using MCNBTViewer.Controls;
 using MCNBTViewer.Core;
 using MCNBTViewer.Core.Explorer;
@@ -49,6 +50,12 @@ namespace MCNBTViewer {
             }
             else {
                 await IoC.MessageDialogs.ShowMessageAsync("Unknown drop", "Unknown dropped data. You can only drop files here!");
+            }
+        }
+
+        private void ToggleButtonCheckChanged(object sender, System.Windows.RoutedEventArgs e) {
+            if (sender is ToggleButton button && button.IsChecked.HasValue) {
+                this.Topmost = button.IsChecked.Value;
             }
         }
     }

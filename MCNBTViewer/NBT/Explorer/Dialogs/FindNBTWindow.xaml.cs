@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Controls.Primitives;
 using MCNBTViewer.Core;
 using MCNBTViewer.Core.Explorer.Finding;
 using MCNBTViewer.NBT.Explorer.Finding;
@@ -28,6 +29,12 @@ namespace MCNBTViewer.NBT.Explorer.Dialogs {
             ((FindView) IoC.FindView).OnClosedInternal(this);
             if (this.DataContext is FindViewModel findViewModel) {
                 findViewModel.Dispose();
+            }
+        }
+
+        private void ToggleButtonCheckChanged(object sender, System.Windows.RoutedEventArgs e) {
+            if (sender is ToggleButton button && button.IsChecked.HasValue) {
+                this.Topmost = button.IsChecked.Value;
             }
         }
     }

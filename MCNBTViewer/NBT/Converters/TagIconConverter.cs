@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Windows.Data;
 using MCNBTViewer.Core.NBT;
 
-namespace MCNBTViewer.Converters {
+namespace MCNBTViewer.NBT.Converters {
     public class TagIconConverter : IValueConverter {
         public Uri TagEnd { get; set; }
         public Uri TagByte { get; set; }

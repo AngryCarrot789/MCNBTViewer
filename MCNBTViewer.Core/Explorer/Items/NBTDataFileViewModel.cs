@@ -136,7 +136,8 @@ namespace MCNBTViewer.Core.Explorer.Items {
             }
 
             string name = System.IO.Path.GetFileName(path);
-            if (IoC.MainExplorer.LoadedDataFiles.Any(x => x.Name == name)) {
+            NBTDataFileViewModel alreadyExists = IoC.MainExplorer.LoadedDataFiles.FirstOrDefault(x => x.Name == name);
+            if (alreadyExists != null && alreadyExists != this) {
                 if (!await IoC.MessageDialogs.ShowYesNoDialogAsync("Same name already in tree", $"A DAT file with the name '{name}' already exists in the tree. Continue and remove the existing DAT tag from the tree? (otherwise, don't load the new file)")) {
                     return;
                 }

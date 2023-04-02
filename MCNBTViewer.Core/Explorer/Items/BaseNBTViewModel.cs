@@ -197,11 +197,11 @@ namespace MCNBTViewer.Core.Explorer.Items {
         }
 
         public virtual IEnumerable<IBaseContextEntry> GetContextEntries() {
-            yield return new ContextEntry("Copy Name", this.CopyKeyNameCommand);
             yield return new ContextEntry("Edit Name", this.RenameCommand);
+            yield return new ContextEntry("Copy Name", this.CopyKeyNameCommand);
             if (this is NBTPrimitiveViewModel item) {
-                yield return new ContextEntry("Copy Value", item.CopyValueCommand);
                 yield return new ContextEntry("Edit Value", item.EditValueCommand);
+                yield return new ContextEntry("Copy Value", item.CopyValueCommand);
             }
             else if (this is NBTIntArrayViewModel intArray) {
                 yield return new LazyASFContextEntry("Copy Int Values (CSV)", async () => {

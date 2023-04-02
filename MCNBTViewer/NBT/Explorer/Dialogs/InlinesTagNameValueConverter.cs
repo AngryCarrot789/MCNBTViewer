@@ -25,11 +25,15 @@ namespace MCNBTViewer.NBT.Explorer.Dialogs {
             }
 
             if (!string.IsNullOrEmpty(primitiveOrArrayFoundValue)) {
-                if (output.Count > 0) {
-                    output.Add(this.CreateNormalRun(": "));
+                bool hasName = output.Count > 0;
+                if (hasName) {
+                    output.Add(this.CreateNormalRun(" ("));
                 }
 
                 output.AddRange(this.CreateString(primitiveOrArrayFoundValue, valueMatches));
+                if (hasName) {
+                    output.Add(this.CreateNormalRun(")"));
+                }
             }
             else if (nbt is NBTPrimitiveViewModel primitive) {
                 output.Add(this.CreateNormalRun(" (" + primitive.Data + ")"));

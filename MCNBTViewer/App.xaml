@@ -8,7 +8,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Themes/SoftDark.xaml"/>
-                <ResourceDictionary Source="Themes/ControlColours.xaml"/>
+                <ResourceDictionary Source="Themes/ControlColoursSoftDarkBlue.xaml"/>
                 <ResourceDictionary Source="Themes/Controls.xaml"/>
                 <ResourceDictionary Source="AdvancedContextService/ContextStyles.xaml"/>
                 <ResourceDictionary Source="ConvertersDictionary.xaml"/>

@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MCNBTViewer.Core {
@@ -8,10 +9,10 @@ namespace MCNBTViewer.Core {
     public class AsyncRelayCommand : BaseRelayCommand {
         private readonly Func<Task> execute;
         private readonly Func<bool> canExecute;
+        private volatile bool isRunning; // maybe switch to atomic Interlocked?
 
-        private volatile bool isRunning;
 
-        public AsyncRelayCommand(Func<Task> execute, Func<bool> canExecute = null) {
+        public AsyncRelayCommand(Func<Task> execute, Func<bool> canExecute = null, bool convertParameter = false) {
             if (execute == null) {
                 throw new ArgumentNullException(nameof(execute), "Execute callback cannot be null");
             }
@@ -25,6 +26,10 @@ namespace MCNBTViewer.Core {
         }
 
         public override async void Execute(object parameter) {
+            if (this.isRunning) {
+                return;
+            }
+
             this.isRunning = true;
             try {
                 this.RaiseCanExecuteChanged();
@@ -38,13 +43,13 @@ namespace MCNBTViewer.Core {
     }
 
     public class AsyncRelayCommand<T> : BaseRelayCommand {
-        private readonly Action<T> execute;
-
+        private readonly Func<T, Task> execute;
         private readonly Func<T, bool> canExecute;
+        private volatile bool isRunning;
 
         public bool ConvertParameter { get; set; }
 
-        public AsyncRelayCommand(Action<T> execute, Func<T, bool> canExecute = null, bool convertParameter = false) {
+        public AsyncRelayCommand(Func<T, Task> execute, Func<T, bool> canExecute = null, bool convertParameter = false) {
             if (execute == null) {
                 throw new ArgumentNullException(nameof(execute), "Execute callback cannot be null");
             }
@@ -55,23 +60,34 @@ namespace MCNBTViewer.Core {
         }
 
         public override bool CanExecute(object parameter) {
+            if (this.isRunning) {
+                return false;
+            }
+
             if (this.ConvertParameter) {
                 parameter = GetConvertedParameter<T>(parameter);
             }
 
-            return base.CanExecute(parameter) && (this.canExecute == null || (parameter == null || parameter is T) && this.canExecute((T) parameter));
+            return base.CanExecute(parameter) && (parameter == null || parameter is T) && this.canExecute((T) parameter);
         }
 
-        public override void Execute(object parameter) {
+        public override async void Execute(object parameter) {
+            if (this.isRunning) {
+                return;
+            }
+
+            this.isRunning = true;
             if (this.ConvertParameter) {
                 parameter = GetConvertedParameter<T>(parameter);
             }
 
-            if (parameter == null || parameter is T) {
-                this.execute((T) parameter);
+            try {
+                this.RaiseCanExecuteChanged();
+                await this.execute((T) parameter);
             }
-            else {
-                throw new InvalidCastException($"Parameter type ({parameter.GetType()}) cannot be used for the callback method (which requires type {typeof(T).Name})");
+            finally {
+                this.isRunning = false;
+                this.RaiseCanExecuteChanged();
             }
         }
     }

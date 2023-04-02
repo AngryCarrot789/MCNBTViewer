@@ -36,10 +36,16 @@ namespace MCNBTViewer.Core.Explorer.Finding {
             }
         }
 
-        private bool isNameCaseSentsitive;
-        public bool IsNameCaseSentsitive {
-            get => this.isNameCaseSentsitive;
-            set => this.RaisePropertyChangedIfChanged(ref this.isNameCaseSentsitive, value);
+        private bool isNameCaseSensitive;
+        public bool IsNameCaseSensitive {
+            get => this.isNameCaseSensitive;
+            set => this.RaisePropertyChangedIfChanged(ref this.isNameCaseSensitive, value);
+        }
+
+        private bool includeCollectionNameMatches;
+        public bool IncludeCollectionNameMatches {
+            get => this.includeCollectionNameMatches;
+            set => this.RaisePropertyChangedIfChanged(ref this.includeCollectionNameMatches, value);
         }
 
         private bool isValueRegex;
@@ -88,10 +94,10 @@ namespace MCNBTViewer.Core.Explorer.Finding {
             }
         }
 
-        private bool isSearchEmpty;
-        public bool IsSearchEmpty {
-            get => this.isSearchEmpty;
-            set => this.RaisePropertyChanged(ref this.isSearchEmpty, value);
+        private bool isSearchTermEmpty;
+        public bool IsSearchTermEmpty {
+            get => this.isSearchTermEmpty;
+            set => this.RaisePropertyChanged(ref this.isSearchTermEmpty, value);
         }
 
         private bool isSearchActive;
@@ -114,7 +120,7 @@ namespace MCNBTViewer.Core.Explorer.Finding {
         private readonly Task processQueueTask;
 
         public FindViewModel() {
-            this.isSearchEmpty = true;
+            this.isSearchTermEmpty = true;
             this.isSearchActive = false;
             this.CloseCommand = new RelayCommand(this.CloseDialogAction);
             this.FoundItems = new ObservableCollection<NBTMatchResult>();
@@ -156,7 +162,6 @@ namespace MCNBTViewer.Core.Explorer.Finding {
             this.IsSearchActive = false;
             if (clearResults) {
                 this.FoundItems.Clear();
-                this.IsSearchEmpty = true;
             }
         }
 
@@ -165,11 +170,11 @@ namespace MCNBTViewer.Core.Explorer.Finding {
                 this.StopTaskAndWait(true);
                 this.FoundItems.Clear();
                 this.IdleEventService.CanFireNextTick = false;
-                this.IsSearchEmpty = true;
+                this.IsSearchTermEmpty = true;
                 this.IsSearchActive = false;
             }
             else {
-                this.IsSearchEmpty = false;
+                this.IsSearchTermEmpty = false;
                 this.IdleEventService.OnInput();
             }
         }
@@ -190,7 +195,7 @@ namespace MCNBTViewer.Core.Explorer.Finding {
         public void OnTickSearch() {
             this.StopTaskAndWait();
             if (string.IsNullOrEmpty(this.SearchForNameText) && string.IsNullOrEmpty(this.SearchForValueText)) {
-                this.IsSearchEmpty = true;
+                this.IsSearchTermEmpty = true;
                 this.IsSearchActive = false;
                 return;
             }
@@ -204,7 +209,7 @@ namespace MCNBTViewer.Core.Explorer.Finding {
             FindFlags nf = FindFlags.None;
             if (this.isNameRegex) nf |= FindFlags.Regex;
             if (this.isNameSearchingWholeWord) nf |= FindFlags.Words;
-            if (this.isNameCaseSentsitive) nf |= FindFlags.Cases;
+            if (this.isNameCaseSensitive) nf |= FindFlags.Cases;
 
             FindFlags vf = FindFlags.None;
             if (this.isValueRegex) vf |= FindFlags.Regex;
@@ -219,7 +224,7 @@ namespace MCNBTViewer.Core.Explorer.Finding {
         }
 
         // nf = name flags, vf = value flags
-        private async Task TaskMain(string name, string value, FindFlags nf, FindFlags vf) {
+        private async Task TaskMain(string searchName, string searchValue, FindFlags nf, FindFlags vf) {
             // cheap way of avoid concurrent modification in most cases
             List<NBTDataFileViewModel> list = IoC.MainExplorer.LoadedDataFiles.ToList();
             foreach (NBTDataFileViewModel file in list) {
@@ -227,13 +232,13 @@ namespace MCNBTViewer.Core.Explorer.Finding {
                     return;
                 }
 
-                await this.FindItems(file, file.Children.ToList(), name, value, nf, vf);
+                await this.FindItems(file, file.Children.ToList(), searchName, searchValue, nf, vf);
             }
 
             this.IsSearchActive = false;
         }
 
-        private async Task FindItems(BaseNBTCollectionViewModel parent, List<BaseNBTViewModel> items, string name, string value, FindFlags nf, FindFlags vf) {
+        private async Task FindItems(BaseNBTCollectionViewModel parent, List<BaseNBTViewModel> items, string searchName, string searchValue, FindFlags nf, FindFlags vf) {
             foreach (BaseNBTViewModel child in items) {
                 List<TextRange> nameMatchesNormal = new List<TextRange>();
                 List<TextRange> valueMatchesNormal = new List<TextRange>();
@@ -241,29 +246,34 @@ namespace MCNBTViewer.Core.Explorer.Finding {
                     return;
                 }
 
-                if (name != null) {
+                if (searchName != null) {
                     if (child is BaseNBTCollectionViewModel childCollection) {
-                        if (!string.IsNullOrEmpty(child.Name)) {
-                            AcceptName(name, child, nf, nameMatchesNormal);
+                        if (!string.IsNullOrEmpty(child.Name) && this.includeCollectionNameMatches) {
+                            List<TextRange> collectionMatches = new List<TextRange>();
+                            if (AcceptName(searchName, child, nf, collectionMatches)) {
+                                lock (this.queuedItemsToAdd) {
+                                    this.queuedItemsToAdd.AddLast(new NBTMatchResult(child, searchName, null, null, collectionMatches, null));
+                                }
+                            }
                         }
 
-                        await this.FindItems(childCollection, childCollection.Children.ToList(), name, value, nf, vf);
+                        await this.FindItems(childCollection, childCollection.Children.ToList(), searchName, searchValue, nf, vf);
                         continue;
                     }
-                    else if (string.IsNullOrEmpty(child.Name) || !AcceptName(name, child, nf, nameMatchesNormal)) {
+                    else if (string.IsNullOrEmpty(child.Name) || !AcceptName(searchName, child, nf, nameMatchesNormal)) {
                         continue;
                     }
                 }
 
                 string foundValue = null;
-                if (value != null) {
+                if (searchValue != null) {
                     if (child is NBTPrimitiveViewModel || child is BaseNBTArrayViewModel) {
-                        if (!AcceptValue(value, child, vf, valueMatchesNormal, out foundValue)) {
+                        if (!AcceptValue(searchValue, child, vf, valueMatchesNormal, out foundValue)) {
                             continue;
                         }
                     }
                     else if (child is BaseNBTCollectionViewModel childCollection) {
-                        await this.FindItems(childCollection, childCollection.Children.ToList(), name, value, nf, vf);
+                        await this.FindItems(childCollection, childCollection.Children.ToList(), searchName, searchValue, nf, vf);
                         continue;
                     }
                     else {
@@ -277,7 +287,7 @@ namespace MCNBTViewer.Core.Explorer.Finding {
 
                 if (nameMatchesNormal.Count > 0 || valueMatchesNormal.Count > 0) {
                     lock (this.queuedItemsToAdd) {
-                        this.queuedItemsToAdd.AddLast(new NBTMatchResult(child, name, value, foundValue, nameMatchesNormal, valueMatchesNormal));
+                        this.queuedItemsToAdd.AddLast(new NBTMatchResult(child, searchName, searchValue, foundValue, nameMatchesNormal, valueMatchesNormal));
                     }
                 }
             }

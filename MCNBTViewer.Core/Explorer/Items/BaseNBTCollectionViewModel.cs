@@ -104,22 +104,20 @@ namespace MCNBTViewer.Core.Explorer.Items {
         }
 
         protected virtual async Task NewTagAction(int type) {
-            // await IoC.MessageDialogs.ShowMessageAsync("Cannot create child", "Children cannot be added to this tag");
-
             bool isCompound = this is NBTCompoundViewModel;
             string name;
             NBTBase nbt;
             switch ((NBTType) type) {
                 case NBTType.Byte      :  { (string, NBTTagByte)? x = IoC.TagDialogService.CreateTagByte(isCompound);            if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
                 case NBTType.Short     :  { (string, NBTTagShort)? x = IoC.TagDialogService.CreateTagShort(isCompound);          if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
-                case NBTType.Int    :  { (string, NBTTagInt)? x = IoC.TagDialogService.CreateTagInt(isCompound);              if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
+                case NBTType.Int       :  { (string, NBTTagInt)? x = IoC.TagDialogService.CreateTagInt(isCompound);              if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
                 case NBTType.Long      :  { (string, NBTTagLong)? x = IoC.TagDialogService.CreateTagLong(isCompound);            if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
                 case NBTType.Float     :  { (string, NBTTagFloat)? x = IoC.TagDialogService.CreateTagFloat(isCompound);          if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
                 case NBTType.Double    :  { (string, NBTTagDouble)? x = IoC.TagDialogService.CreateTagDouble(isCompound);        if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
-                case NBTType.String   :  { (string, NBTTagString)? x = IoC.TagDialogService.CreateTagString(isCompound);        if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
-                case NBTType.ByteArray   :  { (string, NBTTagByteArray)? x = IoC.TagDialogService.CreateTagByteArray(isCompound);  if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
-                case NBTType.IntArray: { (string, NBTTagIntArray)? x = IoC.TagDialogService.CreateTagIntArray(isCompound);    if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
-                case NBTType.Compound : {
+                case NBTType.String    :  { (string, NBTTagString)? x = IoC.TagDialogService.CreateTagString(isCompound);        if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
+                case NBTType.ByteArray :  { (string, NBTTagByteArray)? x = IoC.TagDialogService.CreateTagByteArray(isCompound);  if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
+                case NBTType.IntArray  : { (string, NBTTagIntArray)? x = IoC.TagDialogService.CreateTagIntArray(isCompound);     if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
+                case NBTType.Compound  : {
                     if (isCompound) {
                         (string, NBTTagList)? x = IoC.TagDialogService.CreateTagList(true);
                         if (!x.HasValue)
@@ -197,7 +195,7 @@ namespace MCNBTViewer.Core.Explorer.Items {
         }
 
         public override IEnumerable<IBaseContextEntry> GetContextEntries() {
-            yield return new ContextEntry("New", null, this.GetNewItemsEntries());
+            yield return this.GetNewItemEntry();
             yield return ContextEntrySeparator.Instance;
             foreach (IBaseContextEntry entry in this.GetSortingContextEntries()) {
                 yield return entry;
@@ -221,7 +219,11 @@ namespace MCNBTViewer.Core.Explorer.Items {
             },  () => this.Children.Count > 0);
         }
 
-        public IEnumerable<IBaseContextEntry> GetNewItemsEntries() {
+        public virtual IBaseContextEntry GetNewItemEntry() {
+            return new ContextEntry("New", null, this.GetNewItemsEntries());
+        }
+
+        public virtual IEnumerable<IBaseContextEntry> GetNewItemsEntries() {
             // yield return new ContextEntry("End", this.CreateTagCommand, 0);
             yield return new ContextEntry("Byte", this.CreateTagCommand, 1);
             yield return new ContextEntry("Short", this.CreateTagCommand, 2);

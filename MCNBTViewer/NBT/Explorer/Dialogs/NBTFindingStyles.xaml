@@ -4,8 +4,9 @@
                     xmlns:acs="clr-namespace:MCNBTViewer.AdvancedContextService"
                     xmlns:ap="clr-namespace:MCNBTViewer.AttachedProperties"
                     xmlns:f="clr-namespace:MCNBTViewer.Core.Explorer.Finding;assembly=MCNBTViewer.Core"
-                    xmlns:converters="clr-namespace:MCNBTViewer.Converters">
-    <converters:NBTToPathConverter x:Key="NBTPathConverter"/>
+                    xmlns:converters="clr-namespace:MCNBTViewer.Converters"
+                    xmlns:converters1="clr-namespace:MCNBTViewer.NBT.Converters">
+    <converters1:NBTToPathConverter x:Key="NBTPathConverter"/>
     <dialogs:InlinesTagNameValueConverter x:Key="InlinesTagNameValueConverter"/>
     <DataTemplate x:Key="FindTemplateCompoundTemplate" DataType="{x:Type f:NBTMatchResult}">
         <DockPanel Height="18" acs:AdvancedContextMenu.ContextProvider="{Binding}">

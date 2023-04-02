@@ -36,8 +36,8 @@ namespace MCNBTViewer.Core.Explorer.Finding {
             this.NameSearchTerm = nameSearchTerm;
             this.ValueSearchTerm = valueSearchTerm;
             this.PrimitiveOrArrayFoundValue = primitiveOrArrayFoundValue;
-            this.NameMatches = nameMatches;
-            this.ValueMatches = valueMatches;
+            this.NameMatches = nameMatches ?? new List<TextRange>();
+            this.ValueMatches = valueMatches ?? new List<TextRange>();
             this.NavigateToItemCommand = new AsyncRelayCommand(this.NavigateToItemAction);
         }
 

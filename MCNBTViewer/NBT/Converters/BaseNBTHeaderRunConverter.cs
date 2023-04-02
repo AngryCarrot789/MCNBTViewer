@@ -1,7 +1,7 @@
 using System.Windows;
 using System.Windows.Documents;
 
-namespace MCNBTViewer.Converters {
+namespace MCNBTViewer.NBT.Converters {
     public abstract class BaseNBTHeaderRunConverter {
         public Style TagNameRunStyle { get; set; }
         public Style TagDataRunStyle { get; set; }

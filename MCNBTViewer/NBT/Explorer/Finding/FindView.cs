@@ -27,10 +27,6 @@ namespace MCNBTViewer.NBT.Explorer.Finding {
             }
         }
 
-        public void NavigateTo(BaseNBTViewModel item) {
-            IoC.MainExplorer.SetSelectedItem(item);
-        }
-
         internal void OnClosedInternal(FindNBTWindow window) {
             this.window = null;
             (window.DataContext as FindViewModel)?.Dispose();

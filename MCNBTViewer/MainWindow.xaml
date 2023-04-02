@@ -21,6 +21,7 @@
     <Window.InputBindings>
         <KeyBinding Modifiers="Control" Key="O" Command="{Binding OpenFileCommand, Mode=OneTime}"/>
         <KeyBinding Modifiers="Control+Shift" Key="O" Command="{Binding OpenFolderCommand, Mode=OneTime}"/>
+        <KeyBinding Modifiers="Control+Shift" Key="S" Command="{Binding SaveAllDatFilesCommands, Mode=OneTime}"/>
         <KeyBinding Modifiers="Control" Key="F" Command="{Binding ShowFindViewCommand, Mode=OneTime}"/>
     </Window.InputBindings>
     <Grid>
@@ -29,13 +30,16 @@
                 <MenuItem Header="Open File..." Command="{Binding OpenFileCommand, Mode=OneTime}" InputGestureText="Ctrl+O"/>
                 <MenuItem Header="Open Folder..." Command="{Binding OpenFolderCommand, Mode=OneTime}" InputGestureText="Ctrl+Shift+O"/>
                 <Separator Style="{DynamicResource MenuItemSeparator}"/>
-                <MenuItem Header="Save All" Command="{Binding SaveAllDatFilesCommands, Mode=OneTime}" InputGestureText="Ctrl+Shift+O"/>
+                <MenuItem Header="Save All" Command="{Binding SaveAllDatFilesCommands, Mode=OneTime}" InputGestureText="Ctrl+Shift+S"/>
                 <Separator Style="{DynamicResource MenuItemSeparator}"/>
-                <MenuItem IsCheckable="True" Header="Use Big Endianness" IsChecked="{Binding IsBigEndian, UpdateSourceTrigger=PropertyChanged}"/>
-                <MenuItem IsCheckable="True" Header="Use Compressed (GZIP)" IsChecked="{Binding UseCompression, UpdateSourceTrigger=PropertyChanged}"/>
+                <MenuItem IsCheckable="True" Checked="ToggleButtonCheckChanged" Unchecked="ToggleButtonCheckChanged" Header="Make window Topmost" ToolTip="Makes the window top-most, meaning other non-top-most windows cannot be above it"/>
             </MenuItem>
             <MenuItem Header="Search">
                 <MenuItem Header="Find..." InputGestureText="Ctrl+F" Command="{Binding ShowFindViewCommand, Mode=OneTime}"/>
+            </MenuItem>
+            <MenuItem Header="Preferences">
+                <MenuItem IsCheckable="True" Header="Use Big Endianness" IsChecked="{Binding IsBigEndian, UpdateSourceTrigger=PropertyChanged}" ToolTip="Whether NBT data will be loaded in the big-endian format or litt-endian, which is what java's DataOutputStream and DataInputStreams use by default. You most likely won't need to toggle this, but it's here just in case" ToolTipService.ShowDuration="30000"/>
+                <MenuItem IsCheckable="True" Header="Use Compressed (GZIP)" IsChecked="{Binding UseCompression, UpdateSourceTrigger=PropertyChanged}" ToolTip="Whether NBT data will be read and written using GZIP compression or not. Minecraft uses GZIP for most of the NBT usage, but some mods may write uncompressed NBT" ToolTipService.ShowDuration="30000"/>
             </MenuItem>
         </Menu>
         <Grid Margin="0,18,0,0">

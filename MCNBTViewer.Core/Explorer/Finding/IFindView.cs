@@ -7,7 +7,5 @@ namespace MCNBTViewer.Core.Explorer.Finding {
         void ShowFindView();
 
         void CloseFindView();
-
-        void NavigateTo(BaseNBTViewModel item);
     }
 }
