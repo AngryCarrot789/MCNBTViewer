@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.Windows.Data;
 using MCNBTViewer.Core.NBT;
@@ -19,9 +20,7 @@ namespace MCNBTViewer.Converters {
         public Uri TagList { get; set; }
 
         public Uri TagCompoundClosed { get; set; }
-
         public Uri TagCompoundOpenEmpty { get; set; }
-
         public Uri TagCompoundOpenFull { get; set; }
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
@@ -39,6 +38,7 @@ namespace MCNBTViewer.Converters {
                     case NBTType.IntArray: return this.TagIntArray;
                     case NBTType.List: return this.TagList;
                     case NBTType.Compound: {
+                        Debug.WriteLine("TagIconConverter was used to convert NBTTagCompound. This should be avoided!");
                         return this.TagCompoundClosed;
                     }
                 }

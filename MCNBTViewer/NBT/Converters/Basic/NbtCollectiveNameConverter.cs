@@ -3,7 +3,7 @@ using System.Collections;
 using System.Globalization;
 using System.Windows.Data;
 
-namespace MCNBTViewer.Converters {
+namespace MCNBTViewer.NBT.Explorer.Converters.Basic {
     public class NbtCollectiveNameConverter : IMultiValueConverter {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
             if (values.Length != 2) {
