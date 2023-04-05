@@ -1,0 +1,20 @@
+﻿<?xml version="1.0"?>
+<KeyMap>
+    <Group Name="Application">
+        <Group Name="Timeline">
+            <Group Name="Surface">
+                <Shortcut Name="DeleteSelectClips" Description="Deletes all of the selected clips">
+                    <Keystroke Char="Delete"/>
+                </Shortcut>
+            </Group>
+            <Group Name="LayerControllers">
+                <Shortcut Name="DeleteSelectedLayer" Description="Deletes the selected layer">
+                    <Keystroke Char="Delete"/>
+                </Shortcut>
+            </Group>
+            <Shortcut Name="PlayPauseAction" Description="Causes the timeline to play or pause">
+                <Keystroke Char="Space"/>
+            </Shortcut>
+        </Group>
+    </Group>
+</KeyMap>

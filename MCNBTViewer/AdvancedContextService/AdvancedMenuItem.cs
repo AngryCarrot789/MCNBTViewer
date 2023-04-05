@@ -2,7 +2,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace MCNBTViewer.AdvancedContextService {
+namespace MCNBTViewer.DynUI.Menus {
     public class AdvancedMenuItem : MenuItem {
         private object currentItem;
 

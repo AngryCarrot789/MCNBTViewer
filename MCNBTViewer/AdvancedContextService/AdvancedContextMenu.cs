@@ -4,10 +4,32 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
-using MCNBTViewer.Core.AdvancedContextService;
+using MCNBTViewer.Core.AdvancedContextMenu;
+using MCNBTViewer.Core.AdvancedContextMenu.Base;
 
-namespace MCNBTViewer.AdvancedContextService {
+namespace MCNBTViewer.DynUI.Menus {
     public class AdvancedContextMenu : ContextMenu {
+        public static readonly DependencyProperty ContextProviderProperty =
+            DependencyProperty.RegisterAttached(
+                "ContextProvider",
+                typeof(IContextProvider),
+                typeof(AdvancedContextMenu),
+                new PropertyMetadata(null, OnContextProviderPropertyChanged));
+
+        public static readonly DependencyProperty InsertionIndexProperty =
+            DependencyProperty.RegisterAttached(
+                "InsertionIndex",
+                typeof(int),
+                typeof(AdvancedContextMenu),
+                new PropertyMetadata(-1));
+
+        public static readonly DependencyPropertyKey LastAppendEndIndexPropertyKey =
+            DependencyProperty.RegisterAttachedReadOnly(
+                "LastAppendEndIndex",
+                typeof(int),
+                typeof(AdvancedContextMenu),
+                new PropertyMetadata(-1));
+
         private object currentItem;
 
         public AdvancedContextMenu() {
@@ -15,7 +37,7 @@ namespace MCNBTViewer.AdvancedContextService {
         }
 
         public static DependencyObject CreateChildMenuItem(object item) {
-            if (item is ContextEntry) {
+            if (item is ActionContextEntry) {
                 return new AdvancedMenuItem();
             }
             else if (item is ContextEntrySeparator) {
@@ -51,27 +73,6 @@ namespace MCNBTViewer.AdvancedContextService {
 
             return CreateChildMenuItem(item);
         }
-
-        public static readonly DependencyProperty ContextProviderProperty =
-            DependencyProperty.RegisterAttached(
-                "ContextProvider",
-                typeof(IContextProvider),
-                typeof(AdvancedContextMenu),
-                new PropertyMetadata(null, OnContextProviderPropertyChanged));
-
-        public static readonly DependencyProperty InsertionIndexProperty =
-            DependencyProperty.RegisterAttached(
-                "InsertionIndex",
-                typeof(int),
-                typeof(AdvancedContextMenu),
-                new PropertyMetadata(-1));
-
-        public static readonly DependencyPropertyKey LastAppendEndIndexPropertyKey =
-            DependencyProperty.RegisterAttachedReadOnly(
-                "LastAppendEndIndex",
-                typeof(int),
-                typeof(AdvancedContextMenu),
-                new PropertyMetadata(-1));
 
         private static void SetLastAppendEndIndex(DependencyObject element, int value) {
             element.SetValue(LastAppendEndIndexPropertyKey, value);
@@ -114,14 +115,16 @@ namespace MCNBTViewer.AdvancedContextService {
                 AdvancedContextMenu menu = GetOrCreateContextMenu(targetElement);
                 int count = menu.Items.Count;
                 int index = GetInsertionIndex(targetElement);
+                List<IContextEntry> context = new List<IContextEntry>();
+                provider.GetContext(context);
                 if (index < 0) {
                     menu.Items.Clear();
-                    foreach (IBaseContextEntry entry in provider.GetContextEntries()) {
+                    foreach (IContextEntry entry in context) {
                         menu.Items.Add(entry);
                     }
                 }
                 else if (index == menu.Items.Count) {
-                    foreach (IBaseContextEntry entry in provider.GetContextEntries()) {
+                    foreach (IContextEntry entry in context) {
                         menu.Items.Add(entry);
                     }
 
@@ -134,13 +137,12 @@ namespace MCNBTViewer.AdvancedContextService {
                     }
 
                     menu.Items.Clear();
-                    List<IBaseContextEntry> entries = provider.GetContextEntries().ToList();
-                    items.InsertRange(index = index > count ? count : index, entries);
+                    items.InsertRange(index = index > count ? count : index, context);
                     foreach (object item in items) {
                         menu.Items.Add(item);
                     }
 
-                    SetLastAppendEndIndex(targetElement, index + entries.Count);
+                    SetLastAppendEndIndex(targetElement, index + context.Count);
                 }
 
                 if (menu.Items.Count < 1) {
@@ -152,15 +154,6 @@ namespace MCNBTViewer.AdvancedContextService {
         public static void OnContextMenuClosing(object sender, ContextMenuEventArgs e) {
             if (sender is DependencyObject targetElement && ContextMenuService.GetContextMenu(targetElement) is ContextMenu menu) {
                 Application.Current.Dispatcher.Invoke(() => {
-                    // Reduce memory usage :D Hopefully...
-
-                    // 0
-                    // 1
-                    // 2
-                    // 3
-                    // 4 !
-                    // 5 !
-
                     int index = GetInsertionIndex(targetElement); // 4
                     if (index < 0) {
                         menu.Items.Clear();

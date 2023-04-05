@@ -1,8 +1,8 @@
 using System.Windows;
 using System.Windows.Controls;
-using MCNBTViewer.Core.AdvancedContextService;
+using MCNBTViewer.Core.AdvancedContextMenu;
 
-namespace MCNBTViewer.AdvancedContextService {
+namespace MCNBTViewer.DynUI.Menus {
     public class AdvancedMenuItemStyleSelector : StyleSelector {
         public Style NonCheckableMenuItemStyle { get; set; }
         public Style CheckableMenuItemStyle { get; set; }
@@ -15,7 +15,7 @@ namespace MCNBTViewer.AdvancedContextService {
 
         public override Style SelectStyle(object item, DependencyObject container) {
             if (container is MenuItem) {
-                return item is ContextEntryCheckable ? this.CheckableMenuItemStyle : this.NonCheckableMenuItemStyle;
+                return item is CheckableActionContextEntry ? this.CheckableMenuItemStyle : this.NonCheckableMenuItemStyle;
             }
             else if (container is Separator) {
                 return this.SeparatorStyle;
