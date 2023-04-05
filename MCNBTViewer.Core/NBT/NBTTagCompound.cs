@@ -4,9 +4,9 @@ using REghZy.Streams;
 
 namespace MCNBTViewer.Core.NBT {
     public class NBTTagCompound : NBTBase {
-        public override byte Id => 10;
-
         public readonly Dictionary<string, NBTBase> map;
+
+        public override byte Id => 10;
 
         public NBTTagCompound() {
             this.map = new Dictionary<string, NBTBase>();

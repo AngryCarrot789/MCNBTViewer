@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Windows;
 
-namespace FramePFX.Shortcuts {
+namespace MCNBTViewer.Shortcuts {
     public class UIFocusGroup {
         public static readonly DependencyProperty FocusGroupPathProperty =
             DependencyProperty.RegisterAttached(
@@ -23,7 +23,7 @@ namespace FramePFX.Shortcuts {
                 "UsageID",
                 typeof(string),
                 typeof(UIFocusGroup),
-                new PropertyMetadata(AppShortcutManager.DEFAULT_USAGE_ID));
+                new FrameworkPropertyMetadata(AppShortcutManager.DEFAULT_USAGE_ID, FrameworkPropertyMetadataOptions.Inherits));
 
         public static readonly DependencyProperty HasGroupFocusProperty =
             DependencyProperty.RegisterAttached(
@@ -31,6 +31,17 @@ namespace FramePFX.Shortcuts {
                 typeof(bool),
                 typeof(UIFocusGroup),
                 new PropertyMetadata(false));
+
+        public static readonly DependencyPropertyKey ShortcutProcessorProperty =
+            DependencyProperty.RegisterAttachedReadOnly(
+                "ShortcutProcessor",
+                typeof(AppShortcutProcessor),
+                typeof(UIFocusGroup),
+                new PropertyMetadata(default(AppShortcutProcessor)));
+
+        public static AppShortcutProcessor GetShortcutProcessor(DependencyObject element) {
+            return (AppShortcutProcessor) element.GetValue(ShortcutProcessorProperty.DependencyProperty);
+        }
 
 
         public delegate void FocusGroupPathChangedEventHandler(string oldPath, string newPath);
@@ -85,17 +96,14 @@ namespace FramePFX.Shortcuts {
             OnFocusedGroupPathChanged?.Invoke(oldGroup, newGroup);
         }
 
-        public static string ProcessFocusGroupChange(DependencyObject obj) {
+        public static void ProcessFocusGroupChange(DependencyObject obj) {
             string oldPath = FocusedGroupPath;
             string newPath = GetFocusGroupPath(obj);
-            if (oldPath == newPath) {
-                return oldPath;
+            if (oldPath != newPath) {
+                FocusedGroupPath = newPath;
+                RaiseFocusGroupPathChanged(oldPath, newPath);
+                UpdateVisualFocusGroup(obj);
             }
-
-            FocusedGroupPath = newPath;
-            RaiseFocusGroupPathChanged(oldPath, newPath);
-            UpdateVisualFocusGroup(obj);
-            return newPath;
         }
 
         /// <summary>

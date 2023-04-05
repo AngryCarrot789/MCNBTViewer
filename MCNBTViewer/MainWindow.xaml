@@ -8,41 +8,61 @@
                 xmlns:nbtexp="clr-namespace:MCNBTViewer.NBT.Explorer"
                 xmlns:views="clr-namespace:MCNBTViewer.Views"
                 xmlns:ap="clr-namespace:MCNBTViewer.AttachedProperties"
+                xmlns:s="clr-namespace:MCNBTViewer.Shortcuts.Bindings"
+                xmlns:sc="clr-namespace:MCNBTViewer.Shortcuts"
                 d:DataContext="{d:DesignInstance Type=local:MainViewModel}"
                 mc:Ignorable="d"
                 Title="MainWindow" Height="576" Width="1024"
                 Style="{DynamicResource CustomWindowStyleEx}"
-                Background="{DynamicResource AREghZyBrush.Deep.3.Background.Static}"
-                TitlebarBrush="{DynamicResource AREghZyBrush.Deep.3.Background.Static}"
-                BorderBrush="DodgerBlue">
+                Background="{DynamicResource AREghZyBrush.Primary.1.Background.Static}"
+                TitlebarBrush="{DynamicResource AREghZyBrush.Primary.1.Background.Static}"
+                BorderBrush="DodgerBlue"
+                sc:UIFocusGroup.IsGlobalShortcutFocusTarget="True"
+                sc:UIFocusGroup.FocusGroupPath="Application/MainWindow">
     <Window.Resources>
         <nbtexp:ListFallbackSourceConverter x:Key="FallbackConverter"/>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisible" TrueValue="Visible" FalseValue="Collapsed"/>
+        <converters:BoolToVisibilityConverter x:Key="BoolToCollapsed" TrueValue="Collapsed" FalseValue="Visible"/>
+        <converters:ShortcutGestureConverter x:Key="ShortcutGestureConverter"/>
     </Window.Resources>
+
+    <!--
     <Window.InputBindings>
+        <KeyBinding Modifiers="Control" Key="N" Command="{Binding AddEmptyDATTagCommand, Mode=OneTime}"/>
         <KeyBinding Modifiers="Control" Key="O" Command="{Binding OpenFileCommand, Mode=OneTime}"/>
         <KeyBinding Modifiers="Control+Shift" Key="O" Command="{Binding OpenFolderCommand, Mode=OneTime}"/>
         <KeyBinding Modifiers="Control+Shift" Key="S" Command="{Binding SaveAllDatFilesCommands, Mode=OneTime}"/>
         <KeyBinding Modifiers="Control" Key="F" Command="{Binding ShowFindViewCommand, Mode=OneTime}"/>
     </Window.InputBindings>
+    -->
+    <Window.InputBindings>
+        <s:ShortcutBinding ShortcutAndUsageId="Application/MainWindow/AddEmptyDatTag" Command="{Binding AddEmptyDATTagCommand, Mode=OneTime}"/>
+        <s:ShortcutBinding ShortcutAndUsageId="Application/MainWindow/OpenFile" Command="{Binding OpenFileCommand, Mode=OneTime}"/>
+        <s:ShortcutBinding ShortcutAndUsageId="Application/MainWindow/OpenFolder" Command="{Binding OpenFolderCommand, Mode=OneTime}"/>
+        <s:ShortcutBinding ShortcutAndUsageId="Application/MainWindow/SaveAll" Command="{Binding SaveAllDatFilesCommands, Mode=OneTime}"/>
+        <s:ShortcutBinding ShortcutAndUsageId="Application/MainWindow/ShowFindView" Command="{Binding ShowFindViewCommand, Mode=OneTime}"/>
+    </Window.InputBindings>
     <Grid>
-        <Menu VerticalAlignment="Top">
+        <Menu VerticalAlignment="Top" Background="Transparent">
             <MenuItem Header="File">
-                <MenuItem Header="Open File..." Command="{Binding OpenFileCommand, Mode=OneTime}" InputGestureText="Ctrl+O"/>
-                <MenuItem Header="Open Folder..." Command="{Binding OpenFolderCommand, Mode=OneTime}" InputGestureText="Ctrl+Shift+O"/>
+                <MenuItem Header="Add empty root tag" Command="{Binding AddEmptyDATTagCommand, Mode=OneTime}" InputGestureText="{Binding Version, Source={x:Static converters:ShortcutGestureConverter.Holder}, Converter={StaticResource ShortcutGestureConverter}, ConverterParameter='Application/MainWindow/AddEmptyDatTag'}"/>
                 <Separator Style="{DynamicResource MenuItemSeparator}"/>
-                <MenuItem Header="Save All" Command="{Binding SaveAllDatFilesCommands, Mode=OneTime}" InputGestureText="Ctrl+Shift+S"/>
+                <MenuItem Header="Open File..." Command="{Binding OpenFileCommand, Mode=OneTime}" InputGestureText="{Binding Version, Source={x:Static converters:ShortcutGestureConverter.Holder}, Converter={StaticResource ShortcutGestureConverter}, ConverterParameter='Application/MainWindow/OpenFile'}"/>
+                <MenuItem Header="Open Folder..." Command="{Binding OpenFolderCommand, Mode=OneTime}" InputGestureText="{Binding Version, Source={x:Static converters:ShortcutGestureConverter.Holder}, Converter={StaticResource ShortcutGestureConverter}, ConverterParameter='Application/MainWindow/OpenFolder'}"/>
+                <Separator Style="{DynamicResource MenuItemSeparator}"/>
+                <MenuItem Header="Save All" Command="{Binding SaveAllDatFilesCommands, Mode=OneTime}" InputGestureText="{Binding Version, Source={x:Static converters:ShortcutGestureConverter.Holder}, Converter={StaticResource ShortcutGestureConverter}, ConverterParameter='Application/MainWindow/SaveAll'}"/>
                 <Separator Style="{DynamicResource MenuItemSeparator}"/>
                 <MenuItem IsCheckable="True" Checked="ToggleButtonCheckChanged" Unchecked="ToggleButtonCheckChanged" Header="Make window Topmost" ToolTip="Makes the window top-most, meaning other non-top-most windows cannot be above it"/>
             </MenuItem>
             <MenuItem Header="Search">
-                <MenuItem Header="Find..." InputGestureText="Ctrl+F" Command="{Binding ShowFindViewCommand, Mode=OneTime}"/>
+                <MenuItem Header="Find..." Command="{Binding ShowFindViewCommand, Mode=OneTime}" InputGestureText="{Binding Version, Source={x:Static converters:ShortcutGestureConverter.Holder}, Converter={StaticResource ShortcutGestureConverter}, ConverterParameter='Application/MainWindow/ShowFindView'}"/>
             </MenuItem>
             <MenuItem Header="Preferences">
-                <MenuItem IsCheckable="True" Header="Use Big Endianness" IsChecked="{Binding IsBigEndian, UpdateSourceTrigger=PropertyChanged}" ToolTip="Whether NBT data will be loaded in the big-endian format or litt-endian, which is what java's DataOutputStream and DataInputStreams use by default. You most likely won't need to toggle this, but it's here just in case" ToolTipService.ShowDuration="30000"/>
+                <MenuItem IsCheckable="True" Header="Use Big Endianness" IsChecked="{Binding IsBigEndian, UpdateSourceTrigger=PropertyChanged}" ToolTip="Whether NBT data will be loaded in the big-endian format or little-endian, which is what java's DataOutputStream and DataInputStreams use by default. You most likely won't need to toggle this, but it's here just in case" ToolTipService.ShowDuration="30000"/>
                 <MenuItem IsCheckable="True" Header="Use Compressed (GZIP)" IsChecked="{Binding UseCompression, UpdateSourceTrigger=PropertyChanged}" ToolTip="Whether NBT data will be read and written using GZIP compression or not. Minecraft uses GZIP for most of the NBT usage, but some mods may write uncompressed NBT" ToolTipService.ShowDuration="30000"/>
             </MenuItem>
         </Menu>
-        <Grid Margin="0,18,0,0">
+        <Grid Margin="0,18,0,20">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="7*"/>
                 <ColumnDefinition Width="5"/>
@@ -52,32 +72,32 @@
                 <Border>
                     <Grid Margin="0,0,0,0">
                         <c:ExtendedTreeView Explorer="{Binding}" AllowDrop="True" Drop="OnTreeViewDrop"
-                                            ItemsSource="{Binding LoadedDataFiles}"
-                                            ItemTemplateSelector="{StaticResource NBTTreeItemSelector}" 
-                                            BorderThickness="0 1 1 0"
+                                            ItemsSource="{Binding RootFiles}"
+                                            ItemTemplateSelector="{StaticResource NBTTreeItemSelector}"
+                                            BorderThickness="0 1 1 1"
                                             BorderBrush="{DynamicResource AREghZyBrush.Primary.2.Border.Static}"
-                                            Background="{DynamicResource AREghZyBrush.Primary.1.Background.Static}">
+                                            Background="{DynamicResource AREghZyBrush.Deep.3.Background.Static}"
+                                            ItemContainerStyle="{StaticResource TreeViewItemStretchedContent}"
+                                            sc:UIFocusGroup.UsageID="Tree"
+                                            sc:UIFocusGroup.FocusGroupPath="Application/NBT">
+                            <c:ExtendedTreeView.InputBindings>
+                                <s:ShortcutActionBinding ActionId="actions.nbt.copy.name" ShortcutAndUsageId="Application/NBT/CopyNBTName:Tree"/>
+                                <s:ShortcutActionBinding ActionId="actions.nbt.copy.value" ShortcutAndUsageId="Application/NBT/CopyNBTValue:Tree"/>
+                                <s:ShortcutActionBinding ActionId="actions.nbt.edit-general" ShortcutAndUsageId="Application/NBT/EditNBTGeneral:Tree"/>
+                            </c:ExtendedTreeView.InputBindings>
                             <c:ExtendedTreeView.Style>
                                 <Style TargetType="{x:Type c:ExtendedTreeView}" BasedOn="{StaticResource {x:Type TreeView}}"/>
                             </c:ExtendedTreeView.Style>
-                            <c:ExtendedTreeView.ItemContainerStyle>
-                                <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource {x:Type TreeViewItem}}">
-                                </Style>
-                            </c:ExtendedTreeView.ItemContainerStyle>
                         </c:ExtendedTreeView>
-                        <Grid VerticalAlignment="Top" Height="20">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="5"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="5"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                        </Grid>
+                        <TextBlock Text="Drop NBT files here, or press CTRL+N to create a new root tag, or CTRL+O to open a file"
+                                   TextAlignment="Center"
+                                   VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14"
+                                   Foreground="{DynamicResource AREghZyBrush.Foreground.Deeper}" TextWrapping="Wrap"
+                                   Visibility="{Binding IsEmpty, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVisible}}"/>
                     </Grid>
                 </Border>
             </Grid>
-            <Border Grid.Column="2" BorderBrush="{DynamicResource AREghZyBrush.Primary.2.Border.Static}" BorderThickness="0 1 0 0">
+            <Border Grid.Column="2" BorderBrush="{DynamicResource AREghZyBrush.Primary.2.Border.Static}" BorderThickness="1 1 0 1">
                 <Grid Background="{DynamicResource AREghZyBrush.Deep.3.Background.Static}">
                     <Grid.Resources>
                         <nbtexp:PathNavigationGeneratorConveter x:Key="PathNavigationGenerator" AcceptNBT="True"/>
@@ -94,14 +114,19 @@
                                        ItemTemplateSelector="{StaticResource NBTListItemSelector}"
                                        BorderThickness="0 1 0 0"
                                        Background="{DynamicResource AREghZyBrush.Deep.2.Background.Static}"
-                                       SelectionMode="Extended">
+                                       SelectionMode="Extended"
+                                       sc:UIFocusGroup.UsageID="List"
+                                       sc:UIFocusGroup.FocusGroupPath="Application/NBT">
                         <ListBox.InputBindings>
                             <KeyBinding Key="Delete" Command="{Binding SelectedItem.RemoveFromParentCommand}"/>
+                            <s:ShortcutActionBinding ActionId="actions.nbt.copy.name" ShortcutAndUsageId="Application/NBT/CopyNBTName:List"/>
+                            <s:ShortcutActionBinding ActionId="actions.nbt.copy.value" ShortcutAndUsageId="Application/NBT/CopyNBTValue:List"/>
+                            <s:ShortcutActionBinding ActionId="actions.nbt.edit-general" ShortcutAndUsageId="Application/NBT/EditNBTGeneral:List"/>
                         </ListBox.InputBindings>
                         <ListBox.ItemsSource>
                             <MultiBinding Converter="{StaticResource FallbackConverter}">
                                 <Binding Path="CurrentFolder.Children" UpdateSourceTrigger="PropertyChanged"/>
-                                <Binding Path="Explorer.LoadedDataFiles"/>
+                                <Binding Path="Explorer.RootFiles"/>
                             </MultiBinding>
                         </ListBox.ItemsSource>
                         <c:ExtendedListBox.Style>
@@ -118,7 +143,10 @@
             </Border>
             <!-- Details panel -->
 
-            <GridSplitter VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="1" Background="Transparent" BorderThickness="0 0 1 0" BorderBrush="{DynamicResource AREghZyBrush.Primary.2.Border.Static}"/>
+            <GridSplitter VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="1" Background="Transparent" BorderThickness="0 0 0 0" BorderBrush="{DynamicResource AREghZyBrush.Primary.2.Border.Static}"/>
+        </Grid>
+        <Grid VerticalAlignment="Bottom" Height="20" HorizontalAlignment="Stretch">
+            <TextBlock x:Name="ShortcutIndicatorBlock" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="2"/>
         </Grid>
     </Grid>
 </views:WindowEx>

@@ -4,7 +4,7 @@ using MCNBTViewer.Core.Explorer.Items;
 using MCNBTViewer.NBT.Explorer.Dialogs;
 
 namespace MCNBTViewer.NBT.Explorer.Finding {
-    public class FindView : IFindView {
+    public class FindViewService : IFindViewService {
         private FindNBTWindow window;
 
         public FindViewModel ViewModel => this.window?.DataContext as FindViewModel;

@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace FramePFX.Core.Utils {
+namespace MCNBTViewer.Core.Utils {
     public class StringJoiner {
         private readonly StringBuilder sb;
         private readonly string delimiter;

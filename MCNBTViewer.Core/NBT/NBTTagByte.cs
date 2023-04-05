@@ -4,6 +4,8 @@ namespace MCNBTViewer.Core.NBT {
     public class NBTTagByte : NBTBase {
         public byte data;
 
+        public override byte Id => 1;
+
         public NBTTagByte() {
         }
 
@@ -19,8 +21,6 @@ namespace MCNBTViewer.Core.NBT {
             this.data = input.ReadByte();
         }
 
-        public override byte Id => 1;
-
         public override string ToString() {
             return this.data.ToString();
         }
@@ -30,8 +30,8 @@ namespace MCNBTViewer.Core.NBT {
         }
 
         public override bool Equals(object obj) {
-            if (base.Equals(obj)) {
-                return this.data == ((NBTTagByte) obj).data;
+            if (base.Equals(obj) && obj is NBTTagByte tagByte) {
+                return this.data == tagByte.data;
             }
             else {
                 return false;

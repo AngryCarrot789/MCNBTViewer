@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 
 namespace MCNBTViewer.Core.AdvancedContextService.Base {
-    public class BaseClickableContextEntry : BaseInteractableEntry {
+    public class ContextEntry : BaseInteractableEntry {
         private string header;
         private string inputGestureText;
         private string toolTip;
@@ -32,26 +32,26 @@ namespace MCNBTViewer.Core.AdvancedContextService.Base {
 
         public IEnumerable<IContextEntry> Children { get; }
 
-        protected BaseClickableContextEntry(IEnumerable<IContextEntry> children = null) {
+        public ContextEntry(IEnumerable<IContextEntry> children = null) {
             this.Children = children;
         }
 
-        protected BaseClickableContextEntry(object dataContext, IEnumerable<IContextEntry> children = null) : base(dataContext) {
+        public ContextEntry(object dataContext, IEnumerable<IContextEntry> children = null) : base(dataContext) {
             this.Children = children;
         }
 
-        protected BaseClickableContextEntry(object dataContext, string header, IEnumerable<IContextEntry> children = null) : base(dataContext) {
+        public ContextEntry(object dataContext, string header, IEnumerable<IContextEntry> children = null) : base(dataContext) {
             this.header = header;
             this.Children = children;
         }
 
-        protected BaseClickableContextEntry(object dataContext, string header, string inputGestureText, IEnumerable<IContextEntry> children = null) : base(dataContext) {
+        public ContextEntry(object dataContext, string header, string inputGestureText, IEnumerable<IContextEntry> children = null) : base(dataContext) {
             this.header = header;
             this.inputGestureText = inputGestureText;
             this.Children = children;
         }
 
-        protected BaseClickableContextEntry(object dataContext, string header, string inputGestureText, string toolTip, IEnumerable<IContextEntry> children = null) : base(dataContext) {
+        public ContextEntry(object dataContext, string header, string inputGestureText, string toolTip, IEnumerable<IContextEntry> children = null) : base(dataContext) {
             this.header = header;
             this.inputGestureText = inputGestureText;
             this.toolTip = toolTip;

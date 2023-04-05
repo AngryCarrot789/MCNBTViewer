@@ -11,5 +11,9 @@ namespace MCNBTViewer.Core.Explorer.Items {
         public override NBTBase ToNBT() {
             return new NBTTagIntArray(this.Data);
         }
+
+        protected override void SetData(NBTBase nbt) {
+            this.Data = ((NBTTagIntArray) nbt).data;
+        }
     }
 }

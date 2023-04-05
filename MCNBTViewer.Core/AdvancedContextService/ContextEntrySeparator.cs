@@ -1,6 +1,6 @@
-using MCNBTViewer.Core.AdvancedContextMenu.Base;
+using MCNBTViewer.Core.AdvancedContextService.Base;
 
-namespace MCNBTViewer.Core.AdvancedContextMenu {
+namespace MCNBTViewer.Core.AdvancedContextService {
     /// <summary>
     /// A separator element between menu items
     /// </summary>

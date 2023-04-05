@@ -1,3 +1,6 @@
 namespace MCNBTViewer.Core.Settings {
-    public enum SettingPage {  }
+    public enum SettingPage {
+        None,
+        Keymap,
+    }
 }

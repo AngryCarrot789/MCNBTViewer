@@ -2,7 +2,7 @@ using System.ComponentModel;
 using System.Windows.Markup;
 using System.Windows.Media;
 
-namespace MCNBTViewer.DynUI.XAML {
+namespace MCNBTViewer.Actions.XAML {
     [DefaultProperty("Items")]
     [ContentProperty("Items")]
     public class StaticMenuItem : StaticMenuElement {

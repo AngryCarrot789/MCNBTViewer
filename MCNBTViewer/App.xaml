@@ -3,10 +3,22 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:MCNBTViewer"
              xmlns:converters="clr-namespace:MCNBTViewer.Converters"
+             xmlns:xaml="clr-namespace:MCNBTViewer.Actions.XAML"
              Startup="Application_Startup">
     <Application.Resources>
         <ResourceDictionary>
+            <xaml:StaticMenu x:Key="FileMenu">
+                <xaml:StaticMenuItem Header="Add empty root tag" InputGestureText="Ctrl+N"   ActionID="app.file.new_root"/>
+                <xaml:StaticMenuSeparator/>
+                <xaml:StaticMenuItem Header="Open File..." InputGestureText="Ctrl+O"         ActionID="app.file.open_file"/>
+                <xaml:StaticMenuItem Header="Open Folder..." InputGestureText="Ctrl+Shift+O" ActionID="app.file.open_folder"/>
+                <xaml:StaticMenuSeparator/>
+                <xaml:StaticMenuItem Header="Make window topmost"                            ActionID="actions.windows.make_topmost"/>
+                <xaml:StaticMenuItem Header="Exit"                                           ActionID="actions.windows.exit"/>
+            </xaml:StaticMenu>
+
             <ResourceDictionary.MergedDictionaries>
+
                 <ResourceDictionary Source="Themes/SoftDark.xaml"/>
                 <ResourceDictionary Source="Themes/ControlColoursSoftDarkBlue.xaml"/>
                 <ResourceDictionary Source="Themes/Controls.xaml"/>

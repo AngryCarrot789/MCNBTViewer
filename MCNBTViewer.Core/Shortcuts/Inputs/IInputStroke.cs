@@ -1,4 +1,4 @@
-namespace FramePFX.Core.Inputs {
+namespace MCNBTViewer.Core.Shortcuts.Inputs {
     /// <summary>
     /// An interface defining behaviour for input strokes
     /// </summary>

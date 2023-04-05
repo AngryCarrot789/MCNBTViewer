@@ -24,6 +24,9 @@ namespace MCNBTViewer.NBT.Converters.Inlines {
             else if (values[1] is byte[] byteArray) {
                 runs.Add(this.CreateDataRun($"({byteArray.Length} byte elements)"));
             }
+            else if (values[1] is long[] longArray) {
+                runs.Add(this.CreateDataRun($"({longArray.Length} long elements)"));
+            }
             else {
                 runs.Add(this.CreateNameRun($"<invalid data: {values[1]?.GetType()}>"));
             }

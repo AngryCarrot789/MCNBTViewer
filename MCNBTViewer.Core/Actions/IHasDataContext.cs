@@ -1,5 +1,5 @@
 namespace MCNBTViewer.Core.Actions {
-    public class IHasDataContext {
-        
+    public interface IHasDataContext {
+        object DataContext { get; }
     }
 }

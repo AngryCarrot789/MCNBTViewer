@@ -1,10 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using MCNBTViewer.Core.Explorer.Items;
 using MCNBTViewer.Core.Explorer.New.NotVeryGood;
 
-namespace MCNBTViewer.Core.Explorer.New.NBT {
+namespace MCNBTViewer.Core.Explorer.New.Trees {
     public interface ITreeHandle {
         object SelectedItem { get; }
 

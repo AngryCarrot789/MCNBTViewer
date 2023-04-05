@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace FramePFX.Core.Shortcuts.Serialization {
+namespace MCNBTViewer.Core.Shortcuts.Serialization {
     [XmlRoot("KeyMap")]
     public class KeyMap : Group {
 
@@ -37,7 +37,7 @@ namespace FramePFX.Core.Shortcuts.Serialization {
     }
 
     public class Keystroke {
-        [XmlAttribute("Char")]       public string Char { get; set; }
+        [XmlAttribute("Key")]        public string KeyName { get; set; }
         [XmlAttribute("Keycode")]    public string KeyCode { get; set; }
         [XmlAttribute("Mods")]       public string Mods { get; set; }
         [XmlAttribute("IsRelease")]  public string IsRelease { get; set; }

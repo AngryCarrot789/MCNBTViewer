@@ -3,19 +3,19 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Input;
+using MCNBTViewer.Core.Actions;
 using MCNBTViewer.Core.AdvancedContextService;
+using MCNBTViewer.Core.AdvancedContextService.Base;
 using MCNBTViewer.Core.NBT;
 using MCNBTViewer.Core.Utils;
 using MCNBTViewer.Core.Views.Dialogs.UserInputs;
+using Action = MCNBTViewer.Core.Actions.Action;
 
 namespace MCNBTViewer.Core.Explorer.Items {
     public abstract class BaseNBTViewModel : BaseViewModel, IContextProvider {
-        private NBTType nbtType;
-        public NBTType NBTType {
-            get => this.nbtType;
-            set => this.RaisePropertyChanged(ref this.nbtType, value);
-        }
+        public NBTType NBTType { get; }
 
         protected string name;
         public string Name {
@@ -75,17 +75,17 @@ namespace MCNBTViewer.Core.Explorer.Items {
 
         public RelayCommand RemoveFromParentCommand { get; }
 
-        public ICommand CopyKeyNameCommand { get; }
+        public ICommand CopyNameCommand { get; }
 
         public ICommand CopyBinaryToClipboardCommand { get; }
 
-        public ICommand RenameCommand { get; }
+        public ICommand EditNameCommand { get; }
 
         protected BaseNBTViewModel(string name, NBTType type) {
             this.Name = name;
             this.NBTType = type;
             this.RemoveFromParentCommand = new RelayCommand(this.RemoveFromParentAction, () => this.Parent != null && !(this is NBTDataFileViewModel));
-            this.CopyKeyNameCommand = new RelayCommand(async () => {
+            this.CopyNameCommand = new RelayCommand(async () => {
                 await ClipboardUtils.SetClipboardOrShowErrorDialog(this.Name ?? "");
             }, () => !string.IsNullOrEmpty(this.Name));
             this.CopyBinaryToClipboardCommand = new RelayCommand(async () => {
@@ -106,10 +106,10 @@ namespace MCNBTViewer.Core.Explorer.Items {
                 }
             });
 
-            this.RenameCommand = new RelayCommand(this.RenameAction, () => this.Parent is NBTCompoundViewModel);
+            this.EditNameCommand = new RelayCommand(this.RenameAction, () => this.Parent is NBTCompoundViewModel);
         }
 
-        private void RenameAction() {
+        public void RenameAction() {
             if (!(this.Parent is NBTCompoundViewModel compound)) {
                 return;
             }
@@ -138,19 +138,13 @@ namespace MCNBTViewer.Core.Explorer.Items {
 
         public static NBTCompoundViewModel CreateFrom(string name, NBTTagCompound nbt) {
             NBTCompoundViewModel tag = new NBTCompoundViewModel(name);
-            foreach (KeyValuePair<string, NBTBase> pair in nbt.map) {
-                tag.Children.Add(CreateFrom(pair.Key, pair.Value));
-            }
-
+            tag.AddChildren(nbt);
             return tag;
         }
 
         public static NBTListViewModel CreateFrom(string name, NBTTagList nbt) {
             NBTListViewModel tag = new NBTListViewModel(name);
-            foreach (NBTBase t in nbt.tags) {
-                tag.Children.Add(CreateFrom(null, t));
-            }
-
+            tag.AddChildren(nbt);
             return tag;
         }
 
@@ -158,8 +152,9 @@ namespace MCNBTViewer.Core.Explorer.Items {
             switch (nbt) {
                 case NBTTagCompound compound: return CreateFrom(name, compound);
                 case NBTTagList list: return CreateFrom(name, list);
-                case NBTTagByteArray ba: return new NBTByteArrayViewModel(name) {Data = ba.data};
+                case NBTTagLongArray la: return new NBTLongArrayViewModel(name) {Data = la.data};
                 case NBTTagIntArray ia: return new NBTIntArrayViewModel(name) {Data = ia.data};
+                case NBTTagByteArray ba: return new NBTByteArrayViewModel(name) {Data = ba.data};
                 case NBTTagByte b: return new NBTPrimitiveViewModel(name, NBTType.Byte) {Data = b.data.ToString()};
                 case NBTTagShort s: return new NBTPrimitiveViewModel(name, NBTType.Short) {Data = s.data.ToString()};
                 case NBTTagInt i: return new NBTPrimitiveViewModel(name, NBTType.Int) {Data = i.data.ToString()};
@@ -196,32 +191,116 @@ namespace MCNBTViewer.Core.Explorer.Items {
             }
         }
 
-        public virtual IEnumerable<IBaseContextEntry> GetContextEntries() {
-            yield return new ContextEntry("Edit Name", this.RenameCommand);
-            yield return new ContextEntry("Copy Name", this.CopyKeyNameCommand);
-            if (this is NBTPrimitiveViewModel item) {
-                yield return new ContextEntry("Edit Value", item.EditValueCommand);
-                yield return new ContextEntry("Copy Value", item.CopyValueCommand);
+        public virtual List<IContextEntry> GetContext(List<IContextEntry> list) {
+            list.Add(new CommandContextEntry("Edit Name", this.EditNameCommand));
+            list.Add(new CommandContextEntry("Copy Name", this.CopyNameCommand));
+
+            if (this is NBTPrimitiveViewModel a) {
+                list.Add(new CommandContextEntry("Edit Value", a.EditGeneralCommand));
+                list.Add(new CommandContextEntry("Copy Value", a.CopyValueCommand));
             }
-            else if (this is NBTIntArrayViewModel intArray) {
-                yield return new LazyASFContextEntry("Copy Int Values (CSV)", async () => {
-                    await ClipboardUtils.SetClipboardOrShowErrorDialog(intArray.Data == null ? "" : string.Join(",", intArray.Data));
-                });
-            }
-            else if (this is NBTByteArrayViewModel byteArray) {
-                yield return new LazyASFContextEntry("Copy Byte Values (CSV)", async () => {
-                    await ClipboardUtils.SetClipboardOrShowErrorDialog(byteArray.Data == null ? "" : string.Join(",", byteArray.Data));
-                });
+            else if (this is BaseNBTArrayViewModel) {
+                list.Add(new ActionContextEntry(this, "Copy array (CSV)", "nbt.value.copy.array.csv"));
             }
 
-            yield return new ContextEntry("Copy (Binary)", this.CopyBinaryToClipboardCommand);
-            if (this is BaseNBTCollectionViewModel collective) {
-                yield return new ContextEntry("Paste (Binary)", collective.PasteNBTBinaryDataCommand);
+            list.Add(new CommandContextEntry("Copy to clipboard (binary)", this.CopyBinaryToClipboardCommand));
+            if (this is BaseNBTCollectionViewModel c) {
+                list.Add(new CommandContextEntry("Paste from clipboard (binary)", c.PasteNBTBinaryDataCommand));
             }
-            yield return ContextEntrySeparator.Instance;
-            yield return new ContextEntry("Delete Tag", this.RemoveFromParentCommand) {
-                ToolTip = "Removes this NBT entry from its parent"
-            };
+
+            list.Add(new CommandContextEntry("Remove tag", this.RemoveFromParentCommand));
+            return list;
+        }
+
+        static BaseNBTViewModel() {
+            ActionUtils.Register<CopyNBTNameAction>(ActionType.NBTCopyName);
+            ActionUtils.Register<CopyNBTValueAction>(ActionType.NBTCopyValue);
+            ActionUtils.Register<EditNBTNameAction>(ActionType.NBTEditGeneral);
+        }
+
+        private class EditNBTNameAction : Action {
+            public EditNBTNameAction() : base("Edit Name", "Renames this tag's name") {
+
+            }
+
+            public override async Task<bool> Execute(ActionEvent e) {
+                if (e.TryGetContext(out NBTPrimitiveViewModel primitive)) {
+                    await primitive.EditAction();
+                }
+                else if (e.TryGetContext(out BaseNBTArrayViewModel array)) {
+                    await array.EditAction();
+                }
+                else if (e.TryGetContext(out BaseNBTViewModel nbt)) {
+                    string newName = IoC.UserInput.ShowSingleInputDialog("Rename tag", "Input a new name for this element", nbt.Name ?? "", InputValidator.FromFunc(input => {
+                        if (nbt.Parent is NBTCompoundViewModel compound) {
+                            BaseNBTViewModel first = compound.Children.FirstOrDefault(item => item.Name == input);
+                            if (first != null) {
+                                return "A tag already exists with that name: " + first;
+                            }
+                        }
+
+                        return null;
+                    }));
+
+                    if (newName != null) {
+                        nbt.Name = newName;
+                    }
+                }
+                else {
+                    return false;
+                }
+
+                return true;
+            }
+        }
+
+        private class CopyNBTNameAction : Action {
+            public CopyNBTNameAction() : base("Copy Name", "Copies this tag's name, if it has one, to the clipboard") {
+
+            }
+
+            public override async Task<bool> Execute(ActionEvent e) {
+                if (e.TryGetContext(out BaseNBTViewModel nbt) && !string.IsNullOrEmpty(nbt.Name)) {
+                    await ClipboardUtils.SetClipboardOrShowErrorDialog(nbt.Name);
+                    return true;
+                }
+
+                return false;
+            }
+        }
+
+        private class CopyNBTValueAction : Action {
+            public CopyNBTValueAction() : base("Copy value", "Copies this tag's value, if it has one, to the clipboard") {
+
+            }
+
+            public override async Task<bool> Execute(ActionEvent e) {
+                if (e.TryGetContext(out NBTPrimitiveViewModel primitive)) {
+                    if (!string.IsNullOrEmpty(primitive.Data)) {
+                        await ClipboardUtils.SetClipboardOrShowErrorDialog(primitive.Data);
+                    }
+                }
+                else if (e.TryGetContext(out NBTLongArrayViewModel lvm)) {
+                    if (lvm.Data != null) {
+                        await ClipboardUtils.SetClipboardOrShowErrorDialog(string.Join(",", lvm.Data));
+                    }
+                }
+                else if (e.TryGetContext(out NBTIntArrayViewModel ivm)) {
+                    if (ivm.Data != null) {
+                        await ClipboardUtils.SetClipboardOrShowErrorDialog(string.Join(",", ivm.Data));
+                    }
+                }
+                else if (e.TryGetContext(out NBTByteArrayViewModel bvm)) {
+                    if (bvm.Data != null) {
+                        await ClipboardUtils.SetClipboardOrShowErrorDialog(string.Join(",", bvm.Data));
+                    }
+                }
+                else {
+                    return false;
+                }
+
+                return true;
+            }
         }
     }
 }

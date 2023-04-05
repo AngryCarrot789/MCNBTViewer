@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using MCNBTViewer.Core.Utils;
 
-namespace MCNBTViewer.Core.Explorer.New {
+namespace MCNBTViewer.Core.Explorer.New.NotVeryGood {
     public class ExplorerFolderViewModel : BaseExplorerItemViewModel {
         private readonly EfficientObservableCollection<BaseExplorerItemViewModel> items;
         public ReadOnlyObservableCollection<BaseExplorerItemViewModel> Items { get; }

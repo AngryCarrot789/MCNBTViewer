@@ -1,9 +1,9 @@
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Threading;
 using MCNBTViewer.Core.Actions;
+using MCNBTViewer.Core.AdvancedContextService;
 
-namespace MCNBTViewer.DynUI.Menus {
+namespace MCNBTViewer.AdvancedContextService {
     public class AdvancedActionMenuItem : AdvancedMenuItem {
         public static readonly DependencyProperty ActionIdProperty = DependencyProperty.Register("ActionId", typeof(string), typeof(AdvancedActionMenuItem), new PropertyMetadata(null));
         public static readonly DependencyProperty InvokeActionAfterCommandProperty = DependencyProperty.Register("InvokeActionAfterCommand", typeof(bool), typeof(AdvancedActionMenuItem), new PropertyMetadata(default(bool)));
@@ -18,7 +18,17 @@ namespace MCNBTViewer.DynUI.Menus {
             set => this.SetValue(InvokeActionAfterCommandProperty, value);
         }
 
+        private volatile bool isExecuting;
+
+        public AdvancedActionMenuItem() {
+
+        }
+
         protected override void OnClick() {
+            if (this.isExecuting) {
+                return;
+            }
+
             string id = this.ActionId;
             if (string.IsNullOrEmpty(id)) {
                 base.OnClick();
@@ -36,8 +46,18 @@ namespace MCNBTViewer.DynUI.Menus {
         }
 
         protected virtual void DispatchAction(string id) {
-            this.Dispatcher.Invoke(() => {
-                ActionManager.Instance.Execute(id, this.DataContext, false);
+            if (this.isExecuting) {
+                return;
+            }
+
+            this.isExecuting = true;
+            this.Dispatcher.InvokeAsync(async () => {
+                try {
+                    await ActionManager.Instance.Execute(id, ((ActionContextEntry) this.DataContext).DataContext);
+                }
+                finally {
+                    this.isExecuting = false;
+                }
             }, DispatcherPriority.Render);
         }
     }

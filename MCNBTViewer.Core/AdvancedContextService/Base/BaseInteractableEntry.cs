@@ -1,4 +1,4 @@
-namespace MCNBTViewer.Core.AdvancedContextMenu.Base {
+namespace MCNBTViewer.Core.AdvancedContextService.Base {
     public class BaseInteractableEntry : BaseViewModel, IContextEntry {
         private object dataContext;
         public object DataContext {

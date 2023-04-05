@@ -1,22 +1,17 @@
-using System.Collections.Generic;
-
 namespace MCNBTViewer.Core.Actions {
-    public class AnActionEvent {
-        private readonly Dictionary<string, object> data;
+    public class ActionEvent {
+        public object DataContext { get; }
 
-        public bool IsModal { get; }
-
-        public AnActionEvent(Dictionary<string, object> data, bool modal) {
-            this.data = data;
-            this.IsModal = modal;
+        public ActionEvent(object dataContext) {
+            this.DataContext = dataContext;
         }
 
-        public T GetData<T>(string key) {
-            return this.data.TryGetValue(key, out object obj) && obj is T value ? value : default;
+        public T GetContext<T>() {
+            return this.DataContext is T t ? t : default;
         }
 
-        public bool TryGetData<T>(string key, out T value) {
-            if (this.data.TryGetValue(key, out object obj) && obj is T t) {
+        public bool TryGetContext<T>(out T value) {
+            if (this.DataContext is T t) {
                 value = t;
                 return true;
             }

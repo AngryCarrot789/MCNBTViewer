@@ -1,17 +1,16 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
 using MCNBTViewer.Core.AdvancedContextService;
+using MCNBTViewer.Core.AdvancedContextService.Base;
 using MCNBTViewer.Core.NBT;
 
 namespace MCNBTViewer.Core.Explorer.Items {
     public class NBTListViewModel : BaseNBTCollectionViewModel {
         private NBTType targetType;
-
         public NBTType TargetType {
             get => this.targetType;
-            set => RaisePropertyChangedIfChanged(ref this.targetType, value);
+            set => this.RaisePropertyChangedIfChanged(ref this.targetType, value);
         }
 
         public NBTListViewModel(string name = null) : base(name, NBTType.List) {
@@ -20,11 +19,11 @@ namespace MCNBTViewer.Core.Explorer.Items {
 
         public override async Task PasteNBTBinaryDataAction(string name, NBTBase nbt) {
             if (this.TargetType != NBTType.End && nbt.Type != this.TargetType && this.Children.Count > 0) {
-                await IoC.MessageDialogs.ShowMessageAsync("Invalid type", "This tag list expects items of type " + this.NBTType + ", not " + nbt.Type + ". Remove all exists items from the list and then paste it in, to switch the type");
+                await IoC.MessageDialogs.ShowMessageAsync("Invalid type", "This tag list expects items of type " + this.TargetType + ", not " + nbt.Type + ". Remove all exists items from the list and then paste it in, to switch the type");
                 return;
             }
 
-            this.Children.Add(CreateFrom(name, nbt));
+            this.AddChild(CreateFrom(name, nbt));
         }
 
         public override NBTBase ToNBT() {
@@ -46,20 +45,22 @@ namespace MCNBTViewer.Core.Explorer.Items {
             this.TargetType = this.Children[0].NBTType;
         }
 
-        public override IBaseContextEntry GetNewItemEntry() {
+        public override IContextEntry GetNewItemContextEntry() {
+            object typeParam = (int) this.TargetType;
             switch (this.TargetType) {
-                case NBTType.Byte:      return new ContextEntry("Add new Byte...", this.CreateTagCommand, 1);
-                case NBTType.Short:     return new ContextEntry("Add new Short...", this.CreateTagCommand, 2);
-                case NBTType.Int:       return new ContextEntry("Add new Int...", this.CreateTagCommand, 3);
-                case NBTType.Long:      return new ContextEntry("Add new Long...", this.CreateTagCommand, 4);
-                case NBTType.Float:     return new ContextEntry("Add new Float...", this.CreateTagCommand, 5);
-                case NBTType.Double:    return new ContextEntry("Add new Double...", this.CreateTagCommand, 6);
-                case NBTType.String:    return new ContextEntry("Add new String...", this.CreateTagCommand, 8);
-                case NBTType.ByteArray: return new ContextEntry("Add new Byte Array...", this.CreateTagCommand, 7);
-                case NBTType.IntArray:  return new ContextEntry("Add new Int Array...", this.CreateTagCommand, 11);
-                case NBTType.List:      return new ContextEntry("Add new List...", this.CreateTagCommand, 9);
-                case NBTType.Compound:  return new ContextEntry("Add new Compound...", this.CreateTagCommand, 10);
-                default:                return base.GetNewItemEntry();
+                case NBTType.Byte:      return new CommandContextEntry("Add new Byte...", this.CreateTagCommand, typeParam);
+                case NBTType.Short:     return new CommandContextEntry("Add new Short...", this.CreateTagCommand, typeParam);
+                case NBTType.Int:       return new CommandContextEntry("Add new Int...", this.CreateTagCommand, typeParam);
+                case NBTType.Long:      return new CommandContextEntry("Add new Long...", this.CreateTagCommand, typeParam);
+                case NBTType.Float:     return new CommandContextEntry("Add new Float...", this.CreateTagCommand, typeParam);
+                case NBTType.Double:    return new CommandContextEntry("Add new Double...", this.CreateTagCommand, typeParam);
+                case NBTType.String:    return new CommandContextEntry("Add new String...", this.CreateTagCommand, typeParam);
+                case NBTType.ByteArray: return new CommandContextEntry("Add new Byte Array...", this.CreateTagCommand, typeParam);
+                case NBTType.IntArray:  return new CommandContextEntry("Add new Int Array...", this.CreateTagCommand, typeParam);
+                case NBTType.LongArray: return new CommandContextEntry("Add new Long Array...", this.CreateTagCommand, typeParam);
+                case NBTType.List:      return new CommandContextEntry("Add new List...", this.CreateTagCommand, typeParam);
+                case NBTType.Compound:  return new CommandContextEntry("Add new Compound...", this.CreateTagCommand, typeParam);
+                default: return new ContextEntry(this, "New...", this.GetNewItemsEntries(new List<IContextEntry>()));
             }
         }
     }

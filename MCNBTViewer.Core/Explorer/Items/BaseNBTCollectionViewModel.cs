@@ -6,7 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MCNBTViewer.Core.AdvancedContextService;
+using MCNBTViewer.Core.AdvancedContextService.Base;
 using MCNBTViewer.Core.NBT;
+using MCNBTViewer.Core.Utils;
 
 namespace MCNBTViewer.Core.Explorer.Items {
     public abstract class BaseNBTCollectionViewModel : BaseNBTViewModel {
@@ -15,13 +17,10 @@ namespace MCNBTViewer.Core.Explorer.Items {
             set => IoC.MainExplorer.IgnoreSelectionChanged = value;
         }
 
-        public ObservableCollection<BaseNBTViewModel> Children { get; }
+        protected readonly EfficientObservableCollection<BaseNBTViewModel> children;
+        public ReadOnlyObservableCollection<BaseNBTViewModel> Children { get; }
 
-        private bool isEmpty;
-        public bool IsEmpty {
-            get => this.isEmpty;
-            set => this.RaisePropertyChanged(ref this.isEmpty, value);
-        }
+        public bool IsEmpty => this.Children.Count < 1;
 
         public RelayCommand SortByTypeCommand { get; }
         public RelayCommand SortByNameCommand { get; }
@@ -32,37 +31,28 @@ namespace MCNBTViewer.Core.Explorer.Items {
         public RelayCommand<int> CreateTagCommand { get; }
 
         protected BaseNBTCollectionViewModel(string name, NBTType type) : base(name, type) {
-            this.Children = new ObservableCollection<BaseNBTViewModel>();
-            this.Children.CollectionChanged += this.OnChildrenChanged;
+            this.children = new EfficientObservableCollection<BaseNBTViewModel>();
+            this.Children = new ReadOnlyObservableCollection<BaseNBTViewModel>(this.children);
+            this.children.CollectionChanged += this.OnChildrenChanged;
             this.CreateTagCommand = new RelayCommand<int>(async (x) => await this.NewTagAction(x));
             this.SortByTypeCommand = new RelayCommand(() => {
-                IgnoreMainExplorerSelectionChange = true;
                 List<BaseNBTViewModel> list = this.Children.OrderByDescending((a) => a.NBTType).ToList();
                 this.ApplySort(list);
-                IgnoreMainExplorerSelectionChange = false;
             });
 
             this.SortByNameCommand = new RelayCommand(() => {
-                IgnoreMainExplorerSelectionChange = true;
                 List<BaseNBTViewModel> list = this.Children.OrderBy((a) => a.Name ?? "").ToList();
                 this.ApplySort(list);
-                IgnoreMainExplorerSelectionChange = false;
             });
 
             this.SortByBothCommand = new RelayCommand(() => {
-                IgnoreMainExplorerSelectionChange = true;
                 List<BaseNBTViewModel> list = new List<BaseNBTViewModel>(this.Children);
                 list.Sort((a, b) => {
                     int cmp = a.NBTType.Compare4(b.NBTType);
-                    if (cmp != 0) {
-                        return cmp; // reverse order; compound on top, list below, then rest
-                    }
-
-                    return string.Compare(a.Name ?? "", b.Name ?? "", StringComparison.CurrentCulture);
+                    return cmp != 0 ? cmp : string.Compare(a.Name ?? "", b.Name ?? "", StringComparison.CurrentCulture);
                 });
 
                 this.ApplySort(list);
-                IgnoreMainExplorerSelectionChange = false;
             });
 
             this.PasteNBTBinaryDataCommand = new AsyncRelayCommand(async () => {
@@ -77,15 +67,15 @@ namespace MCNBTViewer.Core.Explorer.Items {
                     return;
                 }
 
-                string tagName;
-                NBTBase nbt;
                 using (MemoryStream stream = new MemoryStream(bytes)) {
                     bool result;
+                    string tagName;
+                    NBTBase nbt;
                     try {
                         result = NBTBase.ReadTag(CompressedStreamTools.CreateInput(stream), 0, out tagName, out nbt);
                     }
                     catch (Exception e) {
-                        await IoC.MessageDialogs.ShowMessageAsync("Invalid clipboard", "Failed to read NBT from clipboard");
+                        await IoC.MessageDialogs.ShowMessageAsync("Invalid clipboard", "Failed to read NBT from clipboard: " + e.Message);
                         return;
                     }
 
@@ -99,26 +89,39 @@ namespace MCNBTViewer.Core.Explorer.Items {
             });
         }
 
-        protected virtual Task<bool> CanAddTagOfType(int type) {
-            return Task.FromResult(true);
+        public void AddChild(BaseNBTViewModel nbt) {
+            this.children.Add(nbt);
+        }
+
+        public void AddChildren(IEnumerable<BaseNBTViewModel> nbt) {
+            this.children.AddRange(nbt);
+        }
+
+        public void AddChildren(NBTTagCompound nbt) {
+            this.children.AddRange(nbt.map.Select(x => CreateFrom(x.Key, x.Value)));
+        }
+
+        public void AddChildren(NBTTagList nbt) {
+            this.children.AddRange(nbt.tags.Select(x => CreateFrom(null, x)));
         }
 
         protected virtual async Task NewTagAction(int type) {
-            bool isCompound = this is NBTCompoundViewModel;
+            bool isInCompound = this is NBTCompoundViewModel;
             string name;
             NBTBase nbt;
             switch ((NBTType) type) {
-                case NBTType.Byte      :  { (string, NBTTagByte)? x = IoC.TagDialogService.CreateTagByte(isCompound);            if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
-                case NBTType.Short     :  { (string, NBTTagShort)? x = IoC.TagDialogService.CreateTagShort(isCompound);          if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
-                case NBTType.Int       :  { (string, NBTTagInt)? x = IoC.TagDialogService.CreateTagInt(isCompound);              if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
-                case NBTType.Long      :  { (string, NBTTagLong)? x = IoC.TagDialogService.CreateTagLong(isCompound);            if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
-                case NBTType.Float     :  { (string, NBTTagFloat)? x = IoC.TagDialogService.CreateTagFloat(isCompound);          if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
-                case NBTType.Double    :  { (string, NBTTagDouble)? x = IoC.TagDialogService.CreateTagDouble(isCompound);        if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
-                case NBTType.String    :  { (string, NBTTagString)? x = IoC.TagDialogService.CreateTagString(isCompound);        if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
-                case NBTType.ByteArray :  { (string, NBTTagByteArray)? x = IoC.TagDialogService.CreateTagByteArray(isCompound);  if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
-                case NBTType.IntArray  : { (string, NBTTagIntArray)? x = IoC.TagDialogService.CreateTagIntArray(isCompound);     if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
+                case NBTType.Byte      : { (string, NBTTagByte)? x = IoC.TagDialogService.CreateTagByte(isInCompound);            if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
+                case NBTType.Short     : { (string, NBTTagShort)? x = IoC.TagDialogService.CreateTagShort(isInCompound);          if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
+                case NBTType.Int       : { (string, NBTTagInt)? x = IoC.TagDialogService.CreateTagInt(isInCompound);              if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
+                case NBTType.Long      : { (string, NBTTagLong)? x = IoC.TagDialogService.CreateTagLong(isInCompound);            if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
+                case NBTType.Float     : { (string, NBTTagFloat)? x = IoC.TagDialogService.CreateTagFloat(isInCompound);          if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
+                case NBTType.Double    : { (string, NBTTagDouble)? x = IoC.TagDialogService.CreateTagDouble(isInCompound);        if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
+                case NBTType.String    : { (string, NBTTagString)? x = IoC.TagDialogService.CreateTagString(isInCompound);        if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
+                case NBTType.ByteArray : { (string, NBTTagByteArray)? x = IoC.TagDialogService.CreateTagByteArray(isInCompound);  if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
+                case NBTType.IntArray  : { (string, NBTTagIntArray)? x = IoC.TagDialogService.CreateTagIntArray(isInCompound);    if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
+                case NBTType.LongArray : { (string, NBTTagLongArray)? x = IoC.TagDialogService.CreateTagLongArray(isInCompound);  if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
                 case NBTType.Compound  : {
-                    if (isCompound) {
+                    if (isInCompound) {
                         (string, NBTTagList)? x = IoC.TagDialogService.CreateTagList(true);
                         if (!x.HasValue)
                             return;
@@ -133,7 +136,7 @@ namespace MCNBTViewer.Core.Explorer.Items {
                     break;
                 }
                 case NBTType.List: {
-                    if (isCompound) {
+                    if (isInCompound) {
                         (string, NBTTagCompound)? x = IoC.TagDialogService.CreateTagCompound(true);
                         if (!x.HasValue)
                             return;
@@ -148,7 +151,7 @@ namespace MCNBTViewer.Core.Explorer.Items {
                 default: return;
             }
 
-            if (isCompound) {
+            if (isInCompound) {
                 if (string.IsNullOrEmpty(name)) {
                     await IoC.MessageDialogs.ShowMessageAsync("Tag name is empty", "The tag name cannot be an empty string");
                     return;
@@ -159,15 +162,18 @@ namespace MCNBTViewer.Core.Explorer.Items {
                 }
             }
 
-            this.Children.Add(CreateFrom(name, nbt));
+            this.children.Add(CreateFrom(name, nbt));
         }
 
         public abstract Task PasteNBTBinaryDataAction(string name, NBTBase nbt);
 
         protected void ApplySort(List<BaseNBTViewModel> sorted) {
-            for (int index = 0; index < sorted.Count; index++) {
-                this.Children.Move(this.Children.IndexOf(sorted[index]), index);
-            }
+            IgnoreMainExplorerSelectionChange = true;
+            this.children.ClearAndAddRange(sorted);
+            IgnoreMainExplorerSelectionChange = false;
+            // for (int index = 0; index < sorted.Count; index++) {
+            //     this.children.Move(this.children.IndexOf(sorted[index]), index);
+            // }
         }
 
         protected virtual void OnChildrenChanged(object sender, NotifyCollectionChangedEventArgs e) {
@@ -185,57 +191,49 @@ namespace MCNBTViewer.Core.Explorer.Items {
                 }
             }
 
-            this.IsEmpty = this.Children.Count == 0;
+            this.RaisePropertyChanged(nameof(this.IsEmpty));
         }
 
         public bool RemoveChild(BaseNBTViewModel nbt) {
-            bool result = this.Children.Remove(nbt);
-            nbt.Parent = null;
-            return result;
+            return this.children.Remove(nbt);
         }
 
-        public override IEnumerable<IBaseContextEntry> GetContextEntries() {
-            yield return this.GetNewItemEntry();
-            yield return ContextEntrySeparator.Instance;
-            foreach (IBaseContextEntry entry in this.GetSortingContextEntries()) {
-                yield return entry;
-            }
-
-            yield return ContextEntrySeparator.Instance;
-            foreach (IBaseContextEntry entry in base.GetContextEntries()) {
-                yield return entry;
-            }
-        }
-
-        public IEnumerable<IBaseContextEntry> GetSortingContextEntries() {
-            yield return new ContextEntry("Sort By Type", this.SortByTypeCommand);
-            yield return new ContextEntry("Sort By Name", this.SortByNameCommand);
-            yield return new ContextEntry("Sort By Both", this.SortByBothCommand) {
+        public override List<IContextEntry> GetContext(List<IContextEntry> list) {
+            list.Add(GetNewItemContextEntry());
+            list.Add(ContextEntrySeparator.Instance);
+            list.Add(new CommandContextEntry("Sort By Type", this.SortByTypeCommand));
+            list.Add(new CommandContextEntry("Sort By Name", this.SortByNameCommand));
+            list.Add(new CommandContextEntry("Sort By Both", this.SortByBothCommand) {
                 ToolTip = "This is what NBTExplorer sorts by; compound, list, array, primitive and then finally by name"
-            };
+            });
 
-            yield return new LazyASFContextEntry("Expand hierarchy", () => {
-                IoC.MainExplorer.TreeView.Behaviour.ExpandItemHierarchy(this);
-            },  () => this.Children.Count > 0);
+            list.Add(ContextEntrySeparator.Instance);
+            list.Add(new CommandContextEntry("Edit Name", this.EditNameCommand));
+            list.Add(new CommandContextEntry("Copy Name", this.CopyNameCommand));
+            list.Add(new CommandContextEntry("Copy to clipboard (binary)", this.CopyBinaryToClipboardCommand));
+            list.Add(new CommandContextEntry("Paste from clipboard (binary)", this.PasteNBTBinaryDataCommand));
+            list.Add(new CommandContextEntry("Remove tag", this.RemoveFromParentCommand));
+            return list;
         }
 
-        public virtual IBaseContextEntry GetNewItemEntry() {
-            return new ContextEntry("New", null, this.GetNewItemsEntries());
+        public virtual IContextEntry GetNewItemContextEntry() {
+            return new ContextEntry(this, "New...", this.GetNewItemsEntries(new List<IContextEntry>()));
         }
 
-        public virtual IEnumerable<IBaseContextEntry> GetNewItemsEntries() {
-            // yield return new ContextEntry("End", this.CreateTagCommand, 0);
-            yield return new ContextEntry("Byte", this.CreateTagCommand, 1);
-            yield return new ContextEntry("Short", this.CreateTagCommand, 2);
-            yield return new ContextEntry("Int", this.CreateTagCommand, 3);
-            yield return new ContextEntry("Long", this.CreateTagCommand, 4);
-            yield return new ContextEntry("Float", this.CreateTagCommand, 5);
-            yield return new ContextEntry("Double", this.CreateTagCommand, 6);
-            yield return new ContextEntry("String", this.CreateTagCommand, 8);
-            yield return new ContextEntry("Byte Array", this.CreateTagCommand, 7);
-            yield return new ContextEntry("Int Array", this.CreateTagCommand, 11);
-            yield return new ContextEntry("List", this.CreateTagCommand, 9);
-            yield return new ContextEntry("Compound", this.CreateTagCommand, 10);
+        public List<IContextEntry> GetNewItemsEntries(List<IContextEntry> list) {
+            list.Add(new CommandContextEntry("Byte", this.CreateTagCommand, (int) NBTType.Byte));
+            list.Add(new CommandContextEntry("Short", this.CreateTagCommand, (int) NBTType.Short));
+            list.Add(new CommandContextEntry("Int", this.CreateTagCommand, (int) NBTType.Int));
+            list.Add(new CommandContextEntry("Long", this.CreateTagCommand, (int) NBTType.Long));
+            list.Add(new CommandContextEntry("Float", this.CreateTagCommand, (int) NBTType.Float));
+            list.Add(new CommandContextEntry("Double", this.CreateTagCommand, (int) NBTType.Double));
+            list.Add(new CommandContextEntry("String", this.CreateTagCommand, (int) NBTType.String));
+            list.Add(new CommandContextEntry("Byte Array",this.CreateTagCommand, (int) NBTType.ByteArray));
+            list.Add(new CommandContextEntry("Int Array",this.CreateTagCommand, (int) NBTType.IntArray));
+            list.Add(new CommandContextEntry("Long Array",this.CreateTagCommand, (int) NBTType.LongArray));
+            list.Add(new CommandContextEntry("List", this.CreateTagCommand, (int) NBTType.List));
+            list.Add(new CommandContextEntry("Compound", this.CreateTagCommand, (int) NBTType.Compound));
+            return list;
         }
 
         public BaseNBTViewModel FindChildByName(string name) {

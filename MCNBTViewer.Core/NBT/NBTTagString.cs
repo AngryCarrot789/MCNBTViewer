@@ -2,9 +2,9 @@ using REghZy.Streams;
 
 namespace MCNBTViewer.Core.NBT {
     public class NBTTagString : NBTBase {
-        public override byte Id => 8;
-
         public string data;
+
+        public override byte Id => 8;
 
         public NBTTagString() : this("") {
 

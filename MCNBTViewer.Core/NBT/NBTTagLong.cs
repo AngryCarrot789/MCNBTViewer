@@ -2,9 +2,9 @@ using REghZy.Streams;
 
 namespace MCNBTViewer.Core.NBT {
     public class NBTTagLong : NBTBase {
-        public override byte Id => 4;
-
         public long data;
+
+        public override byte Id => 4;
 
         public NBTTagLong() {
         }

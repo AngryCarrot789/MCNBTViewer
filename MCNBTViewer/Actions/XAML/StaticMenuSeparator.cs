@@ -1,4 +1,4 @@
-namespace MCNBTViewer.DynUI.XAML {
+namespace MCNBTViewer.Actions.XAML {
     public class StaticMenuSeparator : StaticMenuElement {
 
     }

@@ -1,11 +1,11 @@
 using System;
 using System.Text;
 using System.Windows.Input;
-using FramePFX.Core.Shortcuts.Inputs;
-using FramePFX.Core.Shortcuts.Serialization;
-using FramePFX.Core.Utils;
+using MCNBTViewer.Core.Shortcuts.Inputs;
+using MCNBTViewer.Core.Shortcuts.Serialization;
+using MCNBTViewer.Core.Utils;
 
-namespace FramePFX.Shortcuts {
+namespace MCNBTViewer.Shortcuts {
     public class WPFKeyMapDeserialiser : KeyMapDeserialiser {
         public static WPFKeyMapDeserialiser Instance { get; } = new WPFKeyMapDeserialiser();
 
@@ -15,9 +15,11 @@ namespace FramePFX.Shortcuts {
         protected override Keystroke SerialiseKeystroke(in KeyStroke stroke) {
             Keystroke keystroke = new Keystroke();
             Key key = (Key) stroke.KeyCode;
-            keystroke.KeyCode = stroke.KeyCode.ToString();
             if (Enum.IsDefined(typeof(Key), key)) {
-                keystroke.Char = key.ToString();
+                keystroke.KeyName = key.ToString();
+            }
+            else {
+                keystroke.KeyCode = stroke.KeyCode.ToString();
             }
 
             keystroke.Mods = ModsToString((ModifierKeys)stroke.Modifiers);
@@ -66,15 +68,15 @@ namespace FramePFX.Shortcuts {
 
         protected override KeyStroke DeserialiseKeystroke(Keystroke stroke) {
             int keyCode;
-            if (Enum.TryParse(stroke.Char, out Key key)) {
+            if (Enum.TryParse(stroke.KeyName, out Key key)) {
                 keyCode = (int) key;
             }
             else if (!int.TryParse(stroke.KeyCode, out keyCode)) {
-                throw new Exception("Invalid key char or keycode: " + stroke.KeyCode);
+                throw new Exception($"Invalid key '{stroke.KeyName}' and keycode '{stroke.KeyCode}'");
             }
 
             int mods = (int) StringToMods(stroke.Mods);
-            bool isRelease = stroke.IsRelease == "true";
+            bool isRelease = "true".Equals(stroke.IsRelease);
             return new KeyStroke(keyCode, mods, isRelease);
         }
 

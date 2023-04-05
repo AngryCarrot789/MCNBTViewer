@@ -1,15 +1,21 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.IO.Packaging;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Documents;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using MCNBTViewer.Core;
 using MCNBTViewer.Core.Explorer.Items;
 using MCNBTViewer.Core.NBT;
 using MCNBTViewer.Core.Services;
+using MCNBTViewer.Core.Shortcuts.Managing;
 using MCNBTViewer.NBT.Explorer.Dialogs;
 using MCNBTViewer.NBT.Explorer.Finding;
 using MCNBTViewer.Services;
+using MCNBTViewer.Shortcuts;
 using MCNBTViewer.Views.Dialogs.FilePicking;
 using MCNBTViewer.Views.Dialogs.Message;
 using MCNBTViewer.Views.Dialogs.UserInputs;
@@ -27,7 +33,23 @@ namespace MCNBTViewer {
             IoC.UserInput = new UserInputDialogService();
             IoC.ExplorerService = new WinExplorerService();
             IoC.TagDialogService = new NBTDialogService();
-            IoC.FindView = new FindView();
+            IoC.FindViewService = new FindViewService();
+
+            // pack://application:,,,/MCNBTViewer;component/Keymap.xml
+            // Uri uri = new Uri("pack://application:,,,/Keymap.xml");
+            // new BitmapImage(uri);
+            // Uri otherUri = PackUriHelper.GetPackageUri(uri);
+            string filePath = @"F:\VSProjsV2\MCNBTViewer\MCNBTViewer\Keymap.xml";
+            if (File.Exists(filePath)) {
+                AppShortcutManager.Instance.Root = null;
+                using (FileStream stream = File.OpenRead(filePath)) {
+                    ShortcutGroup group = WPFKeyMapDeserialiser.Instance.Deserialise(stream);
+                    AppShortcutManager.Instance.Root = group;
+                }
+            }
+            else {
+                MessageBox.Show("Keymap file does not exist: " + filePath);
+            }
 
             this.MainWindow = new MainWindow();
             this.MainWindow.Show();
@@ -39,7 +61,7 @@ namespace MCNBTViewer {
                 //     view.AddDataFile(new NBTDataFileViewModel(Path.GetFileName(debugPath), compound) { FilePath = debugPath });
                 // }
 
-                view.AddDataFile(new NBTDataFileViewModel("Demo Tag", MainViewModel.CreateRoot()));
+                view.AddChildToExplorer(new NBTDataFileViewModel("Demo Tag", MainViewModel.CreateRoot()));
             }
         }
 

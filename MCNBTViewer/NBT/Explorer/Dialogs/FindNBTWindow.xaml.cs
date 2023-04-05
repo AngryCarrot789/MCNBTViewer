@@ -26,7 +26,7 @@ namespace MCNBTViewer.NBT.Explorer.Dialogs {
         protected override void OnClosed(EventArgs e) {
             base.OnClosed(e);
 
-            ((FindView) IoC.FindView).OnClosedInternal(this);
+            ((FindViewService) IoC.FindViewService).OnClosedInternal(this);
             if (this.DataContext is FindViewModel findViewModel) {
                 findViewModel.Dispose();
             }

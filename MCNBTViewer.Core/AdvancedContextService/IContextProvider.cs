@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using MCNBTViewer.Core.AdvancedContextMenu.Base;
+using MCNBTViewer.Core.AdvancedContextService.Base;
 
-namespace MCNBTViewer.Core.AdvancedContextMenu {
+namespace MCNBTViewer.Core.AdvancedContextService {
     public interface IContextProvider {
-        void GetContext(List<IContextEntry> list);
+        List<IContextEntry> GetContext(List<IContextEntry> list);
     }
 }

@@ -3,9 +3,9 @@ using REghZy.Streams;
 
 namespace MCNBTViewer.Core.NBT {
     public class NBTTagFloat : NBTBase {
-        public override byte Id => 5;
-
         public float data;
+
+        public override byte Id => 5;
 
         public NBTTagFloat() {
         }

@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using MCNBTViewer.Core.AdvancedContextService;
+using MCNBTViewer.Core.AdvancedContextService.Base;
 using MCNBTViewer.Core.Explorer.Items;
-using MCNBTViewer.Core.Utils;
 
 namespace MCNBTViewer.Core.Explorer.Finding {
     public class NBTMatchResult : IContextProvider {
@@ -45,19 +46,10 @@ namespace MCNBTViewer.Core.Explorer.Finding {
             await IoC.MainExplorer.TreeView.Behaviour.RepeatExpandHierarchyFromRootAsync(this.NBT.ParentChain, true);
         }
 
-        public IEnumerable<IBaseContextEntry> GetContextEntries() {
-            // if (!string.IsNullOrEmpty(this.PrimitiveOrArrayFoundValue)) {
-            //     yield return new LazyASFContextEntry("Copy value", async () => {
-            //         await ClipboardUtils.SetClipboardOrShowErrorDialog(this.PrimitiveOrArrayFoundValue);
-            //     });
-            //     yield return ContextEntrySeparator.Instance;
-            // }
-
-            if (this.NBT is IContextProvider provider) {
-                foreach (IBaseContextEntry entry in provider.GetContextEntries()) {
-                    yield return entry;
-                }
-            }
+        public List<IContextEntry> GetContext(List<IContextEntry> list) {
+            list.Add(new CommandContextEntry("Navigate", this.NavigateToItemCommand));
+            list.Add(ContextEntrySeparator.Instance);
+            return this.NBT.GetContext(list);
         }
     }
 }

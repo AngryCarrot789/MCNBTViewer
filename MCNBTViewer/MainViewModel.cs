@@ -1,18 +1,23 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using MCNBTViewer.Core;
 using MCNBTViewer.Core.Explorer;
 using MCNBTViewer.Core.Explorer.Items;
+using MCNBTViewer.Core.Explorer.Items.Regions;
 using MCNBTViewer.Core.NBT;
+using MCNBTViewer.Core.Regions;
 using MCNBTViewer.Core.Utils;
 using MCNBTViewer.Core.Views.Dialogs;
 
 namespace MCNBTViewer {
     public class MainViewModel : BaseViewModel {
         public NBTExplorerViewModel Explorer { get; }
+
+        public ICommand AddEmptyDATTagCommand { get; }
 
         public ICommand OpenFileCommand { get; }
 
@@ -23,6 +28,7 @@ namespace MCNBTViewer {
         public ICommand ShowFindViewCommand { get; }
 
         private bool isBigEndian;
+
         public bool IsBigEndian {
             get => this.isBigEndian;
             set => this.RaisePropertyChanged(ref this.isBigEndian, value, () => {
@@ -31,6 +37,7 @@ namespace MCNBTViewer {
         }
 
         private bool useCompression;
+
         public bool UseCompression {
             get => this.useCompression;
             set => this.RaisePropertyChanged(ref this.useCompression, value, () => {
@@ -43,23 +50,34 @@ namespace MCNBTViewer {
             this.UseCompression = true;
             this.Explorer = new NBTExplorerViewModel();
             IoC.MainExplorer = this.Explorer;
+            this.AddEmptyDATTagCommand = new RelayCommand(() => {
+                int count = this.Explorer.RootFiles.Count + 1;
+                for (int i = count, end = count + 1000; i <= end; i++) {
+                    string newName = "New Tag " + i;
+                    if (this.Explorer.RootFiles.All(x => !(x is BaseNBTViewModel nbt) || nbt.Name != newName)) {
+                        this.Explorer.AddChild(new NBTDataFileViewModel(newName));
+                        return;
+                    }
+                }
+            });
             this.OpenFileCommand = new RelayCommand(async () => await this.OpenFileAction());
             this.OpenFolderCommand = new AsyncRelayCommand(this.OpenFolderActionAsync);
-
             this.SaveAllDatFilesCommands = new RelayCommand(async () => {
-                int count = this.Explorer.LoadedDataFiles.Count, i = 0;
-                foreach (NBTDataFileViewModel file in this.Explorer.LoadedDataFiles) {
+                int count = this.Explorer.RootFiles.Count, i = 0;
+                foreach (BaseViewModel file in this.Explorer.RootFiles) {
+                    if (!(file is NBTDataFileViewModel dat)) {
+                        continue;
+                    }
+
                     try {
-                        if (File.Exists(file.FilePath)) {
-                            file.SaveToFile();
-                        }
+                        await dat.SaveToFileAction(false);
                     }
                     catch (Exception e) {
                         if ((i + 1) >= count) {
-                            await IoC.MessageDialogs.ShowMessageAsync("Failed to write NBT", $"Failed to write compressed NBT to file at:\n{file.FilePath}\n{e.Message}");
+                            await IoC.MessageDialogs.ShowMessageAsync("Failed to write NBT", $"Failed to write compressed NBT to file at:\n{dat.FilePath}\n{e.Message}");
                             break;
                         }
-                        else if (!await IoC.MessageDialogs.ShowYesNoDialogAsync("Failed to write NBT", $"Failed to write compressed NBT to file at:\n{file.FilePath}\n{e.Message}\nDo you want to continue saving the rest of the files?")) {
+                        else if (!await IoC.MessageDialogs.ShowYesNoDialogAsync("Failed to write NBT", $"Failed to write compressed NBT to file at:\n{dat.FilePath}\n{e.Message}\nDo you want to continue saving the rest of the files?")) {
                             break;
                         }
                     }
@@ -73,11 +91,11 @@ namespace MCNBTViewer {
 
         public async Task ShowFindViewAsync() {
             await Task.Delay(1);
-            IoC.FindView.ShowFindView();
+            IoC.FindViewService.ShowFindView();
         }
 
         private void ShowFindViewAction() {
-            IoC.FindView.ShowFindView();
+            IoC.FindViewService.ShowFindView();
         }
 
         private async Task OpenFolderActionAsync() {
@@ -99,52 +117,129 @@ namespace MCNBTViewer {
             }
         }
 
+        public static bool IsDatFile(string extension) {
+            switch (extension) {
+                case ".dat":
+                case ".nbt":
+                case ".schematic":
+                case ".dat_mcr":
+                case ".dat_old":
+                case ".bpt":
+                case ".rc":
+                    return true;
+                default: return false;
+            }
+        }
+
+        public static bool IsRegionFile(string extension) {
+            switch (extension) {
+                case ".mcr":
+                case ".mca":
+                    return true;
+                default: return false;
+            }
+        }
+
         public async Task ParseFilesAction(string[] files) {
             for (int i = 0; i < files.Length; i++) {
-                string fileName = Path.GetFileName(files[i]);
-                NBTDataFileViewModel match = this.Explorer.LoadedDataFiles.FirstOrDefault(x => x.Name == fileName);
+                string filePath = files[i];
+                string fileName = Path.GetFileName(filePath);
+                BaseViewModel match = this.Explorer.RootFiles.FirstOrDefault(x => x is BaseNBTViewModel nbt && nbt.Name == fileName);
                 if (match != null) {
-                    await IoC.MessageDialogs.ShowMessageAsync("Already added", $"A root DAT file with the name '{fileName}'{(string.IsNullOrEmpty(match.FilePath) ? "" : $" already exists at path:\n{match.FilePath}")}");
+                    if (match is NBTDataFileViewModel dat) {
+                        if (!string.IsNullOrEmpty(dat.FilePath)) {
+                            await IoC.MessageDialogs.ShowMessageAsync("Already added", $"A root DAT file with the name '{fileName}' already exists at path:\n{dat.FilePath}");
+                        }
+                        else {
+                            await IoC.MessageDialogs.ShowMessageAsync("Already added", $"A root DAT file with the name '{fileName}' was already added");
+                        }
+                    }
+                    else {
+                        await IoC.MessageDialogs.ShowMessageAsync("Already added", $"A root file with the name '{fileName}' was already added");
+                    }
+
                     continue;
                 }
 
-                NBTTagCompound compound;
-                try {
-                    compound = CompressedStreamTools.ReadCompressed(files[i], out _, IoC.UseCompression, IoC.IsBigEndian);
-                }
-                catch (Exception e) {
-                    if ((i + 1) >= files.Length) {
-                        await IoC.MessageDialogs.ShowMessageAsync("Failed to read NBT", $"Failed to read NBT file at:\n{files[i]}\n{e.Message}\n. Try turning on/off compression; the file may or may not be using compressed NBT (File->Use Compression)");
-                        break;
+                string extension = Path.GetExtension(filePath);
+                if (true) { // IsDatFile(extension)
+                    NBTTagCompound compound;
+                    try {
+                        compound = CompressedStreamTools.Read(filePath, out _, IoC.UseCompression, IoC.IsBigEndian);
                     }
-                    else if (!await IoC.MessageDialogs.ShowYesNoDialogAsync("Failed to read NBT", $"Failed to read NBT file at:\n{files[i]}\n{e.Message}\nDo you want to continue reading the rest of the files?")) {
-                        break;
-                    }
-                    else {
-                        continue;
-                    }
-                }
-
-                try {
-                    this.AddDataFile(new NBTDataFileViewModel(fileName, compound) {
-                        FilePath = files[i]
-                    });
-                }
-                catch (Exception e) {
-                    if ((i + 1) >= files.Length) {
-                        await IoC.MessageDialogs.ShowMessageAsync("Failed to parse NBT", $"Failed to parse NBT into UI elements for file at:\n{files[i]}\n{e.Message}");
-                    }
-                    else if (await IoC.MessageDialogs.ShowYesNoDialogAsync("Failed to parse NBT", $"Failed to parse NBT into UI elements for file at:\n{files[i]}\n{e.Message}\nDo you want to continue reading the rest of the files?")) {
-                        continue;
+                    catch (Exception e) {
+                        if ((i + 1) >= files.Length) {
+                            await IoC.MessageDialogs.ShowMessageAsync("Failed to read NBT", $"Failed to read NBT file at:\n{filePath}\n{e.Message}\n. Try turning on/off compression; the file may or may not be using compressed NBT (File->Use Compression)");
+                            break;
+                        }
+                        else if (!await IoC.MessageDialogs.ShowYesNoDialogAsync("Failed to read NBT", $"Failed to read NBT file at:\n{filePath}\n{e.Message}\nDo you want to continue reading the rest of the files?")) {
+                            break;
+                        }
+                        else {
+                            continue;
+                        }
                     }
 
-                    break;
+                    try {
+                        this.AddChildToExplorer(new NBTDataFileViewModel(fileName, compound) {
+                            FilePath = filePath
+                        });
+                    }
+                    catch (Exception e) {
+                        if ((i + 1) >= files.Length) {
+                            await IoC.MessageDialogs.ShowMessageAsync("Failed to parse NBT", $"Failed to parse NBT into UI elements for file at:\n{filePath}\n{e.Message}");
+                        }
+                        else if (await IoC.MessageDialogs.ShowYesNoDialogAsync("Failed to parse NBT", $"Failed to parse NBT into UI elements for file at:\n{filePath}\n{e.Message}\nDo you want to continue reading the rest of the files?")) {
+                            continue;
+                        }
+
+                        break;
+                    }
+                }
+                else if (IsRegionFile(extension)) {
+                    RegionFile file = new RegionFile(filePath);
+                    try {
+                        file.ReadFile();
+                    }
+                    catch (Exception e) {
+                        if ((i + 1) >= files.Length) {
+                            await IoC.MessageDialogs.ShowMessageAsync("Failed to read region", $"Failed to read region file at:\n{filePath}\n{e.Message}");
+                            break;
+                        }
+                        else if (!await IoC.MessageDialogs.ShowYesNoDialogAsync("Failed to read region", $"Failed to read region file at:\n{filePath}\n{e.Message}\nDo you want to continue reading the rest of the files?")) {
+                            break;
+                        }
+                        else {
+                            continue;
+                        }
+                    }
+
+                    try {
+                        RegionItemViewModel region = new RegionItemViewModel();
+                        region.ClearAndLoadChunks(file);
+                        this.AddChildToExplorer(region);
+                    }
+                    catch (Exception e) {
+                        if ((i + 1) >= files.Length) {
+                            await IoC.MessageDialogs.ShowMessageAsync("Failed to parse region", $"Failed to parse region file data at:\n{filePath}\n{e.Message}");
+                            break;
+                        }
+                        else if (!await IoC.MessageDialogs.ShowYesNoDialogAsync("Failed to parse region", $"Failed to parse region file data at:\n{filePath}\n{e.Message}\nDo you want to continue reading the rest of the files?")) {
+                            break;
+                        }
+                        else {
+                            continue;
+                        }
+                    }
+                }
+                else if (files.Length == 1) {
+                    await IoC.MessageDialogs.ShowMessageAsync("Unknown file type", $"Unknown file type: {extension}");
                 }
             }
         }
 
-        public void AddDataFile(NBTDataFileViewModel file) {
-            this.Explorer.AddDataFile(file);
+        public void AddChildToExplorer(BaseViewModel file) {
+            this.Explorer.AddChild(file);
         }
 
         public static NBTTagCompound CreateRoot() {

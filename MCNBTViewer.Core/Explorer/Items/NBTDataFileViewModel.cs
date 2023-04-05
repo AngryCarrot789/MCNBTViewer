@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MCNBTViewer.Core.AdvancedContextService;
+using MCNBTViewer.Core.AdvancedContextService.Base;
 using MCNBTViewer.Core.NBT;
 using MCNBTViewer.Core.Utils;
 using MCNBTViewer.Core.Views.Dialogs;
@@ -32,20 +33,16 @@ namespace MCNBTViewer.Core.Explorer.Items {
 
 
         public NBTDataFileViewModel(BaseNBTCollectionViewModel nbt, bool deepCopy = false) : this(nbt.Name) {
-            foreach (BaseNBTViewModel pair in nbt.Children) {
-                this.Children.Add(deepCopy ? CreateFrom(pair.Name, pair.ToNBT()) : pair);
-            }
+            this.AddChildren(deepCopy ? nbt.Children.Select(x => CreateFrom(x.Name, x.ToNBT())) : nbt.Children);
         }
 
         public NBTDataFileViewModel(string name, NBTTagCompound nbt) : this(name) {
-            foreach (KeyValuePair<string, NBTBase> pair in nbt.map) {
-                this.Children.Add(CreateFrom(pair.Key, pair.Value));
-            }
+            this.AddChildren(nbt);
         }
 
         public NBTDataFileViewModel(string name) : base(name) {
             this.RefreshDatFileCommand = new AsyncRelayCommand(this.RefreshAction, () => File.Exists(this.FilePath));
-            this.RemoveDatFileFromTreeCommand = new AsyncRelayCommand(this.RemoveSelfAction, () => IoC.MainExplorer != null && IoC.MainExplorer.LoadedDataFiles.Contains(this));
+            this.RemoveDatFileFromTreeCommand = new AsyncRelayCommand(this.RemoveSelfAction, () => IoC.MainExplorer != null && IoC.MainExplorer.RootFiles.Contains(this));
             this.DeleteDatFileCommand = new AsyncRelayCommand(this.DeleteFileAction, () => File.Exists(this.FilePath));
             this.ShowInExplorerCommand = new AsyncRelayCommand(this.OpenInExplorerAction, () => File.Exists(this.FilePath) && IoC.ExplorerService != null);
             this.CopyFilePathToClipboardCommand = new AsyncRelayCommand(async () => {
@@ -66,7 +63,7 @@ namespace MCNBTViewer.Core.Explorer.Items {
             if (File.Exists(this.FilePath)) {
                 NBTTagCompound compound;
                 try {
-                    compound = CompressedStreamTools.ReadCompressed(this.FilePath, out _, IoC.UseCompression, IoC.IsBigEndian);
+                    compound = CompressedStreamTools.Read(this.FilePath, out _, IoC.UseCompression, IoC.IsBigEndian);
                 }
                 catch (Exception e) {
                     await IoC.MessageDialogs.ShowMessageAsync("Failed to refresh NBT", $"Failed to read NBT file at:\n{this.FilePath}\n{e.Message}");
@@ -74,9 +71,7 @@ namespace MCNBTViewer.Core.Explorer.Items {
                 }
 
                 try {
-                    foreach (KeyValuePair<string, NBTBase> pair in compound.map) {
-                        this.Children.Add(CreateFrom(pair.Key, pair.Value));
-                    }
+                    this.AddChildren(compound);
                 }
                 catch (Exception e) {
                     await IoC.MessageDialogs.ShowMessageAsync("Failed to parse NBT", $"Failed to parse NBT into UI elements for file at:\n{this.FilePath}\n{e.Message}");
@@ -118,7 +113,7 @@ namespace MCNBTViewer.Core.Explorer.Items {
         }
 
         public void SaveToFile(string filePath) {
-            CompressedStreamTools.WriteCompressed(this.ToNBT(), filePath, IoC.UseCompression, IoC.IsBigEndian);
+            CompressedStreamTools.Write(this.ToNBT(), filePath, IoC.UseCompression, IoC.IsBigEndian);
         }
 
         public async Task SaveToFileAction(bool saveAs) {
@@ -136,7 +131,7 @@ namespace MCNBTViewer.Core.Explorer.Items {
             }
 
             string name = System.IO.Path.GetFileName(path);
-            NBTDataFileViewModel alreadyExists = IoC.MainExplorer.LoadedDataFiles.FirstOrDefault(x => x.Name == name);
+            BaseViewModel alreadyExists = IoC.MainExplorer.RootFiles.FirstOrDefault(x => x is BaseNBTViewModel nbt && nbt.Name == name);
             if (alreadyExists != null && alreadyExists != this) {
                 if (!await IoC.MessageDialogs.ShowYesNoDialogAsync("Same name already in tree", $"A DAT file with the name '{name}' already exists in the tree. Continue and remove the existing DAT tag from the tree? (otherwise, don't load the new file)")) {
                     return;
@@ -157,41 +152,67 @@ namespace MCNBTViewer.Core.Explorer.Items {
             }
         }
 
-        public override IEnumerable<IBaseContextEntry> GetContextEntries() {
-            // this.RefreshDatFileCommand.RaiseCanExecuteChanged();
-            // this.RemoveDatFileFromTreeCommand.RaiseCanExecuteChanged();
-            // this.DeleteDatFileCommand.RaiseCanExecuteChanged();
-            // this.ShowInExplorerCommand.RaiseCanExecuteChanged();
-            // this.CopyFilePathToClipboardCommand.RaiseCanExecuteChanged();
-            yield return new ContextEntry("New", null, this.GetNewItemsEntries());
-            yield return ContextEntrySeparator.Instance;
-            foreach (IBaseContextEntry entry in this.GetSortingContextEntries()) {
-                yield return entry;
-            }
+        public override List<IContextEntry> GetContext(List<IContextEntry> list) {
+            list.Add(new ContextEntry(this, "New...", this.GetNewItemsEntries(new List<IContextEntry>())));
+            list.Add(ContextEntrySeparator.Instance);
+            list.Add(new CommandContextEntry("Sort By Type", this.SortByTypeCommand));
+            list.Add(new CommandContextEntry("Sort By Name", this.SortByNameCommand));
+            list.Add(new CommandContextEntry("Sort By Both", this.SortByBothCommand) {
+                ToolTip = "This is what NBTExplorer sorts by; compound, list, array, primitive and then finally by name"
+            });
 
-            yield return ContextEntrySeparator.Instance;
-            yield return new ContextEntry("Refresh from file", this.RefreshDatFileCommand) {
+            list.Add(ContextEntrySeparator.Instance);
+            list.Add(new CommandContextEntry("Refresh from file", this.RefreshDatFileCommand) {
                 ToolTip = File.Exists(this.FilePath) ? "Reload all of the NBT data from the underlying file" : "File does not exist"
-            };
-            yield return new ContextEntry("Save", this.SaveDatFileCommand) {
+            });
+            list.Add(new CommandContextEntry("Save", this.SaveDatFileCommand) {
                 ToolTip = "Saves this NBT data to a file. If the underlying file does not exist, a new dialog is shown"
-            };
-            yield return new ContextEntry("Save As...", this.SaveDatFileAsCommand) {
+            });
+            list.Add(new CommandContextEntry("Save As...", this.SaveDatFileAsCommand) {
                 ToolTip = File.Exists(this.FilePath) ? "Reload all of the NBT data from the underlying file" : "File does not exist"
-            };
-            yield return ContextEntrySeparator.Instance;
-            yield return new ContextEntry("Show in explorer", this.ShowInExplorerCommand);
-            yield return new ContextEntry("Copy File Path", this.CopyFilePathToClipboardCommand);
-            yield return ContextEntrySeparator.Instance;
-            yield return new ContextEntry("Copy (Binary)", this.CopyBinaryToClipboardCommand);
-            yield return new ContextEntry("Paste (Binary)", this.PasteNBTBinaryDataCommand);
-            yield return ContextEntrySeparator.Instance;
-            yield return new ContextEntry("Remove this root tag", this.RemoveDatFileFromTreeCommand) {
+            });
+            list.Add(ContextEntrySeparator.Instance);
+            list.Add(new CommandContextEntry("Show in explorer", this.ShowInExplorerCommand));
+            list.Add(new CommandContextEntry("Copy File Path", this.CopyFilePathToClipboardCommand));
+            list.Add(ContextEntrySeparator.Instance);
+            list.Add(new CommandContextEntry("Edit Name", this.EditNameCommand));
+            list.Add(new CommandContextEntry("Copy Name", this.CopyNameCommand));
+            list.Add(new CommandContextEntry("Copy to clipboard (binary)", this.CopyBinaryToClipboardCommand));
+            list.Add(new CommandContextEntry("Paste from clipboard (binary)", this.PasteNBTBinaryDataCommand));
+            list.Add(new CommandContextEntry("Remove this root tag", this.RemoveDatFileFromTreeCommand) {
                 ToolTip = "Removes this root DAT file tag from the tree. Does not delete the file"
-            };
-            yield return new ContextEntry("Delete FILE", this.DeleteDatFileCommand) {
+            });
+            list.Add(new CommandContextEntry("Delete FILE", this.DeleteDatFileCommand) {
                 ToolTip = File.Exists(this.FilePath) ? "Deletes the DAT file from your computer" : "File was already deleted"
-            };
+            });
+            return list;
         }
+
+        // public override IEnumerable<IBaseContextEntry> GetContextEntries() {
+        //     yield return OldContextEntrySeparator.Instance;
+        //     yield return OldContextEntrySeparator.Instance;
+        //     yield return new OldContextEntry("Refresh from file", this.RefreshDatFileCommand) {
+        //         ToolTip = File.Exists(this.FilePath) ? "Reload all of the NBT data from the underlying file" : "File does not exist"
+        //     };
+        //     yield return new OldContextEntry("Save", this.SaveDatFileCommand) {
+        //         ToolTip = "Saves this NBT data to a file. If the underlying file does not exist, a new dialog is shown"
+        //     };
+        //     yield return new OldContextEntry("Save As...", this.SaveDatFileAsCommand) {
+        //         ToolTip = File.Exists(this.FilePath) ? "Reload all of the NBT data from the underlying file" : "File does not exist"
+        //     };
+        //     yield return OldContextEntrySeparator.Instance;
+        //     yield return new OldContextEntry("Show in explorer", this.ShowInExplorerCommand);
+        //     yield return new OldContextEntry("Copy File Path", this.CopyFilePathToClipboardCommand);
+        //     yield return OldContextEntrySeparator.Instance;
+        //     yield return new OldContextEntry("Copy (Binary)", this.CopyBinaryToClipboardCommand);
+        //     yield return new OldContextEntry("Paste (Binary)", this.PasteNBTBinaryDataCommand);
+        //     yield return OldContextEntrySeparator.Instance;
+        //     yield return new OldContextEntry("Remove this root tag", this.RemoveDatFileFromTreeCommand) {
+        //         ToolTip = "Removes this root DAT file tag from the tree. Does not delete the file"
+        //     };
+        //     yield return new OldContextEntry("Delete FILE", this.DeleteDatFileCommand) {
+        //         ToolTip = File.Exists(this.FilePath) ? "Deletes the DAT file from your computer" : "File was already deleted"
+        //     };
+        // }
     }
 }

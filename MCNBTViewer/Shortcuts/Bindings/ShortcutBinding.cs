@@ -1,9 +1,10 @@
-using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using FramePFX.Core.Shortcuts.Managing;
+using MCNBTViewer.Core;
+using MCNBTViewer.Core.Shortcuts.Managing;
 
-namespace FramePFX.Shortcuts.Bindings {
+namespace MCNBTViewer.Shortcuts.Bindings {
     public class ShortcutBinding : InputBinding {
         public static readonly DependencyProperty ShortcutAndUsageIdProperty =
             DependencyProperty.Register(
@@ -32,66 +33,51 @@ namespace FramePFX.Shortcuts.Bindings {
 
         public string ShortcutId {
             get {
-                SplitValue(this.ShortcutAndUsageId, out string id, out _);
+                ShortcutUtils.SplitValue(this.ShortcutAndUsageId, out string id, out _);
                 return id;
             }
         }
 
         public string UsageId {
             get {
-                SplitValue(this.ShortcutAndUsageId, out _, out string id);
+                ShortcutUtils.SplitValue(this.ShortcutAndUsageId, out _, out string id);
                 return id;
             }
         }
 
-        private readonly Action<ManagedShortcut> onShortcutFired;
+        private readonly ShortcutActivateHandler onShortcutFired;
 
         public ShortcutBinding() {
             this.onShortcutFired = this.OnShortcutFired;
         }
 
-        public static void SplitValue(string input, out string shortcutId, out string usageId) {
-            if (string.IsNullOrWhiteSpace(input)) {
-                shortcutId = null;
-                usageId = AppShortcutManager.DEFAULT_USAGE_ID;
-                return;
-            }
-
-            int split = input.LastIndexOf(':');
-            if (split == -1) {
-                shortcutId = input;
-                usageId = AppShortcutManager.DEFAULT_USAGE_ID;
-            }
-            else {
-                shortcutId = input.Substring(0, split);
-                if (string.IsNullOrWhiteSpace(shortcutId)) {
-                    shortcutId = null;
-                }
-
-                usageId = input.Substring(split + 1);
-                if (string.IsNullOrWhiteSpace(usageId)) {
-                    usageId = AppShortcutManager.DEFAULT_USAGE_ID;
-                }
-            }
-        }
-
         private void OnShouldcutAndUsageIdChanged(string oldId, string newId) {
             if (!string.IsNullOrWhiteSpace(oldId)) {
-                SplitValue(oldId, out string shortcutId, out string usageId);
+                ShortcutUtils.SplitValue(oldId, out string shortcutId, out string usageId);
                 AppShortcutManager.UnregisterHandler(shortcutId, usageId);
             }
 
             if (!string.IsNullOrWhiteSpace(newId)) {
-                SplitValue(newId, out string shortcutId, out string usageId);
+                ShortcutUtils.SplitValue(newId, out string shortcutId, out string usageId);
                 AppShortcutManager.RegisterHandler(shortcutId, usageId, this.onShortcutFired);
             }
         }
 
-        public void OnShortcutFired(ManagedShortcut shortcut) {
+        private async Task<bool> OnShortcutFired(ShortcutProcessor processor, ManagedShortcut shortcut) {
             ICommand cmd = this.Command;
             object param = this.CommandParameter;
             if (cmd != null && cmd.CanExecute(param)) {
-                cmd.Execute(param);
+                if (cmd is AsyncRelayCommand arc) {
+                    await arc.ExecuteAsync();
+                    return true;
+                }
+                else {
+                    cmd.Execute(param);
+                    return true;
+                }
+            }
+            else {
+                return false;
             }
         }
 

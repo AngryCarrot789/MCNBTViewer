@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
-using MCNBTViewer.Core.AdvancedContextMenu;
-using MCNBTViewer.Core.AdvancedContextMenu.Base;
+using MCNBTViewer.Core.AdvancedContextService;
+using MCNBTViewer.Core.AdvancedContextService.Base;
 
-namespace MCNBTViewer.DynUI.Menus {
+namespace MCNBTViewer.AdvancedContextService {
     public class AdvancedContextMenu : ContextMenu {
         public static readonly DependencyProperty ContextProviderProperty =
             DependencyProperty.RegisterAttached(
@@ -38,6 +37,9 @@ namespace MCNBTViewer.DynUI.Menus {
 
         public static DependencyObject CreateChildMenuItem(object item) {
             if (item is ActionContextEntry) {
+                return new AdvancedActionMenuItem();
+            }
+            else if (item is ContextEntry) {
                 return new AdvancedMenuItem();
             }
             else if (item is ContextEntrySeparator) {

@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Windows.Input;
-using MCNBTViewer.Core.AdvancedContextMenu.Base;
+using MCNBTViewer.Core.AdvancedContextService.Base;
 
-namespace MCNBTViewer.Core.AdvancedContextMenu {
+namespace MCNBTViewer.Core.AdvancedContextService {
     public class CheckableCommandContextEntry : CommandContextEntry {
         private bool isChecked;
         public bool IsChecked {
@@ -16,16 +16,13 @@ namespace MCNBTViewer.Core.AdvancedContextMenu {
         public CheckableCommandContextEntry(ICommand command, object commandParameter, IEnumerable<IContextEntry> children = null) : base(command, commandParameter, children) {
         }
 
-        public CheckableCommandContextEntry(object dataContext, ICommand command, object commandParameter, IEnumerable<IContextEntry> children = null) : base(dataContext, command, commandParameter, children) {
+        public CheckableCommandContextEntry(string header, ICommand command, object commandParameter, IEnumerable<IContextEntry> children = null) : base(header, command, commandParameter, children) {
         }
 
-        public CheckableCommandContextEntry(object dataContext, string header, ICommand command, object commandParameter, IEnumerable<IContextEntry> children = null) : base(dataContext, header, command, commandParameter, children) {
+        public CheckableCommandContextEntry(string header, ICommand command, object commandParameter, string inputGestureText, IEnumerable<IContextEntry> children = null) : base(header, command, commandParameter, inputGestureText, children) {
         }
 
-        public CheckableCommandContextEntry(object dataContext, string header, ICommand command, object commandParameter, string inputGestureText, IEnumerable<IContextEntry> children = null) : base(dataContext, header, command, commandParameter, inputGestureText, children) {
-        }
-
-        public CheckableCommandContextEntry(object dataContext, string header, ICommand command, object commandParameter, string inputGestureText, string toolTip, IEnumerable<IContextEntry> children = null) : base(dataContext, header, command, commandParameter, inputGestureText, toolTip, children) {
+        public CheckableCommandContextEntry(string header, ICommand command, object commandParameter, string inputGestureText, string toolTip, IEnumerable<IContextEntry> children = null) : base(header, command, commandParameter, inputGestureText, toolTip, children) {
         }
     }
 }

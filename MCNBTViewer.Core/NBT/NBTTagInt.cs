@@ -4,6 +4,8 @@ namespace MCNBTViewer.Core.NBT {
     public class NBTTagInt : NBTBase {
         public int data;
 
+        public override byte Id => 3;
+
         public NBTTagInt() {
         }
 
@@ -18,8 +20,6 @@ namespace MCNBTViewer.Core.NBT {
         public override void Read(IDataInput input, int deep) {
             this.data = input.ReadInt();
         }
-
-        public override byte Id => 3;
 
         public override string ToString() {
             return this.data.ToString();

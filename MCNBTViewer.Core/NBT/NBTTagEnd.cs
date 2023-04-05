@@ -2,6 +2,8 @@ using REghZy.Streams;
 
 namespace MCNBTViewer.Core.NBT {
     public class NBTTagEnd : NBTBase {
+        public override byte Id => 0;
+
         public NBTTagEnd() {
 
         }
@@ -11,8 +13,6 @@ namespace MCNBTViewer.Core.NBT {
 
         public override void Read(IDataInput input, int deep) {
         }
-
-        public override byte Id => 0;
 
         public override NBTBase CloneTag() {
             return new NBTTagEnd();

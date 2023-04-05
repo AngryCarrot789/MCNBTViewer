@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using FramePFX.Core.Inputs;
-using FramePFX.Core.Shortcuts.Usage;
+using MCNBTViewer.Core.Shortcuts.Inputs;
+using MCNBTViewer.Core.Shortcuts.Usage;
 
-namespace FramePFX.Core.Shortcuts {
+namespace MCNBTViewer.Core.Shortcuts {
     /// <summary>
     /// Represents a keyboard-based shortcut. This consists of 1 or more key strokes required to activate it
     /// <para>

@@ -75,6 +75,7 @@ namespace MCNBTViewer.Core.NBT {
                 case 9: return new NBTTagList();
                 case 10: return new NBTTagCompound();
                 case 11: return new NBTTagIntArray();
+                case 12: return new NBTTagLongArray();
                 default: return null;
             }
         }

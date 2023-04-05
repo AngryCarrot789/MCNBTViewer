@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using FramePFX.Core.Shortcuts.Inputs;
-using FramePFX.Core.Shortcuts.Serialization;
+using MCNBTViewer.Core.Shortcuts.Inputs;
+using MCNBTViewer.Core.Shortcuts.Serialization;
 
-namespace FramePFX.Core.Shortcuts.Managing {
+namespace MCNBTViewer.Core.Shortcuts.Managing {
     /// <summary>
     /// A collection of shortcuts
     /// </summary>

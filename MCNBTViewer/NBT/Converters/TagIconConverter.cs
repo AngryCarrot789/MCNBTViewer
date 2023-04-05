@@ -16,6 +16,7 @@ namespace MCNBTViewer.NBT.Converters {
         public Uri TagString { get; set; }
         public Uri TagByteArray { get; set; }
         public Uri TagIntArray { get; set; }
+        public Uri TagLongArray { get; set; }
 
         public Uri TagList { get; set; }
 
@@ -36,6 +37,7 @@ namespace MCNBTViewer.NBT.Converters {
                     case NBTType.ByteArray: return this.TagByteArray;
                     case NBTType.String: return this.TagString;
                     case NBTType.IntArray: return this.TagIntArray;
+                    case NBTType.LongArray: return this.TagLongArray;
                     case NBTType.List: return this.TagList;
                     case NBTType.Compound: {
                         Debug.WriteLine("TagIconConverter was used to convert NBTTagCompound. This should be avoided!");

@@ -61,15 +61,23 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AdvancedContextService\AdvancedActionMenuItem.cs" />
     <Compile Include="AdvancedContextService\AdvancedContextMenu.cs" />
     <Compile Include="AdvancedContextService\AdvancedMenuItem.cs" />
     <Compile Include="AdvancedContextService\AdvancedMenuItemStyleSelector.cs" />
     <Compile Include="AttachedProperties\AttachedInteractivity.cs" />
     <Compile Include="AttachedProperties\TextBlockHelper.cs" />
+    <Compile Include="Actions\XAML\StaticMenu.cs" />
+    <Compile Include="Actions\XAML\StaticMenuElement.cs" />
+    <Compile Include="Actions\XAML\StaticMenuItem.cs" />
+    <Compile Include="Actions\XAML\StaticMenuItemCollection.cs" />
+    <Compile Include="Actions\XAML\StaticMenuSeparator.cs" />
     <Compile Include="Controls\IconTextPair.cs" />
     <Compile Include="Converters\BoolConverter.cs" />
     <Compile Include="Converters\EnumConverter.cs" />
     <Compile Include="Converters\NullConverter.cs" />
+    <Compile Include="Converters\ShortcutGestureConverter.cs" />
+    <Compile Include="Converters\SpecialValueConverter.cs" />
     <Compile Include="NBT\Converters\BaseNBTHeaderRunConverter.cs" />
     <Compile Include="NBT\Converters\Basic\NBTArrayNameConverter.cs" />
     <Compile Include="NBT\Converters\Basic\NbtCollectiveNameConverter.cs" />
@@ -89,12 +97,21 @@
     <Compile Include="NBT\Explorer\Dialogs\Inlines\InlineHelper.cs" />
     <Compile Include="NBT\Explorer\Dialogs\Inlines\HighlightingInlinesConverter.cs" />
     <Compile Include="NBT\Explorer\Dialogs\NBTDialogService.cs" />
-    <Compile Include="NBT\Explorer\Finding\FindView.cs" />
+    <Compile Include="NBT\Explorer\Finding\FindViewService.cs" />
     <Compile Include="NBT\Explorer\ListFallbackSourceConverter.cs" />
     <Compile Include="NBT\Explorer\NBTItemTemplateSelector.cs" />
     <Compile Include="NBT\Explorer\PathNavigationGeneratorConveter.cs" />
     <Compile Include="Services\ClipboardService.cs" />
     <Compile Include="Services\WinExplorerService.cs" />
+    <Compile Include="Shortcuts\AppShortcutManager.cs" />
+    <Compile Include="Shortcuts\AppShortcutProcessor.cs" />
+    <Compile Include="Shortcuts\Bindings\ShortcutActionBinding.cs" />
+    <Compile Include="Shortcuts\Bindings\ShortcutBinding.cs" />
+    <Compile Include="Shortcuts\ShortcutActivateHandler.cs" />
+    <Compile Include="Shortcuts\ShortcutUtils.cs" />
+    <Compile Include="Shortcuts\UIFocusGroup.cs" />
+    <Compile Include="Shortcuts\VisualTreeUtils.cs" />
+    <Compile Include="Shortcuts\WPFKeyMapDeserialiser.cs" />
     <Compile Include="Themes\Attached\CornerHelper.cs" />
     <Compile Include="Themes\Attached\MenuHelper.cs" />
     <Compile Include="Themes\Attached\PasswordBoxHelper.cs" />
@@ -247,6 +264,13 @@
       <Project>{ebddaa92-38b1-4501-b4eb-9eeb02909258}</Project>
       <Name>MCNBTViewer.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Actions\Menus" />
+    <Folder Include="Settings" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Keymap.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

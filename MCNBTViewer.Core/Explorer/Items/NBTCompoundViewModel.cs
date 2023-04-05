@@ -19,7 +19,7 @@ namespace MCNBTViewer.Core.Explorer.Items {
                 return;
             }
 
-            this.Children.Add(CreateFrom(name, nbt));
+            this.AddChild(CreateFrom(name, nbt));
         }
 
         public override NBTBase ToNBT() {

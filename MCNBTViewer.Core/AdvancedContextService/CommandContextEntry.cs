@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 using System.Windows.Input;
-using MCNBTViewer.Core.AdvancedContextMenu.Base;
+using MCNBTViewer.Core.AdvancedContextService.Base;
 
-namespace MCNBTViewer.Core.AdvancedContextMenu {
+namespace MCNBTViewer.Core.AdvancedContextService {
     /// <summary>
     /// The default implementation for a context entry (aka menu item), which also supports modifying the header,
     /// input gesture text, command and command parameter to reflect the UI menu item
     /// </summary>
-    public class CommandContextEntry : BaseClickableContextEntry, IContextEntry {
+    public class CommandContextEntry : ContextEntry, IContextEntry {
         private ICommand command;
         private object commandParameter;
 
@@ -30,22 +30,21 @@ namespace MCNBTViewer.Core.AdvancedContextMenu {
             this.commandParameter = commandParameter;
         }
 
-        public CommandContextEntry(object dataContext, ICommand command, object commandParameter, IEnumerable<IContextEntry> children = null) : base(dataContext, children) {
+        public CommandContextEntry(string header, ICommand command, IEnumerable<IContextEntry> children = null) : base(null, header, children) {
+            this.command = command;
+        }
+
+        public CommandContextEntry(string header, ICommand command, object commandParameter, IEnumerable<IContextEntry> children = null) : base(null, header, children) {
             this.command = command;
             this.commandParameter = commandParameter;
         }
 
-        public CommandContextEntry(object dataContext, string header, ICommand command, object commandParameter, IEnumerable<IContextEntry> children = null) : base(dataContext, header, children) {
+        public CommandContextEntry(string header, ICommand command, object commandParameter, string inputGestureText, IEnumerable<IContextEntry> children = null) : base(null, header, inputGestureText, children) {
             this.command = command;
             this.commandParameter = commandParameter;
         }
 
-        public CommandContextEntry(object dataContext, string header, ICommand command, object commandParameter, string inputGestureText, IEnumerable<IContextEntry> children = null) : base(dataContext, header, inputGestureText, children) {
-            this.command = command;
-            this.commandParameter = commandParameter;
-        }
-
-        public CommandContextEntry(object dataContext, string header, ICommand command, object commandParameter, string inputGestureText, string toolTip, IEnumerable<IContextEntry> children = null) : base(dataContext, header, inputGestureText, toolTip, children) {
+        public CommandContextEntry(string header, ICommand command, object commandParameter, string inputGestureText, string toolTip, IEnumerable<IContextEntry> children = null) : base(null, header, inputGestureText, toolTip, children) {
             this.command = command;
             this.commandParameter = commandParameter;
         }

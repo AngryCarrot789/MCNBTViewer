@@ -1,12 +1,12 @@
 using System.Collections.Generic;
-using MCNBTViewer.Core.AdvancedContextMenu.Base;
+using MCNBTViewer.Core.AdvancedContextService.Base;
 
-namespace MCNBTViewer.Core.AdvancedContextMenu {
+namespace MCNBTViewer.Core.AdvancedContextService {
     /// <summary>
     /// The default implementation for a context entry (aka menu item), which also supports modifying the header,
     /// input gesture text, command and command parameter to reflect the UI menu item
     /// </summary>
-    public class ActionContextEntry : BaseClickableContextEntry, IContextEntry {
+    public class ActionContextEntry : ContextEntry, IContextEntry {
         private string actionId;
         public string ActionId {
             get => this.actionId;

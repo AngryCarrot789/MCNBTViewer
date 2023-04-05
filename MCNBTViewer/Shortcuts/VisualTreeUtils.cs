@@ -1,7 +1,8 @@
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Media3D;
 
-namespace FramePFX.Shortcuts {
+namespace MCNBTViewer.Shortcuts {
     public static class VisualTreeUtils {
         /// <summary>
         /// Returns the control which has the given inherited property defined
@@ -11,9 +12,23 @@ namespace FramePFX.Shortcuts {
         /// <returns></returns>
         public static DependencyObject FindInheritedPropertyDefinition(DependencyProperty property, DependencyObject startObject) {
             DependencyObject obj = startObject;
-            while (obj != null && obj.ReadLocalValue(property) == DependencyProperty.UnsetValue)
-                obj = VisualTreeHelper.GetParent(obj);
+            while (obj != null && obj.ReadLocalValue(property) == DependencyProperty.UnsetValue) {
+                obj = GetParent(obj);
+            }
+
             return obj;
+        }
+
+        public static DependencyObject GetParent(DependencyObject source) {
+            if (source is Visual || source is Visual3D) {
+                return VisualTreeHelper.GetParent(source);
+            }
+            else if (source is FrameworkContentElement fce) {
+                return fce.Parent;
+            }
+            else {
+                return null;
+            }
         }
     }
 }

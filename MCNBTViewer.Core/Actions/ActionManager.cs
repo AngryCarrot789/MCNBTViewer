@@ -1,51 +1,42 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
+using System.Threading.Tasks;
 
-namespace MCNBTViewer.Core.DynUI.Actions {
+namespace MCNBTViewer.Core.Actions {
     public class ActionManager {
         public static ActionManager Instance { get; }
 
-        private readonly Dictionary<string, AnAction> actions;
+        private readonly Dictionary<string, Action> actions;
 
         public ActionManager() {
-            this.actions = new Dictionary<string, AnAction>();
+            this.actions = new Dictionary<string, Action>();
         }
 
         static ActionManager() {
             Instance = new ActionManager();
         }
 
-        public void Register(string id, AnAction action) {
+        public void Register(string id, Action action) {
+            if (string.IsNullOrEmpty(id))
+                throw new ArgumentException("Action cannot be null or empty", nameof(id));
+            if (action == null)
+                throw new ArgumentNullException(nameof(action));
+            if (this.actions.TryGetValue(id, out Action existing))
+                throw new Exception($"Action already registered with type '{id}': {existing.GetType()}");
+
             this.actions[id] = action;
         }
 
-        public AnAction GetAction(string id) {
-            return this.actions.TryGetValue(id, out AnAction action) ? action : null;
+        public Action GetAction(string id) {
+            return this.actions.TryGetValue(id, out Action action) ? action : null;
         }
 
-        public bool Execute(string id, object dataContext, bool isCalledModally) {
-            if (this.actions.TryGetValue(id, out AnAction action)) {
-                this.Execute(action, dataContext, isCalledModally);
-                return true;
+        public async Task<bool> Execute(string id, object dataContext) {
+            if (this.actions.TryGetValue(id, out Action action)) {
+                return await action.Execute(new ActionEvent(dataContext));
             }
 
             return false;
-        }
-
-        public void Execute(AnAction action, object dataContext, bool isCalledModally) {
-            Dictionary<string, object> dict = new Dictionary<string, object>();
-            dict["DataContext"] = dataContext;
-            AnActionEvent e = new AnActionEvent(dict, isCalledModally);
-            this.Execute(action, e);
-        }
-
-        public void Execute(AnAction action, AnActionEvent e) {
-            if (action == null) {
-                throw new ArgumentNullException(nameof(action), "Action cannot be null");
-            }
-
-            action.Execute(e);
         }
     }
 }

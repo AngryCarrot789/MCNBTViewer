@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -226,19 +227,19 @@ namespace MCNBTViewer.Core.Explorer.Finding {
         // nf = name flags, vf = value flags
         private async Task TaskMain(string searchName, string searchValue, FindFlags nf, FindFlags vf) {
             // cheap way of avoid concurrent modification in most cases
-            List<NBTDataFileViewModel> list = IoC.MainExplorer.LoadedDataFiles.ToList();
-            foreach (NBTDataFileViewModel file in list) {
-                if (this.stopTask) {
-                    return;
-                }
-
-                await this.FindItems(file, file.Children.ToList(), searchName, searchValue, nf, vf);
+            try {
+                await this.FindItems(IoC.MainExplorer.RootFiles.OfType<BaseNBTViewModel>().ToList(), searchName, searchValue, nf, vf);
             }
-
-            this.IsSearchActive = false;
+            catch (Exception e) {
+                Debug.WriteLine(e.ToString());
+                await IoC.MessageDialogs.ShowMessageAsync("Search error", $"An error occurred while searching all files: {e.Message}");
+            }
+            finally {
+                this.IsSearchActive = false;
+            }
         }
 
-        private async Task FindItems(BaseNBTCollectionViewModel parent, List<BaseNBTViewModel> items, string searchName, string searchValue, FindFlags nf, FindFlags vf) {
+        private async Task FindItems(List<BaseNBTViewModel> items, string searchName, string searchValue, FindFlags nf, FindFlags vf) {
             foreach (BaseNBTViewModel child in items) {
                 List<TextRange> nameMatchesNormal = new List<TextRange>();
                 List<TextRange> valueMatchesNormal = new List<TextRange>();
@@ -257,7 +258,7 @@ namespace MCNBTViewer.Core.Explorer.Finding {
                             }
                         }
 
-                        await this.FindItems(childCollection, childCollection.Children.ToList(), searchName, searchValue, nf, vf);
+                        await this.FindItems(childCollection.Children.ToList(), searchName, searchValue, nf, vf);
                         continue;
                     }
                     else if (string.IsNullOrEmpty(child.Name) || !AcceptName(searchName, child, nf, nameMatchesNormal)) {
@@ -273,7 +274,7 @@ namespace MCNBTViewer.Core.Explorer.Finding {
                         }
                     }
                     else if (child is BaseNBTCollectionViewModel childCollection) {
-                        await this.FindItems(childCollection, childCollection.Children.ToList(), searchName, searchValue, nf, vf);
+                        await this.FindItems(childCollection.Children.ToList(), null, searchValue, nf, vf);
                         continue;
                     }
                     else {
@@ -322,6 +323,10 @@ namespace MCNBTViewer.Core.Explorer.Finding {
         private static bool AcceptValue(string pattern, BaseNBTViewModel nbt, FindFlags flags, List<TextRange> matches, out string foundValue) {
             if (nbt is NBTPrimitiveViewModel) {
                 foundValue = ((NBTPrimitiveViewModel) nbt).Data ?? "";
+            }
+            else if (nbt is NBTLongArrayViewModel) {
+                long[] data = ((NBTLongArrayViewModel) nbt).Data;
+                foundValue = data != null && data.Length > 0 ? string.Join(",", data) : "";
             }
             else if (nbt is NBTIntArrayViewModel) {
                 int[] data = ((NBTIntArrayViewModel) nbt).Data;

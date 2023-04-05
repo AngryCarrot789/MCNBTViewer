@@ -1,3 +1,4 @@
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -51,30 +52,44 @@ namespace MCNBTViewer.Controls {
             }
         }
 
-        protected override void OnMouseDoubleClick(MouseButtonEventArgs e) {
+        private volatile bool isProcessingDoubleClick;
+        private volatile bool isProcessingKeyDown;
+        protected override async void OnMouseDoubleClick(MouseButtonEventArgs e) {
             base.OnMouseDoubleClick(e);
-            if (e.Handled) {
+            if (e.Handled || this.isProcessingDoubleClick) {
                 return;
             }
 
-            if (this.SelectedItem is BaseNBTViewModel file) {
-                if (this.ItemContainerGenerator.ContainerFromItem(file) is ListBoxItem item) {
-                    if (item.IsMouseOver) {
-                        this.Explorer.UseItem(file);
+            this.isProcessingDoubleClick = true;
+            try {
+                if (this.SelectedItem is BaseNBTViewModel file) {
+                    if (this.ItemContainerGenerator.ContainerFromItem(file) is ListBoxItem item) {
+                        if (item.IsMouseOver) {
+                            await this.Explorer.UseItem(file);
+                        }
                     }
                 }
             }
+            finally {
+                this.isProcessingDoubleClick = false;
+            }
         }
-        protected override void OnKeyDown(KeyEventArgs e) {
+        protected override async void OnKeyDown(KeyEventArgs e) {
             base.OnKeyDown(e);
-            if (e.Handled) {
+            if (e.Handled || this.isProcessingKeyDown) {
                 return;
             }
 
-            if (this.IsFocused && e.Key == Key.Enter) {
-                if (this.SelectedItem is BaseNBTViewModel file) {
-                    this.Explorer.UseItem(file);
+            this.isProcessingKeyDown = true;
+            try {
+                if (this.IsFocused && e.Key == Key.Enter) {
+                    if (this.SelectedItem is BaseNBTViewModel file) {
+                        await this.Explorer.UseItem(file);
+                    }
                 }
+            }
+            finally {
+                this.isProcessingKeyDown = false;
             }
         }
     }

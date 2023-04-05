@@ -3,30 +3,25 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
-using FramePFX.Core;
-using FramePFX.Core.Shortcuts.Inputs;
-using FramePFX.Core.Shortcuts.Managing;
-using FramePFX.Core.Shortcuts.Usage;
-using FramePFX.Core.Utils;
-using FramePFX.Views.Main;
+using MCNBTViewer.Core.Shortcuts.Inputs;
+using MCNBTViewer.Core.Shortcuts.Managing;
+using MCNBTViewer.Core.Utils;
 
-namespace FramePFX.Shortcuts {
+namespace MCNBTViewer.Shortcuts {
     public class AppShortcutManager : ShortcutManager {
-        public const int BUTTON_WHEEL_UP = 143;    // Away from the user
-        public const int BUTTON_WHEEL_DOWN = 142;  // Towards the user
+        public const int BUTTON_WHEEL_UP = 143;   // Away from the user
+        public const int BUTTON_WHEEL_DOWN = 142; // Towards the user
         public const string DEFAULT_USAGE_ID = "DEF";
 
         public static AppShortcutManager Instance { get; } = new AppShortcutManager();
 
         /// <summary>
-        /// Maps an action ID to a dictionary, which maps a custom ID (relative to each usage of the same shortcut) to the callback function
+        /// Maps an action ID to a dictionary which maps a custom usage ID to the callback functions
         /// </summary>
-        public static Dictionary<string, Dictionary<string, Action<ManagedShortcut>>> InputBindingCallbackMap { get; }
-
-        public static string CurrentInputBindingUsageID { get; set; } = DEFAULT_USAGE_ID;
+        public static Dictionary<string, Dictionary<string, List<ShortcutActivateHandler>>> InputBindingCallbackMap { get; }
 
         static AppShortcutManager() {
-            InputBindingCallbackMap = new Dictionary<string, Dictionary<string, Action<ManagedShortcut>>>();
+            InputBindingCallbackMap = new Dictionary<string, Dictionary<string, List<ShortcutActivateHandler>>>();
             KeyStroke.KeyCodeToStringProvider = (x) => ((Key) x).ToString();
             KeyStroke.ModifierToStringProvider = (x) => {
                 StringJoiner joiner = new StringJoiner(new StringBuilder(), " + ");
@@ -54,51 +49,30 @@ namespace FramePFX.Shortcuts {
             MouseStroke.ModifierToStringProvider = KeyStroke.ModifierToStringProvider;
         }
 
-        // new KeyStroke((int) Key.Escape, (int) ModifierKeys.None, false)
         public AppShortcutManager() {
-            // this.CreateHotkey(null, () => MessageBox.Show("Ello! CTRL + SHIFT + A"), NewStroke(false, Key.A, ModifierKeys.Control, ModifierKeys.Shift), NewStroke(false, Key.X, ModifierKeys.Control));
-            // this.CreateHotkey("Panel1", () => MessageBox.Show("Panel 1 says ello!"), NewStroke(true, Key.D, ModifierKeys.Control));
-            // this.CreateHotkey("Panel1/Inner2", () => MessageBox.Show("Inner 2 says ello!"), NewStroke(true, Key.B, ModifierKeys.Control));
-            // this.CreateHotkey("Panel1/Inner3", () => MessageBox.Show("Inner 3 says ello!"), NewStroke(true, Key.C, ModifierKeys.Control));
-        }
 
-        public static bool GetKeyStrokeForEvent(KeyEventArgs e, out KeyStroke stroke, bool isRelease) {
-            Key key = e.Key == Key.System ? e.SystemKey : e.Key;
-            if (IsModifierKey(key) || key == Key.DeadCharProcessed) {
-                stroke = default;
-                return false;
-            }
-
-            stroke = new KeyStroke((int) key, (int) Keyboard.Modifiers, isRelease);
-            return true;
-        }
-
-        public static MouseStroke GetMouseStrokeForEvent(MouseButtonEventArgs e) {
-            return new MouseStroke((int) e.ChangedButton, (int) Keyboard.Modifiers, e.ClickCount);
-        }
-
-        private static void EnforceIdFormat(string id, string paramName) {
-            if (string.IsNullOrWhiteSpace(id)) {
-                throw new Exception($"{paramName} cannot be null or consist of whitespaces only");
-            }
         }
 
         public static void UnregisterHandler(string shortcutId, string usageId) {
-            EnforceIdFormat(shortcutId, nameof(shortcutId));
-            EnforceIdFormat(usageId, nameof(usageId));
-            if (InputBindingCallbackMap.TryGetValue(shortcutId, out Dictionary<string, Action<ManagedShortcut>> usageMap)) {
+            ShortcutUtils.EnforceIdFormat(shortcutId, nameof(shortcutId));
+            ShortcutUtils.EnforceIdFormat(usageId, nameof(usageId));
+            if (InputBindingCallbackMap.TryGetValue(shortcutId, out Dictionary<string, List<ShortcutActivateHandler>> usageMap)) {
                 usageMap.Remove(usageId);
             }
         }
 
-        public static void RegisterHandler(string shortcutId, string usageId, Action<ManagedShortcut> handler) {
-            EnforceIdFormat(shortcutId, nameof(shortcutId));
-            EnforceIdFormat(usageId, nameof(usageId));
-            if (!InputBindingCallbackMap.TryGetValue(shortcutId, out Dictionary<string, Action<ManagedShortcut>> usageMap)) {
-                InputBindingCallbackMap[shortcutId] = usageMap = new Dictionary<string, Action<ManagedShortcut>>();
+        public static void RegisterHandler(string shortcutId, string usageId, ShortcutActivateHandler handler) {
+            ShortcutUtils.EnforceIdFormat(shortcutId, nameof(shortcutId));
+            ShortcutUtils.EnforceIdFormat(usageId, nameof(usageId));
+            if (!InputBindingCallbackMap.TryGetValue(shortcutId, out Dictionary<string, List<ShortcutActivateHandler>> usageMap)) {
+                InputBindingCallbackMap[shortcutId] = usageMap = new Dictionary<string, List<ShortcutActivateHandler>>();
             }
 
-            usageMap[usageId] = handler;
+            if (!usageMap.TryGetValue(usageId, out List<ShortcutActivateHandler> list)) {
+                usageMap[usageId] = list = new List<ShortcutActivateHandler>();
+            }
+
+            list.Add(handler);
         }
 
         // Typically applied only to windows
@@ -117,6 +91,10 @@ namespace FramePFX.Shortcuts {
                     element.KeyDown += OnWindowKeyDown;
                     element.KeyUp += OnWindowKeyUp;
                     element.MouseWheel += OnWindowMouseWheel;
+                    element.SetValue(UIFocusGroup.ShortcutProcessorProperty, new AppShortcutProcessor(Instance));
+                }
+                else {
+                    element.ClearValue(UIFocusGroup.ShortcutProcessorProperty);
                 }
             }
             else {
@@ -130,14 +108,13 @@ namespace FramePFX.Shortcuts {
             }
         }
 
-        private static void OnWindowMouseDown(object sender, MouseButtonEventArgs e) {
-            if (e.OriginalSource is DependencyObject hit) {
-                string focusedPath = UIFocusGroup.ProcessFocusGroupChange(hit);
-                MouseStroke stroke = new MouseStroke((int) e.ChangedButton, (int) Keyboard.Modifiers, e.ClickCount);
-                if (Instance.OnMouseStroke(focusedPath, stroke)) {
-                    e.Handled = true;
-                }
-            }
+        private static async void OnWindowMouseDown(object sender, MouseButtonEventArgs e) {
+            AppShortcutProcessor processor = GetWindowProcessor(sender);
+            processor?.OnWindowMouseDown(sender, e);
+        }
+
+        private static AppShortcutProcessor GetWindowProcessor(object sender) {
+            return sender is Window window ? UIFocusGroup.GetShortcutProcessor(window) : null;
         }
 
         private static void OnWindowMouseUp(object sender, MouseButtonEventArgs e) {
@@ -150,138 +127,26 @@ namespace FramePFX.Shortcuts {
             // }
         }
 
-        private static void OnWindowMouseWheel(object sender, MouseWheelEventArgs e) {
-            if (e.OriginalSource is DependencyObject hit) {
-                int button;
-                if (e.Delta < 0) {
-                    button = BUTTON_WHEEL_DOWN;
-                }
-                else if (e.Delta > 0) {
-                    button = BUTTON_WHEEL_UP;
-                }
-                else {
-                    return;
-                }
-
-                try {
-                    CurrentInputBindingUsageID = UIFocusGroup.GetUsageID(hit) ?? DEFAULT_USAGE_ID;
-                    MouseStroke stroke = new MouseStroke(button, (int) Keyboard.Modifiers, 0, e.Delta);
-                    if (Instance.OnMouseStroke(UIFocusGroup.FocusedGroupPath, stroke)) {
-                        e.Handled = true;
-                    }
-                }
-                finally {
-                    CurrentInputBindingUsageID = DEFAULT_USAGE_ID;
-                }
-            }
+        private static async void OnWindowMouseWheel(object sender, MouseWheelEventArgs e) {
+            AppShortcutProcessor processor = GetWindowProcessor(sender);
+            processor?.OnWindowMouseWheel(sender, e);
         }
 
         private static void OnWindowKeyUp(object sender, KeyEventArgs e) {
-            OnKeyEvent(e.OriginalSource as DependencyObject, e, true);
+            OnKeyEvent(sender, e.OriginalSource as DependencyObject, e, true);
         }
 
         private static void OnWindowKeyDown(object sender, KeyEventArgs e) {
-            OnKeyEvent(e.OriginalSource as DependencyObject, e, false);
+            OnKeyEvent(sender, e.OriginalSource as DependencyObject, e, false);
         }
 
-        public static void OnKeyEvent(DependencyObject focused, KeyEventArgs e, bool isRelease) {
-            if (e.Handled || e.IsRepeat) {
-                return;
-            }
-
-            Key key = e.Key == Key.System ? e.SystemKey : e.Key;
-            if (IsModifierKey(key) || key == Key.DeadCharProcessed) {
-                return;
-            }
-
-            try {
-                CurrentInputBindingUsageID = UIFocusGroup.GetUsageID(focused) ?? DEFAULT_USAGE_ID;
-                KeyStroke stroke = new KeyStroke((int) key, (int) Keyboard.Modifiers, isRelease);
-                if (Instance.OnKeyStroke(UIFocusGroup.FocusedGroupPath, stroke)) {
-                    e.Handled = true;
-                }
-            }
-            finally {
-                CurrentInputBindingUsageID = DEFAULT_USAGE_ID;
-            }
+        public static async void OnKeyEvent(object window, DependencyObject focused, KeyEventArgs e, bool isRelease) {
+            AppShortcutProcessor processor = GetWindowProcessor(window);
+            processor?.OnKeyEvent(window, focused, e, isRelease);
         }
 
-        public static bool IsModifierKey(Key key) {
-            switch (key) {
-                case Key.LeftCtrl:
-                case Key.RightCtrl:
-                case Key.LeftAlt:
-                case Key.RightAlt:
-                case Key.LeftShift:
-                case Key.RightShift:
-                case Key.LWin:
-                case Key.RWin:
-                case Key.Clear:
-                case Key.OemClear:
-                case Key.Apps:
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
-        public override bool OnShortcutActivated(ManagedShortcut shortcut) {
-            CoreIoC.BroadcastShortcutActivity("Processed shortcut: " + shortcut);
-            // ShortcutInputGesture input = ShortcutInputGesture.CurrentInputGesture;
-            // if (input?.ShortcutKeyBinding != null && shortcut.Path == input.ShortcutKeyBinding.ShortcutID) {
-            //     input.IsCompleted = true;
-            // }
-
-            if (InputBindingCallbackMap.TryGetValue(shortcut.Path, out Dictionary<string, Action<ManagedShortcut>> usageMap)) {
-                if (usageMap.TryGetValue(CurrentInputBindingUsageID, out Action<ManagedShortcut> callback)) {
-                    callback(shortcut);
-                }
-            }
-
-            return base.OnShortcutActivated(shortcut);
-        }
-
-        public override bool OnNoSuchShortcutForKeyStroke(in KeyStroke stroke) {
-            if (stroke.IsKeyDown) {
-                CoreIoC.BroadcastShortcutActivity("No such shortcut for key stroke: " + stroke);
-            }
-
-            return base.OnNoSuchShortcutForKeyStroke(in stroke);
-        }
-
-        public override bool OnNoSuchShortcutForMouseStroke(in MouseStroke stroke) {
-            CoreIoC.BroadcastShortcutActivity("No such shortcut for mouse stroke: " + stroke);
-            return base.OnNoSuchShortcutForMouseStroke(in stroke);
-        }
-
-        public override bool OnCancelUsageForNoSuchNextKeyStroke(IShortcutUsage usage, ManagedShortcut shortcut, in KeyStroke stroke) {
-            CoreIoC.BroadcastShortcutActivity("No such shortcut for next key stroke: " + stroke);
-            return base.OnCancelUsageForNoSuchNextKeyStroke(usage, shortcut, in stroke);
-        }
-
-        public override bool OnCancelUsageForNoSuchNextMouseStroke(IShortcutUsage usage, ManagedShortcut shortcut, in MouseStroke stroke) {
-            CoreIoC.BroadcastShortcutActivity("No such shortcut for next mouse stroke: " + stroke);
-            return base.OnCancelUsageForNoSuchNextMouseStroke(usage, shortcut, in stroke);
-        }
-
-        public override bool OnShortcutUsagesCreated() {
-            StringJoiner joiner = new StringJoiner(new StringBuilder(), ", ");
-            foreach (KeyValuePair<IShortcutUsage, ManagedShortcut> pair in this.ActiveUsages) {
-                joiner.Append(pair.Key.CurrentStroke.ToString());
-            }
-
-            CoreIoC.BroadcastShortcutActivity("Waiting for next input: " + joiner);
-            return base.OnShortcutUsagesCreated();
-        }
-
-        public override bool OnSecondShortcutUsagesProgressed() {
-            StringJoiner joiner = new StringJoiner(new StringBuilder(), ", ");
-            foreach (KeyValuePair<IShortcutUsage, ManagedShortcut> pair in this.ActiveUsages) {
-                joiner.Append(pair.Key.CurrentStroke.ToString());
-            }
-
-            CoreIoC.BroadcastShortcutActivity("Waiting for next input: " + joiner);
-            return base.OnSecondShortcutUsagesProgressed();
+        public override ShortcutProcessor NewProcessor() {
+            return new AppShortcutProcessor(this);
         }
     }
 }

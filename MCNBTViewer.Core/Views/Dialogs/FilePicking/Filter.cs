@@ -13,6 +13,7 @@ namespace MCNBTViewer.Core.Views.Dialogs.FilePicking {
 
         public Filter(string filter) {
             this.sb = new StringBuilder(filter ?? "");
+            this.hasFirst = this.sb.Length > 0;
         }
 
         public static Filter Of() {

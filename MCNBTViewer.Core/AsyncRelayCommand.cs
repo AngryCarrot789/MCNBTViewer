@@ -9,10 +9,15 @@ namespace MCNBTViewer.Core {
     public class AsyncRelayCommand : BaseRelayCommand {
         private readonly Func<Task> execute;
         private readonly Func<bool> canExecute;
+
+        /// <summary>
+        /// Because <see cref="Execute"/> is async void, it can be fired multiple
+        /// times while the task that <see cref="execute"/> returns is still running. This
+        /// is used to track if it's running or not
+        /// </summary>
         private volatile bool isRunning; // maybe switch to atomic Interlocked?
 
-
-        public AsyncRelayCommand(Func<Task> execute, Func<bool> canExecute = null, bool convertParameter = false) {
+        public AsyncRelayCommand(Func<Task> execute, Func<bool> canExecute = null) {
             if (execute == null) {
                 throw new ArgumentNullException(nameof(execute), "Execute callback cannot be null");
             }
@@ -26,6 +31,14 @@ namespace MCNBTViewer.Core {
         }
 
         public override async void Execute(object parameter) {
+            if (this.isRunning) {
+                return;
+            }
+
+            await this.ExecuteAsync();
+        }
+
+        public async Task ExecuteAsync() {
             if (this.isRunning) {
                 return;
             }

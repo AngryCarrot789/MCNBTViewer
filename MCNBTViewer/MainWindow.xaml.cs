@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using MCNBTViewer.Controls;
 using MCNBTViewer.Core;
@@ -18,6 +19,9 @@ namespace MCNBTViewer {
             this.InitializeComponent();
             this.DataContext = new MainViewModel();
             this.ViewModel.Explorer.ExplorerListHandle = new MainListImpl(this.MainListBox);
+            IoC.BroadcastShortcutActivity = (x) => {
+                this.ShortcutIndicatorBlock.Text = x ?? "";
+            };
         }
 
         public class MainListImpl : IMainList {
@@ -53,9 +57,9 @@ namespace MCNBTViewer {
             }
         }
 
-        private void ToggleButtonCheckChanged(object sender, System.Windows.RoutedEventArgs e) {
-            if (sender is ToggleButton button && button.IsChecked.HasValue) {
-                this.Topmost = button.IsChecked.Value;
+        private void ToggleButtonCheckChanged(object sender, RoutedEventArgs e) {
+            if (sender is MenuItem button) {
+                this.Topmost = button.IsChecked;
             }
         }
     }

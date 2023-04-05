@@ -2,27 +2,28 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel.Design;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using MCNBTViewer.Core.Explorer.Items;
-using MCNBTViewer.Core.NBT;
 using MCNBTViewer.Core.Utils;
 
 namespace MCNBTViewer.Core.Explorer {
     public class NBTExplorerViewModel : BaseViewModel {
+        private readonly EfficientObservableCollection<BaseViewModel> rootFiles;
+        public ReadOnlyObservableCollection<BaseViewModel> RootFiles { get; }
+
+        public bool IsEmpty => this.rootFiles.Count < 1;
+
         public bool IgnoreSelectionChanged { get; set; }
 
         public NBTDataFileViewModel RootDataFileForSelectedItem {
             get {
-                BaseNBTViewModel item = this.SelectedFile;
+                BaseViewModel item = this.SelectedItem;
                 if (item is NBTDataFileViewModel model) {
                     return model;
                 }
-                else if (item != null && (item = item.RootParent) is NBTDataFileViewModel) {
-                    return (NBTDataFileViewModel) item;
+                else if (item is BaseNBTViewModel baseNbt && (baseNbt = baseNbt.RootParent) is NBTDataFileViewModel) {
+                    return (NBTDataFileViewModel) baseNbt;
                 }
                 else {
                     return null;
@@ -30,20 +31,17 @@ namespace MCNBTViewer.Core.Explorer {
             }
         }
 
-        public BaseNBTViewModel SelectedFile => (BaseNBTViewModel) this.TreeView.GetSelectedItem();
-
-        private readonly ObservableCollection<NBTDataFileViewModel> loadedDataFiles;
-        public ReadOnlyObservableCollection<NBTDataFileViewModel> LoadedDataFiles { get; }
-
         public NBTExplorerListViewModel ExplorerList { get; }
 
         public ITreeView TreeView { get; set; }
 
         public IMainList ExplorerListHandle { get; set; }
 
+        public BaseViewModel SelectedItem => (BaseViewModel) this.TreeView.GetSelectedItem();
+
         public NBTExplorerViewModel() {
-            this.loadedDataFiles = new ObservableCollection<NBTDataFileViewModel>();
-            this.LoadedDataFiles = new ReadOnlyObservableCollection<NBTDataFileViewModel>(this.loadedDataFiles);
+            this.rootFiles = new EfficientObservableCollection<BaseViewModel>();
+            this.RootFiles = new ReadOnlyObservableCollection<BaseViewModel>(this.rootFiles);
             this.ExplorerList = new NBTExplorerListViewModel(this);
         }
 
@@ -64,7 +62,7 @@ namespace MCNBTViewer.Core.Explorer {
             int i, j = 0;
             string name;
             BaseNBTViewModel tag;
-            IList source = this.LoadedDataFiles;
+            IList source = this.RootFiles;
             while ((i = path.IndexOf('/', j)) >= 0) {
                 tag = GetChild(source, name = path.JSubstring(j, i));
                 if (tag == null) {
@@ -94,17 +92,16 @@ namespace MCNBTViewer.Core.Explorer {
                 return null;
             }
 
-
-            foreach (BaseNBTViewModel child in children) {
-                if (child.Name == name) {
-                    return child;
+            foreach (object child in children) {
+                if (child is BaseNBTViewModel tag && tag.Name == name) {
+                    return tag;
                 }
             }
 
             // finally try to parse the index. the above checks just in case a tag was actually named [3] for example
             if (name[0] == '[' && name[name.Length - 1] == ']') {
                 if (int.TryParse(name.JSubstring(1, name.Length - 1), out int index) && index >= 0 && index < children.Count) {
-                    return (BaseNBTViewModel) children[index];
+                    return children[index] as BaseNBTViewModel;
                 }
             }
 
@@ -122,20 +119,21 @@ namespace MCNBTViewer.Core.Explorer {
 
         public void RemoveDatFile(NBTDataFileViewModel file) {
             bool isSelected = this.RootDataFileForSelectedItem == file;
-            if (this.loadedDataFiles.Remove(file)) {
+            if (this.rootFiles.Remove(file)) {
                 if (isSelected) {
-                    NBTDataFileViewModel any = this.loadedDataFiles.FirstOrDefault();
-                    if (any == null) {
+                    if (this.rootFiles.FirstOrDefault() is BaseNBTCollectionViewModel anyCollection) {
+                        this.ExplorerList.CurrentFolder = anyCollection;
+                        if (anyCollection.Children.Count > 0) {
+                            this.ExplorerList.SelectedItem = anyCollection.Children[0];
+                        }
+                    }
+                    else {
                         this.ExplorerList.CurrentFolder = null;
                         this.ExplorerList.SelectedItem = null;
                     }
-                    else {
-                        this.ExplorerList.CurrentFolder = any;
-                        if (any.Children.Count > 0) {
-                            this.ExplorerList.SelectedItem = any.Children[0];
-                        }
-                    }
                 }
+
+                this.RaisePropertyChanged(nameof(this.IsEmpty));
             }
         }
 
@@ -146,28 +144,20 @@ namespace MCNBTViewer.Core.Explorer {
 
             this.IgnoreSelectionChanged = true;
             try {
-                if (item is NBTDataFileViewModel model && this.loadedDataFiles.Contains(item)) {
+                if (item is BaseNBTCollectionViewModel model) {
                     this.ExplorerList.CurrentFolder = model;
                     if (model.Children.Count > 0) {
                         this.ExplorerList.SelectedItem = model.Children[0];
                     }
                 }
                 else if (item != null) {
-                    if (item is BaseNBTCollectionViewModel collection) { // && this.TreeView.IsItemExpanded(collection)
-                        this.ExplorerList.CurrentFolder = collection;
-                        if (collection.Children.Count > 0) {
-                            this.ExplorerList.SelectedItem = collection.Children[0];
-                        }
+                    if (this.ExplorerList.CurrentFolder == null || this.ExplorerList.CurrentFolder != item.Parent) {
+                        // Make sure the list is showing the current folder
+                        this.ExplorerList.CurrentFolder = item.Parent;
+                        // this.ExplorerList.SelectedItem = item;
                     }
-                    else {
-                        if (this.ExplorerList.CurrentFolder == null || this.ExplorerList.CurrentFolder != item.Parent) {
-                            // Make sure the list is showing the current folder
-                            this.ExplorerList.CurrentFolder = item.Parent;
-                            // this.ExplorerList.SelectedItem = item;
-                        }
 
-                        this.ExplorerList.SelectedItem = item;
-                    }
+                    this.ExplorerList.SelectedItem = item;
                 }
                 else {
                     this.ExplorerList.CurrentFolder = null;
@@ -179,19 +169,23 @@ namespace MCNBTViewer.Core.Explorer {
             }
         }
 
-        public void UseItem(BaseNBTViewModel file) {
+        public async Task UseItem(BaseNBTViewModel file) {
             if (file is BaseNBTCollectionViewModel) {
-                this.TreeView.Behaviour.ExpandHierarchyFromRoot(file.ParentChain);
+                await this.TreeView.Behaviour.RepeatExpandHierarchyFromRootAsync(file.ParentChain);
+            }
+            else if (file is NBTPrimitiveViewModel primitive) {
+                await primitive.EditAction();
+            }
+            else if (file is BaseNBTArrayViewModel array) {
+                // not sure if i should make RenameAction async or not... probably should
+                await array.EditAction();
             }
         }
 
-        public void SetSelectedItem(BaseNBTViewModel item) {
-            this.TreeView.SetSelectedFile(item);
-        }
-
-        public void AddDataFile(NBTDataFileViewModel file) {
-            if (file != null) {
-                this.loadedDataFiles.Add(file);
+        public void AddChild(BaseViewModel item) {
+            if (item != null) {
+                this.rootFiles.Add(item);
+                this.RaisePropertyChanged(nameof(this.IsEmpty));
             }
         }
     }

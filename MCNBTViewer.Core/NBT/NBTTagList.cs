@@ -7,6 +7,8 @@ namespace MCNBTViewer.Core.NBT {
         public readonly List<NBTBase> tags;
         public byte tagType;
 
+        public override byte Id => 9;
+
         public NBTTagList() {
             this.tags = new List<NBTBase>();
         }
@@ -47,8 +49,6 @@ namespace MCNBTViewer.Core.NBT {
                 throw new Exception("Tried to read NBT tag with too high complexity, depth > 512");
             }
         }
-
-        public override byte Id => 9;
 
         public override NBTBase CloneTag() {
             NBTTagList copy = new NBTTagList(this.tagType);

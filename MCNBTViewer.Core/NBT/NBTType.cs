@@ -12,6 +12,7 @@ namespace MCNBTViewer.Core.NBT {
         String    = 8,
         ByteArray = 7,
         IntArray  = 11,
+        LongArray = 12,
         List      = 9,
         Compound  = 10
     }
@@ -72,6 +73,7 @@ namespace MCNBTViewer.Core.NBT {
                 case NBTType.String:    return true;
                 case NBTType.ByteArray:
                 case NBTType.IntArray:
+                case NBTType.LongArray:
                 case NBTType.List:
                 case NBTType.Compound:  return false;
                 default: throw new ArgumentOutOfRangeException(nameof(type), type, null);
@@ -79,7 +81,7 @@ namespace MCNBTViewer.Core.NBT {
         }
 
         public static bool IsArray(this NBTType type) {
-            return type == NBTType.IntArray || type == NBTType.ByteArray;
+            return type == NBTType.IntArray || type == NBTType.ByteArray || type == NBTType.LongArray;
         }
 
         public static bool IsCollection(this NBTType type) {

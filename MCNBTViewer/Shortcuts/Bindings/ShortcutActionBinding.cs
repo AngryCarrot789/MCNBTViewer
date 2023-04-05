@@ -1,16 +1,31 @@
-using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using MCNBTViewer.Core.Actions;
 using MCNBTViewer.Core.Shortcuts.Managing;
 
 namespace MCNBTViewer.Shortcuts.Bindings {
-    public class ShortcutBinding : InputBinding {
+    public class ShortcutActionBinding : InputBinding {
         public static readonly DependencyProperty ShortcutAndUsageIdProperty =
             DependencyProperty.Register(
                 "ShortcutAndUsageId",
                 typeof(string),
-                typeof(ShortcutBinding),
-                new PropertyMetadata(null, (d, e) => ((ShortcutBinding) d).OnShouldcutAndUsageIdChanged((string) e.OldValue, (string) e.NewValue)));
+                typeof(ShortcutActionBinding),
+                new PropertyMetadata(null, (d, e) => ((ShortcutActionBinding) d).OnShouldcutAndUsageIdChanged((string) e.OldValue, (string) e.NewValue)));
+
+        public static readonly DependencyProperty ActionIdProperty =
+            DependencyProperty.Register(
+                "ActionId",
+                typeof(string),
+                typeof(ShortcutActionBinding),
+                new PropertyMetadata(null));
+
+        public static readonly DependencyProperty DataContextProperty = DependencyProperty.Register("DataContext", typeof(object), typeof(ShortcutActionBinding), new PropertyMetadata(default(object)));
+
+        public object DataContext {
+            get => (object) this.GetValue(DataContextProperty);
+            set => this.SetValue(DataContextProperty, value);
+        }
 
         /// <summary>
         /// <para>
@@ -30,23 +45,33 @@ namespace MCNBTViewer.Shortcuts.Bindings {
             set => this.SetValue(ShortcutAndUsageIdProperty, value);
         }
 
-        public string ShortcutId {
+        /// <summary>
+        /// The ID of the global action to execute
+        /// </summary>
+        public string ActionId {
+            get => (string) this.GetValue(ActionIdProperty);
+            set => this.SetValue(ActionIdProperty, value);
+        }
+
+        private string ShortcutId {
             get {
                 ShortcutUtils.SplitValue(this.ShortcutAndUsageId, out string id, out _);
                 return id;
             }
         }
 
-        public string UsageId {
+        private string UsageId {
             get {
                 ShortcutUtils.SplitValue(this.ShortcutAndUsageId, out _, out string id);
                 return id;
             }
         }
 
-        private readonly Action<ManagedShortcut> onShortcutFired;
+        private readonly ShortcutActivateHandler onShortcutFired;
 
-        public ShortcutBinding() {
+        private volatile bool isRunning;
+
+        public ShortcutActionBinding() {
             this.onShortcutFired = this.OnShortcutFired;
         }
 
@@ -62,14 +87,21 @@ namespace MCNBTViewer.Shortcuts.Bindings {
             }
         }
 
-        public void OnShortcutFired(ManagedShortcut shortcut) {
-            ICommand cmd = this.Command;
-            object param = this.CommandParameter;
-            if (cmd != null && cmd.CanExecute(param)) {
-                cmd.Execute(param);
+        private async Task<bool> OnShortcutFired(ShortcutProcessor processor, ManagedShortcut shortcut) {
+            string action = this.ActionId;
+            if (this.isRunning || string.IsNullOrEmpty(action)) {
+                return true;
+            }
+
+            this.isRunning = true;
+            try {
+                return await ActionManager.Instance.Execute(action, this.DataContext ?? processor.CurrentDataContext);
+            }
+            finally {
+                this.isRunning = false;
             }
         }
 
-        protected override Freezable CreateInstanceCore() => new ShortcutBinding();
+        protected override Freezable CreateInstanceCore() => new ShortcutActionBinding();
     }
 }

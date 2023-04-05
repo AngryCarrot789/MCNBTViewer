@@ -3,46 +3,45 @@ using MCNBTViewer.Core.Utils;
 using REghZy.Streams;
 
 namespace MCNBTViewer.Core.NBT {
-    public class NBTTagIntArray : NBTBase {
-        public int[] data;
+    public class NBTTagLongArray : NBTBase {
+        public long[] data;
 
-        public NBTTagIntArray() {
+        public override byte Id => 12;
+
+        public NBTTagLongArray() {
         }
 
-        public NBTTagIntArray(int[] data) {
+        public NBTTagLongArray(long[] data) {
             this.data = data;
         }
 
         public override void Write(IDataOutput output) {
             output.WriteInt(this.data.Length);
-            foreach (int value in this.data) {
-                output.WriteInt(value);
+            foreach (long value in this.data) {
+                output.WriteLong(value);
             }
         }
 
         public override void Read(IDataInput input, int deep) {
-            int var3 = input.ReadInt();
-            this.data = new int[var3];
-
-            for (int var4 = 0; var4 < var3; ++var4) {
-                this.data[var4] = input.ReadInt();
+            int size = input.ReadInt();
+            this.data = new long[size];
+            for (int var4 = 0; var4 < size; ++var4) {
+                this.data[var4] = input.ReadLong();
             }
         }
 
-        public override byte Id => 11;
-
         public override string ToString() {
-            return "[" + this.data.Length + " ints]";
+            return "[" + this.data.Length + " longs]";
         }
 
         public override NBTBase CloneTag() {
-            int[] copy = new int[this.data.Length];
+            long[] copy = new long[this.data.Length];
             Array.Copy(this.data, 0, copy, 0, this.data.Length);
-            return new NBTTagIntArray(copy);
+            return new NBTTagLongArray(copy);
         }
 
         public override bool Equals(object obj) {
-            if (base.Equals(obj) && obj is NBTTagIntArray arr) {
+            if (base.Equals(obj) && obj is NBTTagLongArray arr) {
                 return this.data == null && arr.data == null || this.data != null && Arrays.Equals(this.data, arr.data);
             }
             else {

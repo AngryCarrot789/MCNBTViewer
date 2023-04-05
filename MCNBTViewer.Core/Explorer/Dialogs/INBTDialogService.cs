@@ -8,10 +8,11 @@ namespace MCNBTViewer.Core.Explorer.Dialogs {
         (string, NBTTagLong)? CreateTagLong(bool canEditName = true, string defaultName = null, NBTTagLong defaultTag = null);
         (string, NBTTagFloat)? CreateTagFloat(bool canEditName = true, string defaultName = null, NBTTagFloat defaultTag = null);
         (string, NBTTagDouble)? CreateTagDouble(bool canEditName = true, string defaultName = null, NBTTagDouble defaultTag = null);
-        (string, NBTTagByteArray)? CreateTagByteArray(bool canEditName = true, string defaultName = null, NBTTagByteArray defaultTag = null);
         (string, NBTTagString)? CreateTagString(bool canEditName = true, string defaultName = null, NBTTagString defaultTag = null);
+        (string, NBTTagByteArray)? CreateTagByteArray(bool canEditName = true, string defaultName = null, NBTTagByteArray defaultTag = null);
+        (string, NBTTagIntArray)? CreateTagIntArray(bool canEditName = true, string defaultName = null, NBTTagIntArray defaultTag = null);
+        (string, NBTTagLongArray)? CreateTagLongArray(bool canEditName = true, string defaultName = null, NBTTagLongArray defaultTag = null);
         (string, NBTTagList)? CreateTagList(bool canEditName = true, string defaultName = null, NBTTagList defaultTag = null);
         (string, NBTTagCompound)? CreateTagCompound(bool canEditName = true, string defaultName = null, NBTTagCompound defaultTag = null);
-        (string, NBTTagIntArray)? CreateTagIntArray(bool canEditName = true, string defaultName = null, NBTTagIntArray defaultTag = null);
     }
 }

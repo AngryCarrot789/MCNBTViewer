@@ -5,9 +5,9 @@ using System.Linq;
 using MCNBTViewer.Core.Utils;
 
 namespace MCNBTViewer.Core.Explorer.New.Trees {
-    public class BaseTreeFolderViewModel : BaseTreeItemViewModel {
-        protected readonly EfficientObservableCollection<BaseTreeItemViewModel> items;
-        public ReadOnlyObservableCollection<BaseTreeItemViewModel> Items { get; }
+    public class TreeFolderViewModel : TreeItemViewModel {
+        protected readonly EfficientObservableCollection<TreeItemViewModel> items;
+        public ReadOnlyObservableCollection<TreeItemViewModel> Items { get; }
 
         public bool IsEmpty => this.items.Count < 1;
 
@@ -17,41 +17,41 @@ namespace MCNBTViewer.Core.Explorer.New.Trees {
             set => this.RaisePropertyChanged(ref this.isExpanded, value);
         }
 
-        protected BaseTreeFolderViewModel() {
-            this.items = new EfficientObservableCollection<BaseTreeItemViewModel>();
-            this.Items = new ReadOnlyObservableCollection<BaseTreeItemViewModel>(this.items);
+        public TreeFolderViewModel() {
+            this.items = new EfficientObservableCollection<TreeItemViewModel>();
+            this.Items = new ReadOnlyObservableCollection<TreeItemViewModel>(this.items);
         }
 
-        public virtual void AddRange(IEnumerable<BaseTreeItemViewModel> enumerable) {
-            List<BaseTreeItemViewModel> list = enumerable.ToList();
+        public virtual void AddRange(IEnumerable<TreeItemViewModel> enumerable) {
+            List<TreeItemViewModel> list = enumerable.ToList();
             this.items.AddRange(list);
             this.EnsureParents(list, true);
             this.RaiseIsEmptyChanged();
         }
 
-        public virtual void Add(BaseTreeItemViewModel item) {
+        public virtual void Add(TreeItemViewModel item) {
             this.items.Add(item);
             this.RaiseIsEmptyChanged();
         }
 
-        public virtual void Insert(int index, BaseTreeItemViewModel item) {
+        public virtual void Insert(int index, TreeItemViewModel item) {
             this.items.Insert(index, item);
             this.EnsureParent(item, true);
             this.RaiseIsEmptyChanged();
         }
 
-        public virtual void InsertRange(int index, IEnumerable<BaseTreeItemViewModel> enumerable) {
-            List<BaseTreeItemViewModel> list = enumerable.ToList();
+        public virtual void InsertRange(int index, IEnumerable<TreeItemViewModel> enumerable) {
+            List<TreeItemViewModel> list = enumerable.ToList();
             this.items.InsertRange(index, list);
             this.EnsureParents(list, true);
             this.RaiseIsEmptyChanged();
         }
 
-        public virtual bool Contains(BaseTreeItemViewModel item) {
+        public virtual bool Contains(TreeItemViewModel item) {
             return this.items.Contains(item);
         }
 
-        public virtual bool Remove(BaseTreeItemViewModel item) {
+        public virtual bool Remove(TreeItemViewModel item) {
             int index = this.IndexOf(item);
             if (index < 0) {
                 return false;
@@ -61,17 +61,17 @@ namespace MCNBTViewer.Core.Explorer.New.Trees {
             return true;
         }
 
-        public virtual void RemoveAll(IEnumerable<BaseTreeItemViewModel> enumerable) {
-            foreach (BaseTreeItemViewModel item in enumerable) {
+        public virtual void RemoveAll(IEnumerable<TreeItemViewModel> enumerable) {
+            foreach (TreeItemViewModel item in enumerable) {
                 this.Remove(item);
             }
         }
 
-        public virtual void RemoveAll(Predicate<BaseTreeItemViewModel> canRemove) {
+        public virtual void RemoveAll(Predicate<TreeItemViewModel> canRemove) {
             // this.RemoveAll(this.items.Where(canRemove).ToList());
-            List<BaseTreeItemViewModel> list = this.items.ToList();
+            List<TreeItemViewModel> list = this.items.ToList();
             for (int i = list.Count - 1; i >= 0; i--) {
-                BaseTreeItemViewModel item = list[i];
+                TreeItemViewModel item = list[i];
                 if (canRemove(item)) {
                     this.EnsureParent(item, false);
                     this.items.RemoveAt(i);
@@ -81,7 +81,7 @@ namespace MCNBTViewer.Core.Explorer.New.Trees {
             this.RaiseIsEmptyChanged();
         }
 
-        public virtual int IndexOf(BaseTreeItemViewModel item) {
+        public virtual int IndexOf(TreeItemViewModel item) {
             return this.items.IndexOf(item);
         }
 
@@ -101,14 +101,14 @@ namespace MCNBTViewer.Core.Explorer.New.Trees {
             this.RaisePropertyChanged(nameof(this.IsEmpty));
         }
 
-        protected virtual void EnsureParent(BaseTreeItemViewModel item, bool valid) {
+        protected virtual void EnsureParent(TreeItemViewModel item, bool valid) {
             if (item != null) {
                 item.ParentTreeExpander = valid ? this : null;
             }
         }
 
-        protected virtual void EnsureParents(IEnumerable<BaseTreeItemViewModel> enumerable, bool valid) {
-            foreach (BaseTreeItemViewModel item in enumerable) {
+        protected virtual void EnsureParents(IEnumerable<TreeItemViewModel> enumerable, bool valid) {
+            foreach (TreeItemViewModel item in enumerable) {
                 this.EnsureParent(item, valid);
             }
         }

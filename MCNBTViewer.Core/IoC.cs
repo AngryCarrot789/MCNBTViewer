@@ -1,3 +1,4 @@
+using System;
 using MCNBTViewer.Core.Explorer;
 using MCNBTViewer.Core.Explorer.Dialogs;
 using MCNBTViewer.Core.Explorer.Finding;
@@ -20,9 +21,11 @@ namespace MCNBTViewer.Core {
 
         public static NBTExplorerViewModel MainExplorer { get; set; }
 
-        public static IFindView FindView { get; set; }
+        public static IFindViewService FindViewService { get; set; }
 
         public static bool IsBigEndian { get; set; }
         public static bool UseCompression { get; set; }
+
+        public static Action<string> BroadcastShortcutActivity { get; set; }
     }
 }

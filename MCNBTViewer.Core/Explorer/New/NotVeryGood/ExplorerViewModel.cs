@@ -1,4 +1,4 @@
-namespace MCNBTViewer.Core.Explorer.New {
+namespace MCNBTViewer.Core.Explorer.New.NotVeryGood {
     public class ExplorerViewModel : BaseViewModel {
         private ExplorerFolderViewModel rootFolder;
         public ExplorerFolderViewModel RootFolder {

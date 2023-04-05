@@ -6,6 +6,8 @@ namespace MCNBTViewer.Core.NBT {
     public class NBTTagByteArray : NBTBase {
         public byte[] data;
 
+        public override byte Id => 7;
+
         public NBTTagByteArray() {
         }
 
@@ -19,12 +21,10 @@ namespace MCNBTViewer.Core.NBT {
         }
 
         public override void Read(IDataInput input, int deep) {
-            int var3 = input.ReadInt();
-            this.data = new byte[var3];
+            int size = input.ReadInt();
+            this.data = new byte[size];
             input.ReadFully(this.data);
         }
-
-        public override byte Id => 7;
 
         public override string ToString() {
             return "[" + this.data.Length + " bytes]";

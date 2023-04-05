@@ -16,7 +16,7 @@ namespace MCNBTViewer.NBT.Explorer {
             }
 
             if (this.Explorer != null) {
-                return this.Explorer.LoadedDataFiles;
+                return this.Explorer.RootFiles;
             }
 
             return DependencyProperty.UnsetValue;

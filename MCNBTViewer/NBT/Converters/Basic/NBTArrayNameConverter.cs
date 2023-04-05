@@ -19,6 +19,9 @@ namespace MCNBTViewer.NBT.Converters.Basic {
             else if (value is byte[] byteArray) {
                 return string.IsNullOrEmpty(name) ? $"{byteArray.Length} byte elements" : $"{name}: {byteArray.Length} byte elements";
             }
+            else if (value is long[] longArray) {
+                return string.IsNullOrEmpty(name) ? $"{longArray.Length} long elements" : $"{name}: {longArray.Length} long elements";
+            }
             else {
                 return name;
             }

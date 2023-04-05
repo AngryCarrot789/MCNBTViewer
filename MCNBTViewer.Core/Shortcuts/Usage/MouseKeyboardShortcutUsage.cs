@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using FramePFX.Core.Shortcuts.Inputs;
+using MCNBTViewer.Core.Shortcuts.Inputs;
 
-namespace FramePFX.Core.Shortcuts.Usage {
+namespace MCNBTViewer.Core.Shortcuts.Usage {
     public class MouseKeyboardShortcutUsage : IKeyboardShortcutUsage, IMouseShortcutUsage {
         private readonly MouseKeyboardShortcut shortcut;
         // private int clickCounter;

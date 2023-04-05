@@ -1,19 +1,32 @@
 ﻿<?xml version="1.0"?>
 <KeyMap>
     <Group Name="Application">
-        <Group Name="Timeline">
-            <Group Name="Surface">
-                <Shortcut Name="DeleteSelectClips" Description="Deletes all of the selected clips">
-                    <Keystroke Char="Delete"/>
-                </Shortcut>
-            </Group>
-            <Group Name="LayerControllers">
-                <Shortcut Name="DeleteSelectedLayer" Description="Deletes the selected layer">
-                    <Keystroke Char="Delete"/>
-                </Shortcut>
-            </Group>
-            <Shortcut Name="PlayPauseAction" Description="Causes the timeline to play or pause">
-                <Keystroke Char="Space"/>
+        <Group Name="MainWindow" IsGlobal="true">
+            <Shortcut Name="AddEmptyDatTag" Description="Adds a new empty DAT tag">
+                <Keystroke Mods="CTRL" Key="N"/>
+            </Shortcut>
+            <Shortcut Name="OpenFile" Description="Opens a file">
+                <Keystroke Mods="CTRL" Key="O"/>
+            </Shortcut>
+            <Shortcut Name="OpenFolder" Description="Opens a folder (multiple items)">
+                <Keystroke Mods="CTRL+SHIFT" Key="O"/>
+            </Shortcut>
+            <Shortcut Name="SaveAll">
+                <Keystroke Mods="CTRL+SHIFT" Key="S"/>
+            </Shortcut>
+            <Shortcut Name="ShowFindView">
+                <Keystroke Mods="CTRL" Key="F"/>
+            </Shortcut>
+        </Group>
+        <Group Name="NBT">
+            <Shortcut Name="CopyNBTName">
+                <Keystroke Mods="CTRL+SHIFT" Key="C"/>
+            </Shortcut>
+            <Shortcut Name="CopyNBTValue">
+                <Keystroke Mods="CTRL" Key="C"/>
+            </Shortcut>
+            <Shortcut Name="EditNBTGeneral">
+                <Keystroke Key="F2"/>
             </Shortcut>
         </Group>
     </Group>

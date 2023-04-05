@@ -1,7 +1,5 @@
-using MCNBTViewer.Core.Explorer.Items;
-
 namespace MCNBTViewer.Core.Explorer.Finding {
-    public interface IFindView {
+    public interface IFindViewService {
         bool IsOpen { get; }
 
         void ShowFindView();

@@ -17,41 +17,37 @@ namespace MCNBTViewer.Core.Explorer.Items {
 
         public ICommand CopyValueCommand { get; }
 
-        public ICommand EditValueCommand { get; }
+        public ICommand EditGeneralCommand { get; }
 
         public NBTPrimitiveViewModel(string name, NBTType type) : base(name, type) {
             this.CopyValueCommand = new RelayCommand(async () => await this.CopyValueAction());
-            this.EditValueCommand = new AsyncRelayCommand(this.EditValueAction, () => this.Parent != null);
+            this.EditGeneralCommand = new AsyncRelayCommand(this.EditAction);
         }
 
-        private async Task EditValueAction() {
-            if (this.Parent == null) {
-                return;
-            }
-
+        public async Task EditAction() {
             bool isInCompound = this.Parent is NBTCompoundViewModel;
 
-            string name;
+            string newName;
             NBTBase nbt;
             switch (this.NBTType) {
-                case NBTType.Byte:  { (string, NBTTagByte)? x = IoC.TagDialogService.CreateTagByte(isInCompound, this.Name, (NBTTagByte) this.ToNBT());       if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
-                case NBTType.Short:  { (string, NBTTagShort)? x = IoC.TagDialogService.CreateTagShort(isInCompound, this.Name, (NBTTagShort) this.ToNBT());    if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
-                case NBTType.Int:  { (string, NBTTagInt)? x = IoC.TagDialogService.CreateTagInt(isInCompound, this.Name, (NBTTagInt) this.ToNBT());          if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
-                case NBTType.Long:  { (string, NBTTagLong)? x = IoC.TagDialogService.CreateTagLong(isInCompound, this.Name, (NBTTagLong) this.ToNBT());       if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
-                case NBTType.Float:  { (string, NBTTagFloat)? x = IoC.TagDialogService.CreateTagFloat(isInCompound, this.Name, (NBTTagFloat) this.ToNBT());    if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
-                case NBTType.Double:  { (string, NBTTagDouble)? x = IoC.TagDialogService.CreateTagDouble(isInCompound, this.Name, (NBTTagDouble) this.ToNBT()); if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
-                case NBTType.String:  { (string, NBTTagString)? x = IoC.TagDialogService.CreateTagString(isInCompound, this.Name, (NBTTagString) this.ToNBT()); if (!x.HasValue) return; name = x.Value.Item1; nbt = x.Value.Item2; } break;
+                case NBTType.Byte:   { (string, NBTTagByte)? x = IoC.TagDialogService.CreateTagByte(isInCompound, this.Name, (NBTTagByte) this.ToNBT());       if (!x.HasValue) return; newName = x.Value.Item1; nbt = x.Value.Item2; } break;
+                case NBTType.Short:  { (string, NBTTagShort)? x = IoC.TagDialogService.CreateTagShort(isInCompound, this.Name, (NBTTagShort) this.ToNBT());    if (!x.HasValue) return; newName = x.Value.Item1; nbt = x.Value.Item2; } break;
+                case NBTType.Int:    { (string, NBTTagInt)? x = IoC.TagDialogService.CreateTagInt(isInCompound, this.Name, (NBTTagInt) this.ToNBT());          if (!x.HasValue) return; newName = x.Value.Item1; nbt = x.Value.Item2; } break;
+                case NBTType.Long:   { (string, NBTTagLong)? x = IoC.TagDialogService.CreateTagLong(isInCompound, this.Name, (NBTTagLong) this.ToNBT());       if (!x.HasValue) return; newName = x.Value.Item1; nbt = x.Value.Item2; } break;
+                case NBTType.Float:  { (string, NBTTagFloat)? x = IoC.TagDialogService.CreateTagFloat(isInCompound, this.Name, (NBTTagFloat) this.ToNBT());    if (!x.HasValue) return; newName = x.Value.Item1; nbt = x.Value.Item2; } break;
+                case NBTType.Double: { (string, NBTTagDouble)? x = IoC.TagDialogService.CreateTagDouble(isInCompound, this.Name, (NBTTagDouble) this.ToNBT()); if (!x.HasValue) return; newName = x.Value.Item1; nbt = x.Value.Item2; } break;
+                case NBTType.String: { (string, NBTTagString)? x = IoC.TagDialogService.CreateTagString(isInCompound, this.Name, (NBTTagString) this.ToNBT()); if (!x.HasValue) return; newName = x.Value.Item1; nbt = x.Value.Item2; } break;
                 default: return;
             }
 
             if (this.Parent is NBTCompoundViewModel parent) {
-                BaseNBTViewModel existing = parent.FindChildByName(name);
+                BaseNBTViewModel existing = parent.FindChildByName(newName);
                 if (existing != null && existing != this) {
-                    await IoC.MessageDialogs.ShowMessageAsync("Already exists", $"A tag with the name '{name}' already exists: {existing.NBTType}");
+                    await IoC.MessageDialogs.ShowMessageAsync("Already exists", $"A tag with the name '{newName}' already exists as {existing.NBTType}");
                     return;
                 }
 
-                this.Name = name;
+                this.Name = newName;
             }
 
             this.Data = nbt.ToString();
