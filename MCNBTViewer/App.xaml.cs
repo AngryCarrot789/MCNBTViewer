@@ -1,21 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.IO.Packaging;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Documents;
-using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using MCNBTViewer.Converters;
 using MCNBTViewer.Core;
 using MCNBTViewer.Core.Explorer.Items;
-using MCNBTViewer.Core.NBT;
 using MCNBTViewer.Core.Services;
 using MCNBTViewer.Core.Shortcuts.Managing;
+using MCNBTViewer.Core.Shortcuts.ViewModels;
 using MCNBTViewer.NBT.Explorer.Dialogs;
 using MCNBTViewer.NBT.Explorer.Finding;
 using MCNBTViewer.Services;
 using MCNBTViewer.Shortcuts;
+using MCNBTViewer.Shortcuts.Dialogs;
+using MCNBTViewer.Shortcuts.Views;
 using MCNBTViewer.Views.Dialogs.FilePicking;
 using MCNBTViewer.Views.Dialogs.Message;
 using MCNBTViewer.Views.Dialogs.UserInputs;
@@ -25,6 +24,23 @@ namespace MCNBTViewer {
     /// Interaction logic for App.xaml
     /// </summary>
     public partial class App : Application {
+        private static void UpdateShortcutResourcesRecursive(ResourceDictionary dictionary, ShortcutGroup group) {
+            foreach (ShortcutGroup innerGroup in group.Groups) {
+                UpdateShortcutResourcesRecursive(dictionary, innerGroup);
+            }
+
+            foreach (ManagedShortcut shortcut in group.Shortcuts) {
+                UpdatePath(dictionary, shortcut.Path);
+            }
+        }
+
+        private static void UpdatePath(ResourceDictionary dictionary, string shortcut) {
+            string resourcePath = "ShortcutPaths." + shortcut;
+            if (dictionary.Contains(resourcePath)) {
+                dictionary[resourcePath] = ShortcutPathToInputGestureTextConverter.ShortcutToInputGestureText(shortcut);
+            }
+        }
+
         private void Application_Startup(object sender, StartupEventArgs e) {
             IoC.MessageDialogs = new MessageDialogService();
             IoC.Dispatcher = new DispatcherDelegate(this);
@@ -34,6 +50,18 @@ namespace MCNBTViewer {
             IoC.ExplorerService = new WinExplorerService();
             IoC.TagDialogService = new NBTDialogService();
             IoC.FindViewService = new FindViewService();
+            InputStrokeViewModel.KeyToReadableString = KeyStrokeRepresentationConverter.ToStringFunction;
+            InputStrokeViewModel.MouseToReadableString = MouseStrokeRepresentationConverter.ToStringFunction;
+            IoC.KeyboardDialogs = new KeyboardDialogService();
+            IoC.MouseDialogs = new MouseDialogService();
+            IoC.ShortcutManager = AppShortcutManager.Instance;
+            IoC.ShortcutManagerDialog = new ShortcutManagerDialogService();
+            IoC.OnShortcutManagedChanged = (x) => {
+                if (!string.IsNullOrWhiteSpace(x)) {
+                    ShortcutGestureConverter.BroadcastChange();
+                    // UpdatePath(this.Resources, x);
+                }
+            };
 
             // pack://application:,,,/MCNBTViewer;component/Keymap.xml
             // Uri uri = new Uri("pack://application:,,,/Keymap.xml");

@@ -18,12 +18,17 @@ namespace MCNBTViewer.Core.Shortcuts.Managing {
         /// This group's full path (containing the parent's path and this group's name into one).
         /// It will either be null (meaning no parent), or a non-empty string. It will also never consist of only whitespaces
         /// </summary>
-        public string FocusGroupPath { get; }
+        public string FullPath { get; }
 
         /// <summary>
         /// This group's name. It will either be null (meaning no parent), or a non-empty string. It will also never consist of only whitespaces
         /// </summary>
-        public string FocusGroupName { get; }
+        public string Name { get; }
+
+        /// <summary>
+        /// This group's display name, which is a more readable and user-friendly version of <see cref="Name"/>
+        /// </summary>
+        public string DisplayName { get; set; }
 
         /// <summary>
         /// A description of what this group contains
@@ -33,7 +38,7 @@ namespace MCNBTViewer.Core.Shortcuts.Managing {
         /// <summary>
         /// Whether this focus group runs globally (across the entire application). Global focus groups contain shortcuts that can be run, irregardless of what group is focused
         /// </summary>
-        public bool IsGlobal { get; }
+        public bool IsGlobal { get; set; }
 
         /// <summary>
         /// Inherits shortcuts from the parent group
@@ -51,8 +56,8 @@ namespace MCNBTViewer.Core.Shortcuts.Managing {
         public IEnumerable<ShortcutGroup> Groups => this.groups;
 
         public ShortcutGroup(ShortcutGroup parent, string name, bool isGlobal = false, bool inherit = false) {
-            this.FocusGroupPath = (parent != null && name != null) ? parent.GetPathForName(name) : null;
-            this.FocusGroupName = name;
+            this.FullPath = (parent != null && name != null) ? parent.GetPathForName(name) : name;
+            this.Name = name;
             this.InheritFromParent = inherit;
             this.IsGlobal = isGlobal;
             this.Parent = parent;
@@ -67,22 +72,22 @@ namespace MCNBTViewer.Core.Shortcuts.Managing {
 
         public string GetPathForName(string name) {
             ValidateName(name);
-            return this.FocusGroupPath != null ? (this.FocusGroupPath + '/' + name) : name;
+            return this.FullPath != null ? (this.FullPath + '/' + name) : name;
         }
 
         public ShortcutGroup CreateGroupByName(string name, bool isGlobal = false, bool inherit = false) {
             ValidateName(name, "Group name cannot be null or consist of only whitespaces");
             this.ValidateNameNotInUse(name);
             ShortcutGroup group = new ShortcutGroup(this, name, isGlobal, inherit);
-            this.mapToItem[group.FocusGroupName] = group;
+            this.mapToItem[group.Name] = group;
             this.groups.Add(group);
             return group;
         }
 
         public void AddGroup(ShortcutGroup group) {
-            ValidateName(group.FocusGroupName, "Group name cannot be null or consist of only whitespaces");
-            this.ValidateNameNotInUse(group.FocusGroupName);
-            this.mapToItem[group.FocusGroupName] = group;
+            ValidateName(group.Name, "Group name cannot be null or consist of only whitespaces");
+            this.ValidateNameNotInUse(group.Name);
+            this.mapToItem[group.Name] = group;
             this.groups.Add(group);
         }
 
@@ -129,7 +134,7 @@ namespace MCNBTViewer.Core.Shortcuts.Managing {
         }
 
         private bool IsValidSearchForGroup(string focusedGroup) {
-            return IsValidSearchForGroup(this.FocusGroupPath, focusedGroup, this.InheritFromParent);
+            return IsValidSearchForGroup(this.FullPath, focusedGroup, this.InheritFromParent);
         }
 
         private static bool IsValidSearchForGroup(string path, string focused, bool inherit) {
@@ -221,7 +226,7 @@ namespace MCNBTViewer.Core.Shortcuts.Managing {
 
         private void ValidateNameNotInUse(string name) {
             if (this.mapToItem.ContainsKey(name)) {
-                string path = this.FocusGroupPath != null ? (this.FocusGroupPath + '/' + name) : name;
+                string path = this.FullPath != null ? (this.FullPath + '/' + name) : name;
                 throw new Exception("Group or shortcut already exists with name: " + path);
             }
         }

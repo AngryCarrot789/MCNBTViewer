@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using MCNBTViewer.Controls;
 using MCNBTViewer.Core;
 using MCNBTViewer.Core.Explorer;

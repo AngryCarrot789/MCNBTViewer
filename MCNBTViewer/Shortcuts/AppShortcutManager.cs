@@ -140,7 +140,7 @@ namespace MCNBTViewer.Shortcuts {
             OnKeyEvent(sender, e.OriginalSource as DependencyObject, e, false);
         }
 
-        public static async void OnKeyEvent(object window, DependencyObject focused, KeyEventArgs e, bool isRelease) {
+        public static void OnKeyEvent(object window, DependencyObject focused, KeyEventArgs e, bool isRelease) {
             AppShortcutProcessor processor = GetWindowProcessor(window);
             processor?.OnKeyEvent(window, focused, e, isRelease);
         }

@@ -1,6 +1,4 @@
-using MCNBTViewer.Core;
 using MCNBTViewer.Core.Explorer.Finding;
-using MCNBTViewer.Core.Explorer.Items;
 using MCNBTViewer.NBT.Explorer.Dialogs;
 
 namespace MCNBTViewer.NBT.Explorer.Finding {

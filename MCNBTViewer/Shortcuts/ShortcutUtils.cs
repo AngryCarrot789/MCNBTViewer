@@ -44,6 +44,23 @@ namespace MCNBTViewer.Shortcuts {
             return new MouseStroke((int) e.ChangedButton, (int) Keyboard.Modifiers, e.ClickCount);
         }
 
+        public static bool GetMouseStrokeForEvent(MouseWheelEventArgs e, out MouseStroke stroke) {
+            int button;
+            if (e.Delta < 0) {
+                button = AppShortcutManager.BUTTON_WHEEL_DOWN;
+            }
+            else if (e.Delta > 0) {
+                button = AppShortcutManager.BUTTON_WHEEL_UP;
+            }
+            else {
+                stroke = default;
+                return false;
+            }
+
+            stroke = new MouseStroke(button, (int) Keyboard.Modifiers, 0, e.Delta);
+            return true;
+        }
+
         public static void EnforceIdFormat(string id, string paramName) {
             if (string.IsNullOrWhiteSpace(id)) {
                 throw new Exception($"{paramName} cannot be null or consist of whitespaces only");

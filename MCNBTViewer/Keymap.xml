@@ -2,30 +2,30 @@
 <KeyMap>
     <Group Name="Application">
         <Group Name="MainWindow" IsGlobal="true">
-            <Shortcut Name="AddEmptyDatTag" Description="Adds a new empty DAT tag">
+            <Shortcut Name="AddEmptyDatTag" Description="Adds a new empty DAT tag" DisplayName="Add empty DAT tag">
                 <Keystroke Mods="CTRL" Key="N"/>
             </Shortcut>
-            <Shortcut Name="OpenFile" Description="Opens a file">
+            <Shortcut Name="OpenFile" Description="Opens a file" DisplayName="Open a file">
                 <Keystroke Mods="CTRL" Key="O"/>
             </Shortcut>
-            <Shortcut Name="OpenFolder" Description="Opens a folder (multiple items)">
+            <Shortcut Name="OpenFolder" Description="Opens a folder (multiple items)" DisplayName="Open a folder">
                 <Keystroke Mods="CTRL+SHIFT" Key="O"/>
             </Shortcut>
-            <Shortcut Name="SaveAll">
+            <Shortcut Name="SaveAll" DisplayName="Save all files">
                 <Keystroke Mods="CTRL+SHIFT" Key="S"/>
             </Shortcut>
-            <Shortcut Name="ShowFindView">
+            <Shortcut Name="ShowFindView" DisplayName="Show the find window">
                 <Keystroke Mods="CTRL" Key="F"/>
             </Shortcut>
         </Group>
         <Group Name="NBT">
-            <Shortcut Name="CopyNBTName">
+            <Shortcut Name="CopyNBTName" DisplayName="Copy selected tag's name">
                 <Keystroke Mods="CTRL+SHIFT" Key="C"/>
             </Shortcut>
-            <Shortcut Name="CopyNBTValue">
+            <Shortcut Name="CopyNBTValue" DisplayName="Copy selected tag's value">
                 <Keystroke Mods="CTRL" Key="C"/>
             </Shortcut>
-            <Shortcut Name="EditNBTGeneral">
+            <Shortcut Name="EditNBTGeneral" DisplayName="Edit selected tag">
                 <Keystroke Key="F2"/>
             </Shortcut>
         </Group>

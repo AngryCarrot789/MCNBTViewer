@@ -11,12 +11,13 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using MCNBTViewer.Views;
 
 namespace MCNBTViewer.Shortcuts.Views {
     /// <summary>
     /// Interaction logic for ShortcutEditorWindow.xaml
     /// </summary>
-    public partial class ShortcutEditorWindow : Window {
+    public partial class ShortcutEditorWindow : WindowEx {
         public ShortcutEditorWindow() {
             InitializeComponent();
         }

@@ -1,5 +1,4 @@
 using System.Windows;
-using System.Windows.Controls;
 
 namespace MCNBTViewer.Utils {
     public static class UIUtils {

@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using MCNBTViewer.Core;
@@ -26,6 +25,8 @@ namespace MCNBTViewer {
         public ICommand SaveAllDatFilesCommands { get; }
 
         public ICommand ShowFindViewCommand { get; }
+
+        public ICommand EditShortcutsCommand { get; }
 
         private bool isBigEndian;
 
@@ -87,6 +88,9 @@ namespace MCNBTViewer {
             });
 
             this.ShowFindViewCommand = new AsyncRelayCommand(this.ShowFindViewAsync, () => true);
+            this.EditShortcutsCommand = new RelayCommand(() => {
+                IoC.ShortcutManagerDialog.ShowEditorDialog();
+            }, () => !IoC.ShortcutManagerDialog.IsOpen);
         }
 
         public async Task ShowFindViewAsync() {

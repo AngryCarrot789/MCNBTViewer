@@ -23,6 +23,11 @@ namespace MCNBTViewer.Core.Shortcuts.Managing {
         public string Name { get; }
 
         /// <summary>
+        /// This group's display name, which is a more readable and user-friendly version of <see cref="Name"/>
+        /// </summary>
+        public string DisplayName { get; set; }
+
+        /// <summary>
         /// A description of what the shortcut is used for
         /// </summary>
         public string Description { get; set; }
@@ -48,11 +53,7 @@ namespace MCNBTViewer.Core.Shortcuts.Managing {
         }
 
         public void SetShortcut(IShortcut shortcut) {
-            if (shortcut == null) {
-                throw new ArgumentNullException(nameof(shortcut), "Shortcut cannot be null");
-            }
-
-            this.Shortcut = shortcut;
+            this.Shortcut = shortcut ?? throw new ArgumentNullException(nameof(shortcut), "Shortcut cannot be null");
         }
 
         public override string ToString() {

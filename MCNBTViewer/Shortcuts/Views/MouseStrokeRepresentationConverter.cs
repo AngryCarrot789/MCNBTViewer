@@ -3,9 +3,9 @@ using System.Globalization;
 using System.Text;
 using System.Windows.Data;
 using System.Windows.Input;
-using FocusGroupHotkeys.Core.Shortcuts.ViewModels;
+using MCNBTViewer.Core.Shortcuts.ViewModels;
 
-namespace FocusGroupHotkeys.Converters {
+namespace MCNBTViewer.Shortcuts.Views {
     public class MouseStrokeRepresentationConverter : IMultiValueConverter {
         public static string ToStringFunction(MouseStrokeViewModel stroke) {
             return ToStringFunction(stroke.MouseButton, stroke.Modifiers, stroke.ClickCount, stroke.WheelDelta);
@@ -23,19 +23,21 @@ namespace FocusGroupHotkeys.Converters {
                 case 0: name = "Left Click"; break;
                 case 1: name = "Middle Click"; break;
                 case 2: name = "Right Click"; break;
-                case 3: name = "X1 (NAV Back)"; break;
-                case 4: name = "X2 (NAV Forward)"; break;
+                case 3: name = "X1 (Back)"; break;
+                case 4: name = "X2 (Forward)"; break;
                 case AppShortcutManager.BUTTON_WHEEL_UP: name = "Wheel Up"; break;
                 case AppShortcutManager.BUTTON_WHEEL_DOWN: name = "Wheel Down"; break;
                 default: throw new Exception("Invalid mouse button: " + mouseButton);
             }
 
-            switch (clickCount) {
-                case 2: name = "Double " + name; break;
-                case 3: name = "Triple " + name; break;
-                case 4: name = "Quad " + name; break;
-                default: name += " (x" + clickCount + ")"; break;
-            }
+            // switch (clickCount) {
+            //     case 2: name = "Double " + name; break;
+            //     case 3: name = "Triple " + name; break;
+            //     case 4: name = "Quad " + name; break;
+            //     default: name += " (x" + clickCount + ")"; break;
+            // }
+
+            name += " (x" + clickCount + ")";
 
             return sb.Append(name).ToString();
         }

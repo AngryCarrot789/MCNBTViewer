@@ -1,17 +1,24 @@
-﻿<Window x:Class="MCNBTViewer.Shortcuts.Views.ShortcutEditorWindow"
+﻿<views:WindowEx x:Class="MCNBTViewer.Shortcuts.Views.ShortcutEditorWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MCNBTViewer.Shortcuts.Views"
+        xmlns:viewModels="clr-namespace:MCNBTViewer.Core.Shortcuts.ViewModels;assembly=MCNBTViewer.Core"
+        xmlns:acs="clr-namespace:MCNBTViewer.AdvancedContextService"
+        xmlns:views="clr-namespace:MCNBTViewer.Views"
         mc:Ignorable="d"
-        Title="ShortcutEditorWindow" Height="450" Width="800">
+        Title="These shortcuts are not saved to a file yet..." Height="450" Width="800" d:DataContext="{d:DesignInstance viewModels:ShortcutManagerViewModel}"
+        Style="{DynamicResource CustomWindowStyleEx}"
+        Background="{DynamicResource AREghZyBrush.Primary.1.Background.Static}"
+        TitlebarBrush="{DynamicResource AREghZyBrush.Primary.1.Background.Static}"
+        BorderBrush="DodgerBlue">
     <Grid>
         <Grid.Resources>
-            <converters:KeyStrokeRepresentationConverter x:Key="KeyStrokeRepresentationConverter"/>
-            <converters:MouseStrokeRepresentationConverter x:Key="MouseStrokeRepresentationConverter"/>
+            <local:KeyStrokeRepresentationConverter x:Key="KeyStrokeRepresentationConverter"/>
+            <local:MouseStrokeRepresentationConverter x:Key="MouseStrokeRepresentationConverter"/>
         </Grid.Resources>
-        <TreeView DataContext="{Binding ShortcutManager.Root, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding Children}" HorizontalContentAlignment="Stretch" ScrollViewer.CanContentScroll="False" BorderThickness="0">
+        <TreeView ItemsSource="{Binding Root.Children}" HorizontalContentAlignment="Stretch" ScrollViewer.CanContentScroll="False" BorderThickness="0">
             <TreeView.ItemContainerStyle>
                 <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource {x:Type TreeViewItem}}">
                     <Setter Property="Template">
@@ -84,11 +91,11 @@
             <TreeView.Resources>
                 <HierarchicalDataTemplate DataType="{x:Type viewModels:ShortcutGroupViewModel}" ItemsSource="{Binding Children}">
                     <Grid>
-                        <TextBlock Text="{Binding FocusGroupName}" ToolTip="{Binding}" Padding="1" Margin="1"/>
+                        <TextBlock Text="{Binding DisplayName}" ToolTip="{Binding}" Padding="1" Margin="1"/>
                     </Grid>
                 </HierarchicalDataTemplate>
                 <DataTemplate DataType="{x:Type viewModels:ShortcutViewModel}">
-                    <DockPanel acs:ContextMenuHelper.ContextProvider="{Binding}" ToolTip="{Binding Description}" Background="Transparent" HorizontalAlignment="Stretch">
+                    <DockPanel acs:AdvancedContextMenu.ContextProvider="{Binding}" ToolTip="{Binding Description}" Background="Transparent" HorizontalAlignment="Stretch">
                         <ItemsControl ItemsSource="{Binding InputStrokes}" Background="Transparent" BorderThickness="0" DockPanel.Dock="Right">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
@@ -125,10 +132,10 @@
                                 </DataTemplate>
                             </ItemsControl.Resources>
                         </ItemsControl>
-                        <TextBlock Text="{Binding Name}" HorizontalAlignment="Left" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0 0 5 0"/>
+                        <TextBlock Text="{Binding DisplayName}" HorizontalAlignment="Left" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0 0 5 0"/>
                     </DockPanel>
                 </DataTemplate>
             </TreeView.Resources>
         </TreeView>
     </Grid>
-</Window>
+</views:WindowEx>

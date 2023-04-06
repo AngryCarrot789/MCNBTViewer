@@ -1,7 +1,7 @@
-using FocusGroupHotkeys.Core.Inputs;
-using FocusGroupHotkeys.Core.Shortcuts.Dialogs;
+using MCNBTViewer.Core.Shortcuts.Dialogs;
+using MCNBTViewer.Core.Shortcuts.Inputs;
 
-namespace FocusGroupHotkeys.Shortcuts.Dialogs {
+namespace MCNBTViewer.Shortcuts.Dialogs {
     public class KeyboardDialogService : IKeyboardDialogService {
         public KeyStroke? ShowGetKeyStrokeDialog() {
             KeyStrokeInputWindow window = new KeyStrokeInputWindow();

@@ -1,6 +1,6 @@
-using FocusGroupHotkeys.Core.Shortcuts.Managing;
+using MCNBTViewer.Core.Shortcuts.Managing;
 
-namespace FocusGroupHotkeys.Core.Shortcuts.ViewModels {
+namespace MCNBTViewer.Core.Shortcuts.ViewModels {
     public class ShortcutManagerViewModel : BaseViewModel {
         private ShortcutGroupViewModel root;
         public ShortcutGroupViewModel Root {

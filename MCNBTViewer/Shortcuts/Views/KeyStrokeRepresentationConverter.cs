@@ -3,10 +3,10 @@ using System.Globalization;
 using System.Text;
 using System.Windows.Data;
 using System.Windows.Input;
-using FocusGroupHotkeys.Core.Shortcuts.ViewModels;
-using FocusGroupHotkeys.Core.Utils;
+using MCNBTViewer.Core.Shortcuts.ViewModels;
+using MCNBTViewer.Core.Utils;
 
-namespace FocusGroupHotkeys.Converters {
+namespace MCNBTViewer.Shortcuts.Views {
     public class KeyStrokeRepresentationConverter : IMultiValueConverter {
         public static string ToStringFunction(KeyStrokeViewModel stroke) {
             return ToStringFunction(stroke.KeyCode, stroke.Modifiers, stroke.IsKeyRelease);

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Documents;
-using MCNBTViewer.Converters;
 
 namespace MCNBTViewer.NBT.Converters.Inlines {
     public class NBTPrimitiveInlineHeaderConverter : BaseNBTHeaderRunConverter, IMultiValueConverter {

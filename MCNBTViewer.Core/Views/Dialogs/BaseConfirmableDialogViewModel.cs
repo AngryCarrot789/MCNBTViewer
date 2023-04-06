@@ -11,6 +11,10 @@ namespace MCNBTViewer.Core.Views.Dialogs {
             this.CancelCommand = new RelayCommand(async () => await this.CancelAction());
         }
 
+        public BaseConfirmableDialogViewModel(IDialog dialog) : this() {
+            this.Dialog = dialog;
+        }
+
         public virtual async Task ConfirmAction() {
             if (await this.CanConfirm()) {
                 await this.Dialog.CloseDialogAsync(true);

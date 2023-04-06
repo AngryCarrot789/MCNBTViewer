@@ -12,7 +12,7 @@
                 xmlns:sc="clr-namespace:MCNBTViewer.Shortcuts"
                 d:DataContext="{d:DesignInstance Type=local:MainViewModel}"
                 mc:Ignorable="d"
-                Title="MainWindow" Height="576" Width="1024"
+                Title="MC-NBT Viewer/Editor" Height="576" Width="1024"
                 Style="{DynamicResource CustomWindowStyleEx}"
                 Background="{DynamicResource AREghZyBrush.Primary.1.Background.Static}"
                 TitlebarBrush="{DynamicResource AREghZyBrush.Primary.1.Background.Static}"
@@ -23,7 +23,6 @@
         <nbtexp:ListFallbackSourceConverter x:Key="FallbackConverter"/>
         <converters:BoolToVisibilityConverter x:Key="BoolToVisible" TrueValue="Visible" FalseValue="Collapsed"/>
         <converters:BoolToVisibilityConverter x:Key="BoolToCollapsed" TrueValue="Collapsed" FalseValue="Visible"/>
-        <converters:ShortcutGestureConverter x:Key="ShortcutGestureConverter"/>
     </Window.Resources>
 
     <!--
@@ -45,21 +44,22 @@
     <Grid>
         <Menu VerticalAlignment="Top" Background="Transparent">
             <MenuItem Header="File">
-                <MenuItem Header="Add empty root tag" Command="{Binding AddEmptyDATTagCommand, Mode=OneTime}" InputGestureText="{Binding Version, Source={x:Static converters:ShortcutGestureConverter.Holder}, Converter={StaticResource ShortcutGestureConverter}, ConverterParameter='Application/MainWindow/AddEmptyDatTag'}"/>
+                <MenuItem Header="Add empty root tag" Command="{Binding AddEmptyDATTagCommand, Mode=OneTime}" InputGestureText="{Binding Version, Source={x:Static converters:ShortcutGestureConverter.Instance}, Converter={converters:ShortcutGestureConverter}, ConverterParameter='Application/MainWindow/AddEmptyDatTag'}"/>
                 <Separator Style="{DynamicResource MenuItemSeparator}"/>
-                <MenuItem Header="Open File..." Command="{Binding OpenFileCommand, Mode=OneTime}" InputGestureText="{Binding Version, Source={x:Static converters:ShortcutGestureConverter.Holder}, Converter={StaticResource ShortcutGestureConverter}, ConverterParameter='Application/MainWindow/OpenFile'}"/>
-                <MenuItem Header="Open Folder..." Command="{Binding OpenFolderCommand, Mode=OneTime}" InputGestureText="{Binding Version, Source={x:Static converters:ShortcutGestureConverter.Holder}, Converter={StaticResource ShortcutGestureConverter}, ConverterParameter='Application/MainWindow/OpenFolder'}"/>
+                <MenuItem Header="Open File..." Command="{Binding OpenFileCommand, Mode=OneTime}" InputGestureText="{Binding Version, Source={x:Static converters:ShortcutGestureConverter.Instance}, Converter={converters:ShortcutGestureConverter}, ConverterParameter='Application/MainWindow/OpenFile'}"/>
+                <MenuItem Header="Open Folder..." Command="{Binding OpenFolderCommand, Mode=OneTime}" InputGestureText="{Binding Version, Source={x:Static converters:ShortcutGestureConverter.Instance}, Converter={converters:ShortcutGestureConverter}, ConverterParameter='Application/MainWindow/OpenFolder'}"/>
                 <Separator Style="{DynamicResource MenuItemSeparator}"/>
-                <MenuItem Header="Save All" Command="{Binding SaveAllDatFilesCommands, Mode=OneTime}" InputGestureText="{Binding Version, Source={x:Static converters:ShortcutGestureConverter.Holder}, Converter={StaticResource ShortcutGestureConverter}, ConverterParameter='Application/MainWindow/SaveAll'}"/>
+                <MenuItem Header="Save All" Command="{Binding SaveAllDatFilesCommands, Mode=OneTime}" InputGestureText="{Binding Version, Source={x:Static converters:ShortcutGestureConverter.Instance}, Converter={converters:ShortcutGestureConverter}, ConverterParameter='Application/MainWindow/SaveAll'}"/>
                 <Separator Style="{DynamicResource MenuItemSeparator}"/>
                 <MenuItem IsCheckable="True" Checked="ToggleButtonCheckChanged" Unchecked="ToggleButtonCheckChanged" Header="Make window Topmost" ToolTip="Makes the window top-most, meaning other non-top-most windows cannot be above it"/>
             </MenuItem>
             <MenuItem Header="Search">
-                <MenuItem Header="Find..." Command="{Binding ShowFindViewCommand, Mode=OneTime}" InputGestureText="{Binding Version, Source={x:Static converters:ShortcutGestureConverter.Holder}, Converter={StaticResource ShortcutGestureConverter}, ConverterParameter='Application/MainWindow/ShowFindView'}"/>
+                <MenuItem Header="Find..." Command="{Binding ShowFindViewCommand, Mode=OneTime}" InputGestureText="{Binding Version, Source={x:Static converters:ShortcutGestureConverter.Instance}, Converter={converters:ShortcutGestureConverter}, ConverterParameter='Application/MainWindow/ShowFindView'}"/>
             </MenuItem>
             <MenuItem Header="Preferences">
                 <MenuItem IsCheckable="True" Header="Use Big Endianness" IsChecked="{Binding IsBigEndian, UpdateSourceTrigger=PropertyChanged}" ToolTip="Whether NBT data will be loaded in the big-endian format or little-endian, which is what java's DataOutputStream and DataInputStreams use by default. You most likely won't need to toggle this, but it's here just in case" ToolTipService.ShowDuration="30000"/>
                 <MenuItem IsCheckable="True" Header="Use Compressed (GZIP)" IsChecked="{Binding UseCompression, UpdateSourceTrigger=PropertyChanged}" ToolTip="Whether NBT data will be read and written using GZIP compression or not. Minecraft uses GZIP for most of the NBT usage, but some mods may write uncompressed NBT" ToolTipService.ShowDuration="30000"/>
+                <MenuItem Header="Open Shortcut Editor" Command="{Binding EditShortcutsCommand, Mode=OneTime}"/>
             </MenuItem>
         </Menu>
         <Grid Margin="0,18,0,20">

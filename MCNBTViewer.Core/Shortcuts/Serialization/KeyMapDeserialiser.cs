@@ -88,11 +88,11 @@ namespace MCNBTViewer.Core.Shortcuts.Serialization {
                 foreach (Shortcut cut in keyGroup.Shortcuts) {
                     bool hasKey = false;
                     bool hasMouse = false;
-                    if (cut.Strokes != null && cut.Strokes.Count(x => x is Keystroke) > 0) {
+                    if (cut.Strokes != null && cut.Strokes.Any(x => x is Keystroke)) {
                         hasKey = true;
                     }
 
-                    if (cut.Strokes != null && cut.Strokes.Count(x => x is Mousestroke) > 0) {
+                    if (cut.Strokes != null && cut.Strokes.Any(x => x is Mousestroke)) {
                         hasMouse = true;
                     }
 
@@ -115,6 +115,7 @@ namespace MCNBTViewer.Core.Shortcuts.Serialization {
                     ManagedShortcut managed = realKeyGroup.AddShortcut(cut.Name, shortcut, cut.IsGlobalBool);
                     managed.ActionID = cut.ActionID;
                     managed.Description = cut.Description;
+                    managed.DisplayName = cut.DisplayName;
                 }
             }
 
@@ -122,13 +123,15 @@ namespace MCNBTViewer.Core.Shortcuts.Serialization {
                 foreach (Group innerGroup in keyGroup.InnerGroups) {
                     ShortcutGroup realInnerGroup = realKeyGroup.CreateGroupByName(innerGroup.Name, innerGroup.IsGlobalBool, innerGroup.InheritBool);
                     realInnerGroup.Description = innerGroup.Description;
+                    realInnerGroup.DisplayName = innerGroup.DisplayName;
                     this.DeserialiseGroupData(innerGroup, realInnerGroup);
                 }
             }
         }
 
         protected virtual void SerialiseGroup(Group group, ShortcutGroup focusGroup) {
-            group.Name = focusGroup.FocusGroupName;
+            group.Name = focusGroup.Name;
+            group.DisplayName = focusGroup.DisplayName;
             group.Description = string.IsNullOrWhiteSpace(focusGroup.Description) ? null : focusGroup.Description;
             group.IsGlobal = SerialiseObject(focusGroup.IsGlobal, false);
             group.InheritFromParent = SerialiseObject(focusGroup.InheritFromParent, false);

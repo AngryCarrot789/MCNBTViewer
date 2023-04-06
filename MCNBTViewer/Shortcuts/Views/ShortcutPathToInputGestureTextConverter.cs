@@ -1,18 +1,17 @@
 using System;
 using System.Globalization;
 using System.Windows.Data;
-using FocusGroupHotkeys.Core;
-using FocusGroupHotkeys.Core.Shortcuts;
-using FocusGroupHotkeys.Core.Shortcuts.Managing;
+using MCNBTViewer.Core;
+using MCNBTViewer.Core.Shortcuts.Managing;
 
-namespace FocusGroupHotkeys.Converters {
+namespace MCNBTViewer.Shortcuts.Views {
     public class ShortcutPathToInputGestureTextConverter : IValueConverter {
         public string NoSuchShortcutFormat { get; set; } = "<{0}>";
 
         public string ShortcutFormat { get; set; } = null;
 
         public static string ShortcutToInputGestureText(string path, string shortcutFormat = null, string noSuchShortcutFormat = null) {
-            ManagedShortcut shortcut = IoC.ShortcutManager.FindShortcutByPath(path);
+            ManagedShortcut shortcut = AppShortcutManager.Instance.FindShortcutByPath(path);
             if (shortcut == null) {
                 return noSuchShortcutFormat == null ? path : string.Format(noSuchShortcutFormat, path);
             }

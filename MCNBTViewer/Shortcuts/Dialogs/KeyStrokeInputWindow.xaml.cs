@@ -1,12 +1,11 @@
 ﻿using System.Windows;
-using System.Windows.Ink;
 using System.Windows.Input;
-using FocusGroupHotkeys.Converters;
-using FocusGroupHotkeys.Core.Inputs;
-using FocusGroupHotkeys.Core.Views.Dialogs;
-using FocusGroupHotkeys.Views;
+using MCNBTViewer.Core.Shortcuts.Inputs;
+using MCNBTViewer.Core.Views.Dialogs;
+using MCNBTViewer.Shortcuts.Views;
+using MCNBTViewer.Views;
 
-namespace FocusGroupHotkeys.Shortcuts.Dialogs {
+namespace MCNBTViewer.Shortcuts.Dialogs {
     /// <summary>
     /// Interaction logic for KeyStrokeInputWindow.xaml
     /// </summary>
@@ -21,7 +20,7 @@ namespace FocusGroupHotkeys.Shortcuts.Dialogs {
         }
 
         private void InputBox_KeyDown(object sender, KeyEventArgs e) {
-            if (AppShortcutManager.GetKeyStrokeForEvent(e, out KeyStroke stroke, this.IsKeyUp)) {
+            if (ShortcutUtils.GetKeyStrokeForEvent(e, out KeyStroke stroke, this.IsKeyUp)) {
                 this.Stroke = stroke;
                 this.UpdateText(stroke);
             }

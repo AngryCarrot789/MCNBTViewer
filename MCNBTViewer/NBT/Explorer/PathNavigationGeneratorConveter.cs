@@ -5,7 +5,6 @@ using System.Text;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Navigation;
 using MCNBTViewer.Core;
 using MCNBTViewer.Core.Explorer.Items;
 

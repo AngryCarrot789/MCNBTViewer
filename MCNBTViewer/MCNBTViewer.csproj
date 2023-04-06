@@ -101,15 +101,31 @@
     <Compile Include="NBT\Explorer\ListFallbackSourceConverter.cs" />
     <Compile Include="NBT\Explorer\NBTItemTemplateSelector.cs" />
     <Compile Include="NBT\Explorer\PathNavigationGeneratorConveter.cs" />
+    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Services\ClipboardService.cs" />
     <Compile Include="Services\WinExplorerService.cs" />
     <Compile Include="Shortcuts\AppShortcutManager.cs" />
     <Compile Include="Shortcuts\AppShortcutProcessor.cs" />
     <Compile Include="Shortcuts\Bindings\ShortcutActionBinding.cs" />
     <Compile Include="Shortcuts\Bindings\ShortcutBinding.cs" />
+    <Compile Include="Shortcuts\Dialogs\KeyboardDialogService.cs" />
+    <Compile Include="Shortcuts\Dialogs\KeyStrokeInputWindow.xaml.cs">
+      <DependentUpon>KeyStrokeInputWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Shortcuts\Dialogs\MouseDialogService.cs" />
+    <Compile Include="Shortcuts\Dialogs\MouseStrokeInputWindow.xaml.cs">
+      <DependentUpon>MouseStrokeInputWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Shortcuts\ShortcutActivateHandler.cs" />
     <Compile Include="Shortcuts\ShortcutUtils.cs" />
     <Compile Include="Shortcuts\UIFocusGroup.cs" />
+    <Compile Include="Shortcuts\Views\KeyStrokeRepresentationConverter.cs" />
+    <Compile Include="Shortcuts\Views\MouseStrokeRepresentationConverter.cs" />
+    <Compile Include="Shortcuts\Views\ShortcutEditorWindow.xaml.cs">
+      <DependentUpon>ShortcutEditorWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Shortcuts\Views\ShortcutManagerDialogService.cs" />
+    <Compile Include="Shortcuts\Views\ShortcutPathToInputGestureTextConverter.cs" />
     <Compile Include="Shortcuts\VisualTreeUtils.cs" />
     <Compile Include="Shortcuts\WPFKeyMapDeserialiser.cs" />
     <Compile Include="Themes\Attached\CornerHelper.cs" />
@@ -169,6 +185,18 @@
     </Page>
     <Page Include="NBT\Explorer\Items\ListItemStyles.xaml" />
     <Page Include="NBT\Explorer\Items\TreeItemStyles.xaml" />
+    <Page Include="Shortcuts\Dialogs\KeyStrokeInputWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Shortcuts\Dialogs\MouseStrokeInputWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Shortcuts\Views\ShortcutEditorWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Themes\ControlColoursSoftDarkBlue.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -266,8 +294,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Actions\Menus" />
-    <Folder Include="Settings" />
+    <Folder Include="Actions\Menus\" />
+    <Folder Include="Settings\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Keymap.xml" />

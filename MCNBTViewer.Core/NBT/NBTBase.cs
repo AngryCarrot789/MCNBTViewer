@@ -1,5 +1,3 @@
-using System.IO;
-using System.Threading;
 using REghZy.Streams;
 
 namespace MCNBTViewer.Core.NBT {
