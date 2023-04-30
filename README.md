@@ -1,3 +1,11 @@
+# I'm remaking this in another repo
+Link: https://github.com/AngryCarrot789/MCNBTEditor
+
+# h
+# h
+# h
+
+
 # MCNBTViewer
 A minecraft NBT explorer/viewer written in C# using WPF MVVM
 
